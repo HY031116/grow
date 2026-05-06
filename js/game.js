@@ -1180,6 +1180,16 @@ const MINOR_EVENTS = {
         { text: '与其寒暄，虚以委蛇', effect: { favor: 3 },  result: '朝堂人脉，总有一用。' },
         { text: '淡然回应，不卑不亢', effect: { favor: 1 }, flagSet: { loyal: 1 }, result: '君子坦荡，不与小人为伍。' }
       ]
+    },
+    {
+      id: 'court_m2',
+      triggerRound: 17,
+      title: '立储风波',
+      scene: '皇帝龙体违和，朝中两派各立旗帜：嫡长派主张从礼、贤能派欲扶三皇子。两方使者先后登门，各带重礼，均要你明确站队——此刻沉默，便是罪。',
+      choices: [
+        { text: '坚守中立，以"宗法正统"为由婉辞两方', effect: { favor: 8, power: -8 }, flagSet: { neutral_faction: 1 }, result: '两派均视你为难以拉拢之人，但皇帝知悉，对你少了几分猜忌。' },
+        { text: '旗帜鲜明支持嫡长，表明忠义立场', effect: { power: 14, favor: -5 }, flagSet: { court_faction: 1 }, result: '你的表态让嫡长派大喜，权柄悄然增厚，但三皇子的怒火也在积聚。' }
+      ]
     }
   ],
   rebel: [
@@ -1201,6 +1211,16 @@ const MINOR_EVENTS = {
       choices: [
         { text: '接受结盟，借力打力', effect: { troops: 15, morale: -5 }, result: '铁骑助阵，天下为之侧目。' },
         { text: '婉拒结盟，保持独立', effect: { morale: 6, gold: 8 }, result: '你的拒绝赢得了部下的心，也守住了脊梁。' }
+      ]
+    },
+    {
+      id: 'rebel_m3',
+      triggerRound: 17,
+      title: '天下通缉',
+      scene: '朝廷颁布《捉拿逆贼告示》，以十万两白银悬赏你的首级。军营里人心惶惶，连最老实的什长都开始偷偷打听撤路。',
+      choices: [
+        { text: '公开燃烧告示，慷慨激昂：此战不胜，誓不回头', effect: { morale: 18, gold: -10 }, flagSet: { defiant: 1 }, result: '火光之中，士卒高呼，军心凝聚如铁——背水一战，才是枭雄本色。' },
+        { text: '化整为零，秘密转移，另寻根据地', effect: { troops: -5, morale: -8, gold: 15 }, result: '你留得青山，保住了大部分兵马，只是士气低落，重建需要时间。' }
       ]
     }
   ],
@@ -1224,6 +1244,16 @@ const MINOR_EVENTS = {
         { text: '忍气吞声，破财消灾', effect: { gold: -20 }, result: '这笔钱买了安稳，但你心中有一团火。' },
         { text: '暗中联络同行，集体抵制', effect: { prestige: 10, gold: -10 }, flagSet: { merchant_guild: 1 }, result: '商会的雏形，在这一天悄然成形。' }
       ]
+    },
+    {
+      id: 'merchant_m3',
+      triggerRound: 17,
+      title: '钦差入城',
+      scene: '朝廷钦差持节入城，明面上巡视民情，实则奉旨彻查账目——有人在背后告了你一状，说你私通海外、偷漏税款。账房先生哆嗦着问："东家，怎么办？"',
+      choices: [
+        { text: '打点上下，重金疏通，顺利过关', effect: { gold: -30, prestige: 5 }, result: '银子开路，钦差大人最终一笔带过。商誉无损，但家底薄了一圈。' },
+        { text: '坦然摊开账本，据理力争清白', effect: { prestige: 18 }, flagSet: { clean_merchant: 1 }, result: '钦差查了三天，无一纰漏，不得不公开澄清。你的商誉由此达到新高。' }
+      ]
     }
   ],
   hero: [
@@ -1245,6 +1275,16 @@ const MINOR_EVENTS = {
       choices: [
         { text: '拔刀相助，替人申冤', effect: { fame: 10, gold: -15 }, flagSet: { righteous: 1 }, result: '江湖皆知，你是那个有求必应的人。' },
         { text: '力有不逮，赠银送行', effect: { gold: -10, fame: 3 }, result: '力所不及，但你赠银相助，算是尽了心。' }
+      ]
+    },
+    {
+      id: 'hero_m3',
+      triggerRound: 17,
+      title: '名剑之约',
+      scene: '一封红底白字的战书从千里之外送达："久闻阁下之名，某不才，愿以剑论高下。若你不来，天下人便知——你的名望，不过是欺世盗名。"落款：剑宗掌门，顾空行。',
+      choices: [
+        { text: '慨然赴约，生死相见', effect: { fame: 18, martial: -5, gold: -10 }, flagSet: { champion: 1 }, result: '一场恶战，你以微弱劣势险胜，但从此"已登绝顶"之名天下皆知，后无来者。' },
+        { text: '公开回信：以武压人非江湖正道，以理化解恩怨', effect: { fame: 10 }, flagSet: { righteous: 1 }, result: '江湖人称你"侠义无双"——真正的强者，从不以刀兵证明自己。' }
       ]
     }
   ]

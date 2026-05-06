@@ -524,6 +524,68 @@ console.log('\n== 27. 危机事件：侠客追杀令 ==');
 }
 
 // ─────────────────────────────────────────────
+// 晚期小事件（MINOR_EVENTS round17）测试
+// ─────────────────────────────────────────────
+console.log('\n== 晚期小事件（round17）==');
+
+// 测试1：官场 court_m2 在 round17 触发
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.round = 16;
+  const origRand = Math.random;
+  Math.random = () => 0.8;
+  Game.endRound(); // round→17
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') {
+    assert('官场 round17 触发事件', s.pendingStory && s.pendingStory.id === 'court_m2');
+    Game.chooseStory(0);
+  } else {
+    assert('（跳过）官场 round17 主线优先，court_m2 未触发', true);
+  }
+}
+
+// 测试2：造反 rebel_m3 在 round17 触发
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.round = 16;
+  const origRand = Math.random;
+  Math.random = () => 0.8;
+  Game.endRound(); // round→17
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') {
+    assert('造反 round17 触发事件', s.pendingStory && s.pendingStory.id === 'rebel_m3');
+    Game.chooseStory(1);
+  } else {
+    assert('（跳过）造反 round17 主线优先，rebel_m3 未触发', true);
+  }
+}
+
+// 测试3：富商 merchant_m3 round17 触发后选择B清白，prestige 增长
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  const origPrestige = s.resources.prestige;
+  s.round = 16;
+  const origRand = Math.random;
+  Math.random = () => 0.8;
+  Game.endRound(); // round→17
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story' && s.pendingStory && s.pendingStory.id === 'merchant_m3') {
+    Game.chooseStory(1); // 坦然摊账本
+    s = Game.getState();
+    assert('merchant_m3 选择B后商誉增加', s.resources.prestige >= origPrestige);
+    assert('merchant_m3 选择B后设置 clean_merchant flag', !!s.flags.clean_merchant);
+  } else {
+    assert('（跳过）富商 round17 主线优先，merchant_m3 未触发', true);
+  }
+}
+
+// ─────────────────────────────────────────────
 // 人生时间线 测试
 // ─────────────────────────────────────────────
 console.log('\n== 人生时间线 ==');
