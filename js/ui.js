@@ -86,6 +86,10 @@ const UI = (() => {
       `${'<span class="ap-dot used"></span>'.repeat(s.usedPoints)}` +
       `${'<span class="ap-dot"></span>'.repeat(remaining)}`;
 
+    // 内心独白（每回合固定）
+    const monoEl = document.getElementById('monologue-text');
+    if (monoEl) monoEl.textContent = getMonologue(s);
+
     // 资源面板（含胜利目标进度条）
     const resPanel = document.getElementById('resources-panel');
     const goalHtml = buildGoalProgress(s);
@@ -320,6 +324,89 @@ const UI = (() => {
     const pools = { court: courtSituations, rebel: rebelSituations, merchant: merchantSituations, hero: heroSituations };
     const pool = pools[s.player.track] || courtSituations;
     return pool[s.round % pool.length];
+  }
+
+  // ============================
+  // 内心独白（每回合固定一句，基于状态确定性选取）
+  // ============================
+  function getMonologue(s) {
+    const r = s.player.track;
+    const res = s.resources;
+    const round = s.round;
+    // 每个赛道：[早期, 中期, 危困, 顺境, 晚期, 反思] 各选一条
+    const pools = {
+      court: [
+        // 早期（1-5年）
+        ['初入庙堂，方知人心叵测，一切从头学起。', '寒窗苦读十数载，今日方踏入这是非之地。', '仕途之始，如履薄冰，一步亦不敢轻率。'],
+        // 中期（6-12年）
+        ['混迹朝堂数载，终于摸清了几分门道。', '在这权谋之地，笑面之下皆是刀锋。', '年岁渐长，方知忠奸之别有时不过一念之差。'],
+        // 晚期（13年后）
+        ['宦海沉浮二十年，悲欢离合已成过眼云烟。', '历经风雨，终知这朝堂从无永远的赢家。', '功名利禄，终归尘土；唯问心无愧，方能安眠。'],
+        // 圣眷危困
+        ['圣颜不悦，此刻如芒在背，须得寻一良策。', '失了圣眷，便如无根之萍，随时可被倾覆。'],
+        // 权柄雄厚
+        ['权柄在手，方知天下何物不可为。', '朝中党羽已聚，然功高震主之忧，时时萦绕心头。'],
+        // 钱粮紧张
+        ['囊中羞涩，官场人情却一分不能少。', '为官者若连打点之资都无，处处碰壁，实属难堪。']
+      ],
+      rebel: [
+        ['揭竿而起，前路茫茫，然已无退路。', '大丈夫立于天地间，岂能任人宰割，当奋起一战！', '振臂高呼，应者寥寥，然吾心不改。'],
+        ['数载征战，麾下儿郎已见生死，情谊愈深。', '战场磨砺，方知何为真正的生死兄弟。', '攻城掠地，然百姓之苦，日日难忘。'],
+        ['谋定天下，此生或不能见，然后人自当续我未竟之志。', '成王败寇，此刻已无暇多想，唯有向前。', '半生征战，山河已改，吾之名，或将永载史册。'],
+        ['粮草告急，军心动摇，须得速做决断。', '兵力不足，强攻只是送死，需另谋良策。'],
+        ['铁骑万里，所向披靡，天下已成囊中之物。', '麾下将士骁勇，此番定能席卷中原。'],
+        ['民心所向，胜过千军万马。', '百姓拥戴，方是真正的王者根基。']
+      ],
+      merchant: [
+        ['家道中落，然商道无绝境，从头再来又何妨。', '银子是最诚实的东西，给得到，也要得到。', '一文钱难倒英雄汉，然英雄者，必能生财有道。'],
+        ['数载经营，方知商道之深，非只买卖而已。', '诚信为本，人脉为金，此二者缺一不可。', '走南闯北，见识了天下百态，方知财富之道在于人心。'],
+        ['富甲一方，然财聚人散，需思长久之计。', '半生积累，终于站稳脚跟，然守业更难于创业。', '天下无不散之筵席，唯有根基稳固，方能传之子孙。'],
+        ['账目亏空，若不速寻转机，前功尽弃。', '此番失利，不过磨砺，商场沉浮，早已料及。'],
+        ['财富滚滚而来，唯恐引来嫉恨之眼。', '商路畅通，货如轮转，此乃商人之至乐。'],
+        ['人无信不立，商无义不远，此理放诸四海皆准。', '善贾者，不必在意一时之得失，需看长远。']
+      ],
+      hero: [
+        ['一介草莽，凭一腔热血行走天下，不知前路几何。', '仗剑江湖，路见不平便拔刀，这便是吾之道。', '初出茅庐，方知江湖深似海，强者如林。'],
+        ['走过了生死，方知江湖二字，重于泰山。', '一诺千金，恩怨分明，此乃侠客本色。', '见识了人间百态，愈发明白何为真正的公道。'],
+        ['闯荡半生，笑看过多少英雄豪杰，如今仍立于此，幸也。', '侠之大者，非只为一身，更为天下苍生。', '武林中的传说，终将是后人的故事，此生无憾。'],
+        ['声名狼藉，须得以实际行动证明吾之侠义。', '身陷重围，然侠客从不言退，迎难而上乃是本色。'],
+        ['武艺大成，天下强者皆已败于吾剑下。', '一身武艺，行遍天下，无往不胜。'],
+        ['结义兄弟情深，纵使刀山火海，亦能共赴。', '侠义之名，已传四方，然吾心仍似初出之时。']
+      ]
+    };
+
+    const trackPool = pools[r];
+    if (!trackPool) return '';
+
+    // 根据回合选早/中/晚期基础独白
+    let basePool;
+    if (round <= 5)       basePool = trackPool[0];
+    else if (round <= 12) basePool = trackPool[1];
+    else                  basePool = trackPool[2];
+
+    // 根据资源状态覆盖（条件独白优先级高于基础独白）
+    let condPool = null;
+    if (r === 'court') {
+      if ((res.favor || 0) < 20) condPool = trackPool[3];
+      else if ((res.power || 0) >= 60) condPool = trackPool[4];
+      else if ((res.gold || 0) < 15) condPool = trackPool[5];
+    } else if (r === 'rebel') {
+      if ((res.troops || 0) < 20 || (res.morale || 0) < 20) condPool = trackPool[3];
+      else if ((res.troops || 0) >= 80) condPool = trackPool[4];
+      else if ((res.morale || 0) >= 50) condPool = trackPool[5];
+    } else if (r === 'merchant') {
+      if ((res.wealth || 0) < 20) condPool = trackPool[3];
+      else if ((res.wealth || 0) >= 70) condPool = trackPool[4];
+      else if ((res.prestige || 0) >= 40) condPool = trackPool[5];
+    } else if (r === 'hero') {
+      if ((res.fame || 0) < 20) condPool = trackPool[3];
+      else if ((res.martial || 0) >= 50) condPool = trackPool[4];
+      else if ((res.bonds || 0) >= 25) condPool = trackPool[5];
+    }
+
+    const chosen = condPool || basePool;
+    // 用 round 作为确定性索引，同一回合独白不变
+    return '「' + chosen[round % chosen.length] + '」';
   }
 
   function fmtEffect(effect) {

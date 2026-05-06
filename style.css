@@ -310,6 +310,22 @@ html, body {
   margin-left: 2px;
 }
 
+/* ===== 内心独白条 ===== */
+.monologue-bar {
+  text-align: center;
+  padding: 6px 24px;
+  background: rgba(200, 164, 76, 0.04);
+  border-bottom: 1px solid rgba(200, 164, 76, 0.1);
+}
+
+.monologue-text {
+  font-size: 0.8rem;
+  color: var(--gold-dim, #b8963e);
+  font-style: italic;
+  letter-spacing: 0.08em;
+  opacity: 0.9;
+}
+
 .situation-text {
   font-size: 0.85rem;
   color: var(--text-dim);
