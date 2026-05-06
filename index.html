@@ -72,6 +72,18 @@
       <button id="btn-create" class="btn-primary large" disabled onclick="Game.confirmCreate()">
         请先选择出身
       </button>
+
+      <!-- 继续游戏（有存档时显示） -->
+      <div id="continue-section" class="continue-section hidden">
+        <div class="continue-card">
+          <div class="continue-title">📖 上次存档</div>
+          <div id="continue-info" class="continue-info"></div>
+          <div class="continue-actions">
+            <button class="btn-continue" onclick="Game.loadGame()">继续游戏</button>
+            <button class="btn-delete-save" onclick="if(confirm('确定放弃存档？')){{ Game.deleteSave(); document.getElementById('continue-section').classList.add('hidden'); }}">放弃存档</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -35,6 +35,19 @@ const UI = (() => {
     const btn = document.getElementById('btn-create');
     btn.disabled = !s.player.origin;
     btn.textContent = s.player.origin ? '踏上人生之路 →' : '请先选择出身';
+
+    // 存档检查：如有存档则显示"继续游戏"区域
+    const continueSection = document.getElementById('continue-section');
+    const saveInfo = Game.getSaveInfo();
+    if (saveInfo && continueSection) {
+      const d = new Date(saveInfo.savedAt);
+      const dateStr = `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      document.getElementById('continue-info').textContent =
+        `${saveInfo.originName} · ${saveInfo.trackName} · 第${saveInfo.round}/${saveInfo.maxRounds}回合 · ${dateStr}`;
+      continueSection.classList.remove('hidden');
+    } else if (continueSection) {
+      continueSection.classList.add('hidden');
+    }
   }
 
   // ============================

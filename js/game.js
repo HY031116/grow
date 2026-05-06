@@ -1758,10 +1758,12 @@ const Game = (() => {
       state.pendingStory = resolveStoryEvent(storyEvt, state.flags, state.resources);
       state.triggeredStories.push(storyEvt.id);
       state.phase = 'story';
+      saveGame(); // 自动存档
       UI.render();
       return;
     }
 
+    saveGame(); // 自动存档
     UI.render();
   }
 
@@ -1966,6 +1968,64 @@ const Game = (() => {
     return null; // 无特别注脚
   }
 
+  // ==================== 存档 / 读档 ====================
+
+  const SAVE_KEY_AUTO = 'grow_save_auto';
+
+  function saveGame() {
+    try {
+      const saveData = {
+        state: JSON.parse(JSON.stringify(state)),
+        savedAt: Date.now(),
+        version: '0.9'
+      };
+      localStorage.setItem(SAVE_KEY_AUTO, JSON.stringify(saveData));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function loadGame() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY_AUTO);
+      if (!raw) return false;
+      const saveData = JSON.parse(raw);
+      if (!saveData.state) return false;
+      // 深拷贝还原 state
+      Object.keys(saveData.state).forEach(k => { state[k] = saveData.state[k]; });
+      UI.render();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getSaveInfo() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY_AUTO);
+      if (!raw) return null;
+      const saveData = JSON.parse(raw);
+      if (!saveData.state) return null;
+      const p = saveData.state.player;
+      const trackNames = { court: '官场之路', rebel: '造反之路', merchant: '富商之路', hero: '侠客之路' };
+      const originNames = { scholar: '寒门学子', warrior: '边境武将', merchant: '落魄商贾', wanderer: '游侠少年' };
+      return {
+        savedAt: saveData.savedAt,
+        round: saveData.state.round,
+        maxRounds: saveData.state.maxRounds,
+        trackName: trackNames[p.track] || p.track,
+        originName: originNames[p.origin] || p.origin
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function deleteSave() {
+    localStorage.removeItem(SAVE_KEY_AUTO);
+  }
+
   function addLog(type, text) {
     state.log.unshift({ type, text, round: state.round });
     if (state.log.length > 12) state.log.pop();
@@ -1977,5 +2037,5 @@ const Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, confirmTransition, getState };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave };
 })();
