@@ -2575,6 +2575,8 @@ var Game = (() => {
 
     // 里程碑年份写入人生时间线（第5/10/15/20年）
     const milestoneYears = { 5: '初识世界', 10: '壮志渐显', 15: '沧桑已半', 20: '人生将暮' };
+    const YEAR_CN = ['元','二','三','四','五','六','七','八','九','十',
+                     '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
     if (milestoneYears[state.round]) {
       const track = state.player.track;
       const r = state.resources;
@@ -2582,7 +2584,8 @@ var Game = (() => {
       const mainVal = mainResMap[track] || 0;
       const milestone = milestoneYears[state.round];
       const resDesc = mainVal >= 70 ? '声名鹊起' : mainVal >= 40 ? '稳步前行' : '命途多舛';
-      addTimeline('⭐', `乾明${state.round}年·${milestone}——${resDesc}`);
+      const yrCN = YEAR_CN[Math.min(state.round - 1, 19)];
+      addTimeline('⭐', `乾明${yrCN}年·${milestone}——${resDesc}`);
     }
 
     if (state.round > state.maxRounds) {
