@@ -1029,16 +1029,174 @@ html, body {
    响应式
    ========================================== */
 
-@media (max-width: 780px) {
-  .origin-group  { grid-template-columns: 1fr; }
-  .track-group   { grid-template-columns: 1fr; }
-  .play-content  { grid-template-columns: 1fr; }
-  .play-sidebar, .play-log { display: none; }
-  .game-title { font-size: 2rem; letter-spacing: 0.3em; }
-}
-
+/* 中等屏幕：缩紧三栏 */
 @media (max-width: 1000px) {
   .play-content { grid-template-columns: 180px 1fr 200px; }
+}
+
+/* 移动端（≤780px）：单列全展示布局 */
+@media (max-width: 780px) {
+
+  /* ── 通用 ── */
+  html, body { font-size: 14px; }
+  .screen { padding: 16px 12px 32px; }
+  .game-title { font-size: 1.8rem; letter-spacing: 0.25em; }
+  .game-subtitle { font-size: 0.82rem; }
+
+  /* ── 创建页 ── */
+  .origin-group { grid-template-columns: 1fr; }
+  .track-group  { grid-template-columns: 1fr; }
+  .track-header h2 { font-size: 1.4rem; letter-spacing: 0.1em; }
+  .track-card { padding: 16px 14px; }
+  .track-conditions { display: none; } /* 小屏隐藏条件说明，保留预览 */
+
+  /* ── 志向页 ── */
+  #screen-ambition { padding: 20px 12px 60px; }
+  .ambition-header h2 { font-size: 1.4rem; letter-spacing: 0.1em; }
+  .ambition-card { padding: 14px 16px; gap: 12px; }
+  .amb-icon { font-size: 1.6rem; }
+
+  /* ── 游戏主界面 ── */
+  /* 整页可滚动 */
+  #screen-play {
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* 顶部栏：紧凑两行 */
+  .play-topbar {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .round-display { font-size: 0.78rem; }
+  .situation-text {
+    font-size: 0.72rem;
+    flex-basis: 100%;
+    order: 3;
+    text-align: left;
+    padding-top: 2px;
+  }
+  .ap-dot { width: 10px; height: 10px; }
+  .ap-label { font-size: 0.68rem; }
+
+  /* 独白条：紧凑 */
+  .monologue-bar { padding: 5px 12px; }
+  .monologue-text { font-size: 0.73rem; }
+
+  /* 三栏 → 单列垂直堆叠 */
+  .play-content {
+    grid-template-columns: 1fr;
+    overflow: visible;
+    flex: none;
+    height: auto;
+  }
+
+  /* 左侧资源面板：正常显示，不再隐藏 */
+  .play-sidebar {
+    display: block;
+    border-right: none;
+    border-bottom: 1px solid var(--divider);
+    padding: 12px;
+    overflow-y: visible;
+    height: auto;
+  }
+
+  /* 资源数值：横向紧凑排列 */
+  #resources-panel .res-row {
+    display: inline-flex;
+    margin: 0 6px 4px 0;
+  }
+
+  /* 目标进度条：小字 */
+  .goal-label { font-size: 0.68rem; min-width: 48px; }
+  .goal-pct   { font-size: 0.68rem; }
+
+  /* 中间行动区 */
+  .play-main {
+    padding: 12px 12px 72px; /* 底部预留固定按钮空间 */
+    overflow-y: visible;
+    height: auto;
+  }
+
+  /* 结束回合按钮：固定在视口底部 */
+  .end-round-btn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: 0;
+    z-index: 200;
+    padding: 14px 0;
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+  }
+
+  /* 行动按钮：触控友好 */
+  .action-btn { min-height: 48px; }
+  .act-name { font-size: 0.88rem; }
+  .act-desc { font-size: 0.75rem; }
+
+  /* 通用行动标题 */
+  .common-actions-header {
+    font-size: 0.72rem;
+    margin-top: 12px;
+  }
+
+  /* 右侧日志：显示，限制高度，置于最下方 */
+  .play-log {
+    display: block;
+    border-left: none;
+    border-top: 1px solid var(--divider);
+    padding: 10px 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    height: auto;
+  }
+
+  .log-entry { font-size: 0.78rem; }
+  .log-round { font-size: 0.68rem; }
+
+  /* NPC 面板紧凑 */
+  .npc-item { margin-bottom: 6px; }
+  .npc-name { font-size: 0.76rem; }
+  .npc-rel-label { font-size: 0.68rem; }
+
+  /* ── 剧情事件页 ── */
+  #screen-story, #screen-transition {
+    padding: 10px;
+    align-items: flex-start;
+  }
+  .story-body {
+    padding: 1.2rem 1rem;
+    margin-top: 8px;
+  }
+  .story-title { font-size: 1.4rem; }
+  .story-scene {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+  }
+  .story-choice-btn {
+    padding: 12px 14px;
+  }
+  .choice-text { font-size: 0.88rem; }
+
+  /* ── 结局页面 ── */
+  #screen-result { padding: 12px; }
+  .result-body {
+    padding: 20px 12px;
+    max-width: 100%;
+  }
+  .result-title { font-size: 1.8rem; letter-spacing: 0.12em; }
+  .result-story { font-size: 0.88rem; line-height: 1.8; }
+  .result-stats-box { padding: 12px 12px; }
+
+  /* 时间线：文字换行适配小屏 */
+  .timeline-item { flex-wrap: wrap; gap: 4px; }
+  .timeline-year { min-width: 58px; }
+  .timeline-text { flex-basis: 100%; padding-left: 24px; font-size: 0.78rem; }
 }
 
 /* ==========================================
