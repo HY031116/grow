@@ -2048,6 +2048,84 @@ const ENDINGS = {
     story: '二十年仗剑天涯，你留下了数不清的故事，结交了许多江湖好汉。\n\n但传说还未写完，更大的义举还在前方等待。你勒紧马鞍，继续上路——江湖，永远不缺侠客的舞台。'
   },
 
+  // ==================== 自然死亡结局（寿终正寝类）====================
+  // 官场：高圣眷/权柄→安享荣华，中等→平淡致仕，低→郁郁而终
+  death_court_high: {
+    type: 'death',
+    title: '安享荣华',
+    badge: '✧ 致仕归田',
+    story: '二十年宦海，你在朝堂间博弈周旋，终于到了告老还乡的年岁。皇恩浩荡，赐你锦衣玉食，颐养天年。\n\n青山绿水间，你回望这一生的起伏，心中再无遗憾。儿孙绕膝，此生已足。'
+  },
+  death_court_mid: {
+    type: 'death',
+    title: '平淡致仕',
+    badge: '✧ 归隐林泉',
+    story: '二十载仕途，波澜不惊，不曾大起也不曾大落。你以普通官员的身份告老，领了薄薄的养廉银，回到故乡。\n\n邻里依旧认识你，你也记得每一张熟悉的脸。平凡，也是一种圆满。'
+  },
+  death_court_low: {
+    type: 'death',
+    title: '郁郁而终',
+    badge: '✧ 壮志未酬',
+    story: '二十年的挣扎与等待，终究没能等到飞黄腾达的那一天。年岁渐老，圣眷已去，你在一间清冷的官署里结束了这一世的仕途梦。\n\n史书不会记你，但你曾真实地活过，这已是你所能得到的全部。'
+  },
+  // 造反：地盘/民心高→割据封侯，中等→乱世老兵，低→兵败老死
+  death_rebel_high: {
+    type: 'death',
+    title: '割据封侯',
+    badge: '✧ 一方诸侯',
+    story: '你未能问鼎天下，却在这片土地上建立了自己的王国。暮年之时，你坐在自己守护的城池之上，看着百姓安居，心中再无憾恨。\n\n后人称你为乱世中少有的仁义诸侯。这一生，值了。'
+  },
+  death_rebel_mid: {
+    type: 'death',
+    title: '乱世老兵',
+    badge: '✧ 沙场岁月',
+    story: '你征战二十年，见过无数生死。最终，既没有君临天下，也没有马革裹尸——你只是老了，回到了营地，把刀交给了下一个年轻人。\n\n这一生，你是乱世的见证者。平凡的英雄，也是英雄。'
+  },
+  death_rebel_low: {
+    type: 'death',
+    title: '兵败老死',
+    badge: '✧ 壮志难酬',
+    story: '兵散粮尽，麾下的儿郎各奔东西。你在残垣断壁间度过了余生，没有繁华，没有荣光。\n\n但你曾经振臂高呼，曾经在这乱世中燃烧过——哪怕火已熄灭，你也真实地存在过。'
+  },
+  // 富商：财富高→富甲致老，中等→小康晚年，低→薄产终老
+  death_merchant_high: {
+    type: 'death',
+    title: '富甲致老',
+    badge: '✧ 家财万贯',
+    story: '二十年走南闯北，你积累下了令人艳羡的财富。暮年之时，你把商号交给子侄，在老宅里安享晚年。\n\n子孙满堂，家业长存。商人这一生，你活得比大多数人都要圆满。'
+  },
+  death_merchant_mid: {
+    type: 'death',
+    title: '小康晚年',
+    badge: '✧ 平稳度日',
+    story: '你没能成为天下首富，但也攒下了够用一生的家业。孩子们各有营生，老伴陪在身边，日子虽平淡，却也温暖。\n\n有时你会想，若当年再拼一把，结果会不会不同？但转念一想，这平静的晚年，也是福气。'
+  },
+  death_merchant_low: {
+    type: 'death',
+    title: '薄产终老',
+    badge: '✧ 浮沉商海',
+    story: '商场沉浮，起起落落，最终你带着不多的积蓄回到了最初出发的地方。没有大富大贵，但总算平平安安地走到了终点。\n\n或许，活着本身就已经是答案了。'
+  },
+  // 侠客：名望/武艺高→名宿归隐，中等→江湖老人，低→无名老侠
+  death_hero_high: {
+    type: 'death',
+    title: '名宿归隐',
+    badge: '✧ 一代宗师',
+    story: '你的名字在江湖上流传了二十年，年岁渐老，你选择在一处山清水秀之地隐居，收了几个徒弟，把一生所学传授下去。\n\n侠之大者，不在杀伐，而在传承。你的故事，将由后人继续。'
+  },
+  death_hero_mid: {
+    type: 'death',
+    title: '江湖老人',
+    badge: '✧ 游侠终章',
+    story: '二十年仗剑江湖，你见过的风景比大多数人一生都多。老了，走不动了，你在一座小镇上停了下来，开了一间小酒馆。\n\n往来的江湖人偶尔会来讨酒喝，你给他们讲年轻时的故事，讲那些刀光剑影的岁月。'
+  },
+  death_hero_low: {
+    type: 'death',
+    title: '无名老侠',
+    badge: '✧ 默默无闻',
+    story: '你闯荡了二十年，却始终没能留下一个响亮的名字。老了，独自在一处破庙里躺下，回想这一生，心里没有什么遗憾——你做过该做的事，够了。\n\n无名，也是一种自由。'
+  },
+
   // ==================== NPC 盟友专属结局 ====================
   // 官场路：与权相李崇关系≥70 → 联手登顶
   favor_triumph_npc_minister: {
@@ -2303,6 +2381,39 @@ var Game = (() => {
     UI.render();
   }
 
+  // ==================== 自然死亡结局判定 ====================
+  // 根据赛道和主资源水平，判定三级自然死亡结局 ID
+  function buildDeathEnding(track, res, flags) {
+    // 仁义加成：benevolent >= 3 升一级结局
+    const benevolentBonus = (flags.benevolent || 0) >= 3;
+
+    if (track === 'court') {
+      const score = (res.favor || 0) + (res.power || 0) * 0.5;
+      if (score >= 60 || benevolentBonus && score >= 40) return 'death_court_high';
+      if (score >= 25) return 'death_court_mid';
+      return 'death_court_low';
+    }
+    if (track === 'rebel') {
+      const score = (res.territory || 0) + (res.morale || 0) * 0.5;
+      if (score >= 70 || benevolentBonus && score >= 50) return 'death_rebel_high';
+      if (score >= 30) return 'death_rebel_mid';
+      return 'death_rebel_low';
+    }
+    if (track === 'merchant') {
+      const score = (res.wealth || 0) + (res.prestige || 0) * 0.3;
+      if (score >= 60 || benevolentBonus && score >= 40) return 'death_merchant_high';
+      if (score >= 25) return 'death_merchant_mid';
+      return 'death_merchant_low';
+    }
+    if (track === 'hero') {
+      const score = (res.fame || 0) + (res.martial || 0) * 0.5;
+      if (score >= 70 || benevolentBonus && score >= 50) return 'death_hero_high';
+      if (score >= 30) return 'death_hero_mid';
+      return 'death_hero_low';
+    }
+    return 'death_court_mid'; // 兜底
+  }
+
   function endRound() {
     // 若游戏已结束则不执行（防止 story/transition 覆盖结局）
     if (state.phase !== 'play') return;
@@ -2377,9 +2488,8 @@ var Game = (() => {
     state.usedPoints = 0;
 
     if (state.round > state.maxRounds) {
-      const surviveMap = { court: 'survive_court', rebel: 'survive_rebel', merchant: 'survive_merchant', hero: 'survive_hero' };
-      const endingId = surviveMap[state.player.track] || 'survive_court';
-      triggerEnding(endingId);
+      // 自然死亡结局：按主资源水平分三级
+      triggerEnding(buildDeathEnding(state.player.track, state.resources, state.flags));
       return;
     }
 

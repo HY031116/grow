@@ -720,6 +720,7 @@ html, body {
 .result-victory { color: var(--gold); border: 1px solid var(--gold); background: rgba(201,168,76,0.08); }
 .result-defeat  { color: #e74c3c;    border: 1px solid #e74c3c; background: rgba(192,57,43,0.08); }
 .result-survive { color: #89c4e1;    border: 1px solid #89c4e1; background: rgba(52,152,219,0.08); }
+.result-death   { color: #a8b8a0;    border: 1px solid #a8b8a0; background: rgba(130,150,120,0.08); }
 
 .result-title {
   font-size: 2.4rem;

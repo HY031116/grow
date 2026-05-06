@@ -268,26 +268,17 @@ assert('侠客钱粮归零 → result', s.phase === 'result');
 assert('结局=gold_zero', s.currentEnding && s.currentEnding.id === 'gold_zero');
 
 // ─────────────────────────────────────────────
-// 19. survive 结局映射
+// 19. 自然死亡结局映射（第20回合后按资源水平分级）
 // ─────────────────────────────────────────────
-console.log('\n== 19. survive 结局映射 ==');
-function testSurvive(origin, track, expectedId) {
+console.log('\n== 19. 自然死亡结局映射 ==');
+function testDeath(origin, track) {
   newGame(origin, track);
   s = Game.getState();
   s.round = 21; // 超过20回合
-  // 模拟endRound中的survive路径：找到state再调用
-  // 直接调用endRound，round变22，进入survive
+  // 直接调用endRound，round变22，进入death结局
   Game.endRound();
   s = Game.getState();
-  // survive_xxx结局
-  if (s.phase === 'story') {
-    // 跳过故事
-    const choices = s.storyEvent && s.storyEvent.choices;
-    if (choices) Game.chooseStory(0);
-    Game.endRound();
-    s = Game.getState();
-  }
-  // 多次endRound直到结局
+  // 跳过可能的故事事件
   let iter = 0;
   while (s.phase !== 'result' && iter < 5) {
     if (s.phase === 'story') Game.chooseStory(0);
@@ -295,12 +286,13 @@ function testSurvive(origin, track, expectedId) {
     s = Game.getState();
     iter++;
   }
-  assert(`${track} survive → ${expectedId}`, s.currentEnding && s.currentEnding.id === expectedId);
+  assert(`${track} 自然死亡结局类型为 death`, s.currentEnding && s.currentEnding.type === 'death');
+  assert(`${track} 自然死亡结局 ID 以 death_ 开头`, s.currentEnding && s.currentEnding.id.startsWith('death_'));
 }
-testSurvive('scholar', 'court', 'survive_court');
-testSurvive('warrior', 'rebel', 'survive_rebel');
-testSurvive('merchant', 'merchant', 'survive_merchant');
-testSurvive('wanderer', 'hero', 'survive_hero');
+testDeath('scholar', 'court');
+testDeath('warrior', 'rebel');
+testDeath('merchant', 'merchant');
+testDeath('wanderer', 'hero');
 
 // ─────────────────────────────────────────────
 // 20. 故事事件系统
