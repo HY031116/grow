@@ -472,7 +472,7 @@ const NPC_DATA = {
     desc: '朝中最有权势之人，表面儒雅，内藏锋芒。与你同朝为官——究竟是盟友还是对手？',
     tracks: ['court'],
     events: {
-      // 关系值 < 20：政敌阶段
+      // 关系值 < 35：政敌阶段
       hostile: [
         {
           scene: '李崇在皇帝面前暗中参了你一本，言辞颇为犀利。你的圣眷受到波及。',
@@ -480,9 +480,16 @@ const NPC_DATA = {
             { text: '忍气吞声，以退为进',  effect: { favor: -8 },          flag: 'patient',  result: '你选择隐忍，李崇的攻势暂时得手，但你的克制也赢得了部分同僚的好感。' },
             { text: '立即反击，以牙还牙',  effect: { favor: -5, power: -8 }, flag: 'factioner', result: '你当场还击，两人公开交锋，伤敌八百自损一千，但你的强硬让政敌忌惮了几分。' }
           ]
+        },
+        {
+          scene: '李崇借科举舞弊案，暗中牵连你的门生，试图瓦解你的根基。',
+          choices: [
+            { text: '出手护住门生，正面应对', effect: { gold: -20, power: 8 }, flag: 'loyal',    result: '你以自身政治资本护住了门生，代价不小，但门生们从此对你死心塌地。' },
+            { text: '壁上观，不牵连自身',      effect: { favor: 5, power: -10 }, flag: 'patient', result: '你选择暂时置身事外，门生受了些委屈，但你因此保住了与皇帝的关系。' }
+          ]
         }
       ],
-      // 关系值 20-60：普通相处
+      // 关系值 35-65：普通相处
       neutral: [
         {
           scene: '李崇私下派人送来一封密信，邀你在府中一叙，言辞暧昧。',
@@ -490,15 +497,29 @@ const NPC_DATA = {
             { text: '赴约，探探他的底细', effect: { power: 12 },            flag: 'factioner', result: '李崇试探了你的立场，你也摸清了他的一些底牌。关系微妙地往前走了一步。' },
             { text: '婉拒，保持距离',     effect: { favor: 5 },             flag: 'loyal',    result: '你礼貌回绝了李崇的邀约。皇帝似乎知道了此事，对你独立的态度颇为欣慰。' }
           ]
+        },
+        {
+          scene: '朝堂上一项政策引发争议，李崇派人来问你的立场，他希望你公开支持他。',
+          choices: [
+            { text: '公开支持李崇，顺水推舟', effect: { power: 10, favor: -5 }, flag: 'factioner', result: '你在朝堂上表态支持，政策通过，权柄增加，但皇帝隐约察觉你偏向权相。' },
+            { text: '以"请圣裁"规避表态',     effect: { favor: 8 },             flag: 'loyal',    result: '你以圣意为由巧妙中立，皇帝欣赏你的分寸，圣眷微涨，李崇略感不满。' }
+          ]
         }
       ],
-      // 关系值 >= 60：盟友阶段
+      // 关系值 >= 65：盟友阶段
       ally: [
         {
           scene: '李崇向你传递了一条重要情报：皇帝有意调整朝中布局，你若提前布置可借此大涨权柄。',
           choices: [
             { text: '按他的建议行事',      effect: { power: 20, favor: -5 }, flag: 'factioner', result: '借助李崇的情报，你抢先布置，权柄大涨——但你和他的利益已深度捆绑。' },
             { text: '上报皇帝，彰显忠诚', effect: { favor: 18 },            flag: 'loyal',    result: '你将此事如实上报皇帝，皇帝对你的忠诚大加赞赏，圣眷显著提升。' }
+          ]
+        },
+        {
+          scene: '李崇秘密托你主持一场御史考核，这是罕见的信任。你可以借此安插自己的人。',
+          choices: [
+            { text: '安插亲信，扩大党羽', effect: { power: 25 },            flag: 'factioner', result: '考核结束，你的亲信顺利入仕，你和李崇的政治同盟愈发稳固，权柄大增。' },
+            { text: '秉公考核，不营私舞弊', effect: { favor: 15, power: 8 }, flag: 'loyal',    result: '你公正主持，虽无私人收益，但清名大涨，皇帝事后特别嘉奖了你的公正。' }
           ]
         }
       ]
@@ -521,6 +542,13 @@ const NPC_DATA = {
             { text: '公开挑战，当众对决',  effect: { martial: -10, fame: 15 }, flag: 'brave',     result: '你登门挑战，两人大战三百回合，虽败下阵来，却赢得了江湖人的钦佩。' },
             { text: '以行动证明自己',      effect: { fame: 12, bonds: 8 },    flag: 'righteous', result: '你不理会流言，以一次路见不平拔刀的壮举，让江湖人自己做出判断。' }
           ]
+        },
+        {
+          scene: '燕无双的门下弟子公然刁难你，这是宗主的隐晦施压，还是弟子自作主张？',
+          choices: [
+            { text: '出手教训，立威江湖', effect: { fame: 10, martial: -5 }, flag: 'brave',     result: '你三两下制住弟子，展示了真实武艺，江湖中人纷纷说你有真本事。' },
+            { text: '宽以待之，以德服人', effect: { bonds: 12 },            flag: 'righteous', result: '你非但未还手，还资助了弟子回家。此事传开，江湖人对你的义气刮目相看。' }
+          ]
         }
       ],
       neutral: [
@@ -530,6 +558,13 @@ const NPC_DATA = {
             { text: '欣然应约，全力以赴',  effect: { martial: 12, fame: 10 }, flag: 'brave',  result: '你们大战一场，燕无双颇为满意，江湖中关注你的人越来越多了。' },
             { text: '谦虚推辞，改日再说',  effect: { bonds: 5 },             flag: 'patient', result: '你婉言推辞，表现出谦逊，燕无双反而对你多了几分好奇。' }
           ]
+        },
+        {
+          scene: '武林大会在即，燕无双捎话问你是否参加——这是与各路豪杰同台的机会。',
+          choices: [
+            { text: '参加，争取好名次', effect: { fame: 15, gold: -10, martial: -5 }, flag: 'brave',  result: '你参加武林大会，在赛场上拼尽全力，虽有些伤在身，但名望大涨。' },
+            { text: '婉拒，静待时机', effect: { martial: 8 },                          flag: 'patient', result: '你选择不参加，用这段时间闭门苦练，武艺精进，等待更好的时机。' }
+          ]
         }
       ],
       ally: [
@@ -538,6 +573,13 @@ const NPC_DATA = {
           choices: [
             { text: '接受，借助宗主之名',  effect: { fame: 25, bonds: 10 },   flag: 'sworn',     result: '武林大会上，燕无双当众称你为江湖豪杰，你的名望一飞冲天。' },
             { text: '婉拒，名望靠自己挣',  effect: { fame: 12, martial: 8 },  flag: 'lone_hero', result: '你独立自强，凭自己的本事赢得江湖人的钦佩，别有一番风骨。' }
+          ]
+        },
+        {
+          scene: '燕无双透露：武林中有一方秘传内功，他愿将心法手抄一份赠你——这是江湖中极罕见的信任。',
+          choices: [
+            { text: '接受，钻研内功心法', effect: { martial: 30 },           flag: 'sworn',   result: '得到内功心法，你闭门苦修，武艺突飞猛进，已是武林中一流高手。' },
+            { text: '婉谢，内力还靠自悟', effect: { bonds: 15, fame: 8 },    flag: 'lone_hero', result: '你婉言谢绝了馈赠，燕无双对你的风骨深感折服，情谊反而更进一步。' }
           ]
         }
       ]
@@ -560,6 +602,13 @@ const NPC_DATA = {
             { text: '正面抗衡，强行打通', effect: { gold: -20, routes: 1 },      flag: 'cunning',  result: '你强行打通了商路，代价不小，但商业版图守住了。沈万钧对你刮目相看。' },
             { text: '另辟蹊径，开发新路', effect: { gold: -15, routes: 1, prestige: 10 }, flag: 'righteous', result: '你开辟了他意想不到的新商路，商誉因此大涨，让对方措手不及。' }
           ]
+        },
+        {
+          scene: '沈万钧在商会会议上公开质疑你的资质，言辞颇为轻蔑，意在打压你的声势。',
+          choices: [
+            { text: '当场展示账本，以实力说话', effect: { prestige: 12 },          flag: 'cunning',  result: '你拿出实实在在的账本，商会众人刮目相看，沈万钧也不得不收敛。' },
+            { text: '以退为进，低调积蓄',       effect: { wealth: 15, gold: -10 }, flag: 'righteous', result: '你没有争辩，默默离开，转而闷头发展——实力才是最好的回应。' }
+          ]
         }
       ],
       neutral: [
@@ -569,6 +618,13 @@ const NPC_DATA = {
             { text: '接受合作，先壮大再说', effect: { routes: 1, wealth: 20 },   flag: 'cunning',  result: '合作顺利，财富与商路双丰收，和沈万钧的关系也进了一步。' },
             { text: '拒绝，避免被他控制',   effect: { prestige: 15 },            flag: 'righteous', result: '你拒绝了合作，商界称你有骨气，商誉因此提升，但沈万钧对你有了戒心。' }
           ]
+        },
+        {
+          scene: '沈万钧邀你参与一笔海上贸易，高风险高回报。但此事若失败，损失惨重。',
+          choices: [
+            { text: '入股，追求高回报', effect: { gold: -30, wealth: 50 }, flag: 'cunning',   result: '海贸大获全胜，财富暴涨，你在商界的地位也因为这笔冒险大幅提升。' },
+            { text: '婉拒，稳健为主',   effect: { prestige: 10 },          flag: 'righteous', result: '你没有参与冒险，以稳健著称的商誉让更多保守派商人愿意与你合作。' }
+          ]
         }
       ],
       ally: [
@@ -577,6 +633,13 @@ const NPC_DATA = {
           choices: [
             { text: '全力推进，谋取皇商', effect: { prestige: 25, wealth: 15 }, flag: 'royal_merchant', result: '联手申请成功，皇商之名加持，你的商业版图一跃进入顶层。' },
             { text: '婉拒皇商，保持独立',  effect: { prestige: 18 },            flag: 'righteous',      result: '你谢绝了皇商资质，以一介自由商人的身份立足，商誉反而因此特立独行。' }
+          ]
+        },
+        {
+          scene: '沈万钧悄悄告诉你：他打算隐退，并属意将部分商路交托于你。这是千载难逢的机会。',
+          choices: [
+            { text: '欣然接手，大展宏图', effect: { routes: 2, wealth: 25 },   flag: 'royal_merchant', result: '你接手了沈万钧转让的商路，商业版图一夜之间扩大了一半，声望大震。' },
+            { text: '建议他另寻接班人',   effect: { prestige: 20, gold: -10 }, flag: 'righteous',      result: '你婉言谢绝，举荐了更合适的人选，沈万钧对你的人品大为感动，商誉因此大涨。' }
           ]
         }
       ]
@@ -599,6 +662,13 @@ const NPC_DATA = {
             { text: '直接质问，当面对峙',  effect: { troops: -10, morale: -8 },  flag: 'ruthless', result: '你当面质问，徐长风承认了野心，两人关系公开破裂，但你保住了核心将校。' },
             { text: '以恩义笼络自己的人',  effect: { gold: -15, morale: 15 },    flag: 'righteous', result: '你以恩义稳住了将士之心，徐长风的小动作无功而返，你的民心反而上涨。' }
           ]
+        },
+        {
+          scene: '徐长风向你开口，要求独自指挥下一场攻城，理由是他的兵更熟悉地形。',
+          choices: [
+            { text: '拒绝，联合指挥',      effect: { morale: 8, troops: -5 },    flag: 'ruthless',  result: '你坚持联合指挥，徐长风不满，但攻城因两军协同更为顺利。' },
+            { text: '让他全权指挥，观其成', effect: { territory: 10, morale: -5 }, flag: 'cunning', result: '徐长风攻城大获全胜，得意之下，他对你的戒心反而少了几分。' }
+          ]
         }
       ],
       neutral: [
@@ -608,6 +678,13 @@ const NPC_DATA = {
             { text: '接受条件，共同攻城',  effect: { territory: 15, morale: 8 }, flag: 'cunning',  result: '联合攻城成功，双方各取所需，徐长风开始真正把你当平等的盟友。' },
             { text: '拒绝，独力攻城',      effect: { territory: 8, troops: -8 },  flag: 'ruthless', result: '你独立作战，胜利来得更艰难，但所有地盘归你独有，实力更为集中。' }
           ]
+        },
+        {
+          scene: '徐长风私下告诉你：他手下有一批精锐骑兵愿意归附于你，但前提是你要给他们的家人妥善安置。',
+          choices: [
+            { text: '答应安置，纳入麾下', effect: { gold: -20, troops: 20 },   flag: 'cunning',  result: '你兑现承诺，精锐骑兵感恩归附，兵力大增，徐长风对你的信义也深信不疑了。' },
+            { text: '婉拒，保持现有格局', effect: { morale: 12 },              flag: 'righteous', result: '你婉拒了这批骑兵，说兵在精不在多。徐长风对你的克制很意外，也很敬佩。' }
+          ]
         }
       ],
       ally: [
@@ -616,6 +693,13 @@ const NPC_DATA = {
           choices: [
             { text: '接受盟主之位，统一号令', effect: { territory: 10, morale: 20 }, flag: 'righteous', result: '歃血为盟，义军合流，战力大涨。徐长风从此令行禁止，大业有望。' },
             { text: '推辞盟主，保持独立',      effect: { troops: 15 },              flag: 'lone_hero', result: '你谦让盟主之位，让各路义军自由协作，反而赢得更广泛的支持。' }
+          ]
+        },
+        {
+          scene: '徐长风秘密来访，告知你有人在义军中策反，他已暗中查出主谋，愿意协助你除掉此患。',
+          choices: [
+            { text: '授权他处置，果断清除', effect: { morale: 15, troops: -5 },   flag: 'ruthless',  result: '内患被清除，义军重新凝聚，徐长风的果断让你更信赖他。' },
+            { text: '亲自审问，以理服人',   effect: { morale: 20, territory: 5 }, flag: 'righteous', result: '你亲自主持审问，以事实说话，被策反者当众悔过，义军士气反而大振。' }
           ]
         }
       ]
@@ -1823,6 +1907,39 @@ const ENDINGS = {
     title: '江湖浪人',
     badge: '⊙ 侠路未尽',
     story: '二十年仗剑天涯，你留下了数不清的故事，结交了许多江湖好汉。\n\n但传说还未写完，更大的义举还在前方等待。你勒紧马鞍，继续上路——江湖，永远不缺侠客的舞台。'
+  },
+
+  // ==================== NPC 盟友专属结局 ====================
+  // 官场路：与权相李崇关系≥70 → 联手登顶
+  favor_triumph_npc_minister: {
+    type: 'victory',
+    title: '相辅相成',
+    badge: '✦ 朝中双璧',
+    story: '你与权相李崇，从最初的互相试探，到最终成为朝堂上相互支撑的两根柱石。\n\n皇帝倚重你的忠诚，也赖于李崇的才干。你们配合默契，朝政清明，天下称颂"朝中双璧"。\n\n史书上，你们的名字永远并列于同一页。这不是你单独的胜利，但也因此，格外厚重。'
+  },
+
+  // 造反路：与徐长风关系≥70 → 义军霸业
+  territory_triumph_npc_general: {
+    type: 'victory',
+    title: '义结金兰',
+    badge: '✦ 霸业双雄',
+    story: '你与徐长风，从义军中的两股势力，到歃血为盟的生死兄弟。这条路，你们一起走来。\n\n攻城略地之时，你在左，他在右；分配战利之时，他从无异议；建立新政之时，他甘心辅佐。\n\n开国大典上，你封他为第一功臣。史书将你们的情义，作为乱世中最罕见的珍宝，永久传颂。'
+  },
+
+  // 富商路：与沈万钧关系≥70 → 商业帝国
+  wealth_triumph_npc_tycoon: {
+    type: 'victory',
+    title: '商界双雄',
+    badge: '✦ 天下商路',
+    story: '你与沈万钧，从竞争对手，到商业盟友，最终建立起一个横跨天下的商业帝国。\n\n两人商路联通，财富合流，你们共同把控着大半个天下的粮食、绸缎与盐铁。就连皇帝的内库，也不得不仰仗你们的周济。\n\n史书少记商人，但民间流传：那两个把天下变成自家商铺的传奇人物，一个叫沈万钧，另一个，就是你。'
+  },
+
+  // 侠客路：与燕无双关系≥70 → 武林盟主
+  hero_triumph_npc_master: {
+    type: 'victory',
+    title: '宗主传承',
+    badge: '✦ 武林新主',
+    story: '燕无双亲自将武林盟主的位置传给你——这是他在江湖中漂泊数十年后，第一次真正信任一个人。\n\n武林大会上，你接过令牌，江湖中所有门派俯首拜贺。燕无双在台下，罕见地展露了一个真诚的笑容。\n\n你成为了一代宗主。而那段从陌生到知己的情谊，比武艺、比名望，更让你珍视——它让你知道：侠义不是孤独的事。'
   }
 };
 
@@ -2237,15 +2354,23 @@ const Game = (() => {
     return (state.flags.usurper || 0) >= 1 ? 'power_triumph_usurper' : 'power_triumph';
   }
   function pickFavorEnding() {
+    // NPC 盟友加成：与权相李崇关系值≥70，解锁专属结局
+    if ((state.npcs.minister || 0) >= 70) return 'favor_triumph_npc_minister';
     return (state.flags.judge || 0) >= 1 ? 'favor_triumph_judge' : 'favor_triumph';
   }
   function pickTerritoryEnding() {
+    // NPC 盟友加成：与徐长风关系值≥70，解锁专属结局
+    if ((state.npcs.general || 0) >= 70) return 'territory_triumph_npc_general';
     return (state.flags.righteous || 0) >= 2 ? 'territory_triumph_righteous' : 'territory_triumph';
   }
   function pickWealthEnding() {
+    // NPC 盟友加成：与沈万钧关系值≥70，解锁专属结局
+    if ((state.npcs.tycoon || 0) >= 70) return 'wealth_triumph_npc_tycoon';
     return (state.flags.righteous || 0) >= 2 ? 'wealth_triumph_righteous' : 'wealth_triumph';
   }
   function pickHeroEnding() {
+    // NPC 盟友加成：与燕无双关系值≥70，解锁专属结局
+    if ((state.npcs.master || 0) >= 70) return 'hero_triumph_npc_master';
     return (state.resources.bonds || 0) >= 20 ? 'hero_triumph_justice' : 'hero_triumph';
   }
 
@@ -2280,6 +2405,23 @@ const Game = (() => {
   function buildEndingFootnote(flags, player) {
     const f = flags;
     const isFemale = player.gender === 'female';
+    const npcs = state.npcs || {};
+
+    // NPC 关系注脚（优先级最高）
+    if (player.track === 'court' && (npcs.minister || 0) >= 70)
+      return isFemale
+        ? '与权相李崇相交多年，世人皆曰："李崇识人，朝中若无此女，孰能与其并肩？"'
+        : '与权相李崇相交多年，世人皆曰："李崇识人，朝中若无此人，孰能与其并肩？"';
+    if (player.track === 'rebel' && (npcs.general || 0) >= 70)
+      return isFemale
+        ? '徐长风后来著书追忆："我见过很多女将军，但她是唯一让我甘心俯首的那一个。"'
+        : '徐长风后来著书追忆："我见过很多枭雄，但他是唯一让我心甘情愿跟随的那一个。"';
+    if (player.track === 'merchant' && (npcs.tycoon || 0) >= 70)
+      return '沈万钧临终前说："商路千里，我最信任的生意伙伴，只有一个人——那便是他。"';
+    if (player.track === 'hero' && (npcs.master || 0) >= 70)
+      return isFemale
+        ? '燕无双写下："江湖人问我，平生最佩服者，我只写了一个名字——她。"'
+        : '燕无双写下："江湖人问我，平生最佩服者，我只写了一个名字——他。"';
     if (player.track === 'court') {
       if ((f.loyal || 0) >= 3 && (f.judge || 0) >= 1)
         return isFemale
