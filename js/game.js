@@ -2118,7 +2118,8 @@ var Game = (() => {
         unrest: 25      // 民间动荡（0-100），高=民不聊生，低=安居乐业
       }
     };
-    UI.render();
+    // 防御性调用：init 在 UI 可能尚未加载时执行
+    if (typeof UI !== 'undefined') UI.render();
   }
 
   function setGender(g) {
