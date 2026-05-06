@@ -150,6 +150,26 @@ const UI = (() => {
         </button>`;
     }).join('') + npcActHtml;
 
+    // 通用行动区（全赛道可用）
+    const commonPanel = document.getElementById('common-actions-panel');
+    if (commonPanel) {
+      commonPanel.innerHTML = Game.COMMON_ACTIONS.map(act => {
+        const canUse = act.cost <= remaining;
+        const effectStr = fmtEffect(act.effect);
+        return `
+          <button class="action-btn common-action-btn${canUse ? '' : ' action-disabled'}"
+                  onclick="if(!this.classList.contains('action-disabled')) Game.doAction('${act.id}')">
+            <div class="act-top">
+              <span class="act-icon">${act.icon}</span>
+              <span class="act-name">${act.name}</span>
+              <span class="act-cost">${'●'.repeat(act.cost)}</span>
+            </div>
+            <div class="act-desc">${act.desc}</div>
+            <div class="act-effect">${effectStr}</div>
+          </button>`;
+      }).join('');
+    }
+
     // NPC 关系面板（资源面板下方）
     const npcPanelEl = document.getElementById('npc-panel');
     if (npcPanelEl) {

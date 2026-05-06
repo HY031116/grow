@@ -521,6 +521,24 @@ html, body {
 }
 .log-npc .log-text { color: #c9b8f0; }
 
+/* 通用行动区分割线 */
+.common-actions-header {
+  margin: 14px 0 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6b8fa3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 12px;
+}
+.common-action-btn {
+  border-left: 3px solid #3a8a6b !important;
+}
+.common-action-btn .act-effect {
+  color: #6bcfa4;
+}
+
 /* 中部：行动区 */
 .play-main {
   padding: 18px 18px 80px;

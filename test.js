@@ -259,7 +259,7 @@ assert('bonds≥20 → 千古大侠结局', s.currentEnding && s.currentEnding.i
 console.log('\n== 18. 侠客钱粮归零失败 ==');
 newGame('wanderer', 'hero');
 s = Game.getState();
-s.resources.gold = 0;
+s.resources.gold = -200; // 极负值确保被动事件无法拯救（与court测试一致）
 Game.endRound();
 s = Game.getState();
 assert('侠客钱粮归零 → result', s.phase === 'result');

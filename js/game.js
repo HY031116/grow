@@ -771,6 +771,85 @@ const NPC_ACTIONS = {
   }
 };
 
+// ==================== 通用行动池（全赛道可用）====================
+const COMMON_ACTIONS = [
+  {
+    id: 'wander',
+    name: '游历四方',
+    icon: '🌐',
+    cost: 1,
+    desc: '走访各地，增广见闻。小幅提升当前赛道主要资源，并随机获得奇遇。',
+    effect: { gold: -8 },
+    // 各赛道额外加成（应用主资源）
+    trackBonus: { court: { favor: 6 }, rebel: { morale: 6 }, merchant: { prestige: 6 }, hero: { fame: 6 } },
+    results: [
+      '你走访了数十里的村庄，形形色色的人让你心胸愈加宽广，视野豁然开朗。',
+      '旅途中遇到一位老者，几句话点醒了你对时势的困惑，受益良多。',
+      '游历途中你观察到别人未曾注意的机会，默默记在心里，留待日后布局。',
+      '你走过集市、渡口，切实感受到民间真实的脉络，对前行方向更加清晰。'
+    ]
+  },
+  {
+    id: 'study',
+    name: '读书增智',
+    icon: '📚',
+    cost: 1,
+    desc: '闭门苦读，沉淀学识。在当前赛道的核心领域获得较大提升。',
+    effect: { gold: -5 },
+    trackBonus: { court: { favor: 10 }, rebel: { morale: 10 }, merchant: { prestige: 10 }, hero: { martial: 10 } },
+    results: [
+      '你翻阅大量典籍，对时局有了更清醒的认识，行事愈发从容有据。',
+      '枯灯夜读，你在某篇文章中找到了解决当下困境的灵感，豁然开朗。',
+      '苦读数日，学识增进，气质也为之一变，旁人见了都多了几分敬意。',
+      '书中的智慧让你思路大开，明日的棋局在脑中已初见端倪。'
+    ]
+  },
+  {
+    id: 'charity',
+    name: '接济百姓',
+    icon: '🤲',
+    cost: 1,
+    desc: '散财济贫，积累民间善誉。仁善之名远播，或在关键时刻影响命运走向。',
+    effect: { gold: -20 },
+    flag: { benevolent: 1 },
+    results: [
+      '你在集市边开了施粥摊，百姓感恩戴德，仁善之名渐渐传开。',
+      '你出钱资助了一座私塾，让贫困孩童也能读书，美名远播乡里。',
+      '你散尽些积蓄救助流民，此举虽让你暂时拮据，但义名已立。',
+      '你捐资修缮了一段被洪水冲毁的堤坝，百姓无不称颂。'
+    ]
+  },
+  {
+    id: 'scout',
+    name: '打探消息',
+    icon: '🕵️',
+    cost: 1,
+    desc: '广布耳目，洞悉时局。下回合被动危机事件的触发概率降低五成。',
+    effect: { gold: -8 },
+    flag: { informed: 1 },
+    results: [
+      '你花钱雇了几名消息灵通的探子，朝野间的动向尽在掌握之中。',
+      '你主动打探对手的近况，提前掌握其意图，心中有了底气。',
+      '通过几个渠道，你了解到近期时局的微妙变化，及时调整了部署。',
+      '情报即命脉——你花些代价，换来了关键时机的主动权。'
+    ]
+  },
+  {
+    id: 'rest',
+    name: '休养生息',
+    icon: '🌿',
+    cost: 1,
+    desc: '暂时退出争斗，安心积攒财力。虽无争进，但厚积薄发，来日方长。',
+    effect: { gold: 22 },
+    results: [
+      '你推掉了所有应酬，在宅中闭门思考，待积累了足够底气再出山。',
+      '这段时间你刻意保持低调，专心理财，财力悄然丰厚了许多。',
+      '有时候不动才是最好的动——静观时局，养精蓄锐，时机自会到来。',
+      '你用这段时日梳理了手中的资源，将各处打点妥当，等待下一次发力。'
+    ]
+  }
+];
+
 // ==================== 被动事件池 ====================
 
 
@@ -2032,6 +2111,34 @@ const Game = (() => {
       return;
     }
 
+    // 检查是否是通用行动
+    const commonAction = COMMON_ACTIONS.find(a => a.id === actionId);
+    if (commonAction) {
+      const remaining = state.actionPoints - state.usedPoints;
+      if (commonAction.cost > remaining) {
+        addLog('warn', '行动点不足，无法执行此行动。');
+        UI.render();
+        return;
+      }
+      state.usedPoints += commonAction.cost;
+      applyEffect(commonAction.effect);
+      // 应用赛道专属加成（读书/游历类）
+      if (commonAction.trackBonus && commonAction.trackBonus[state.player.track]) {
+        applyEffect(commonAction.trackBonus[state.player.track]);
+      }
+      // 应用 flag 效果（接济百姓/打探消息）
+      if (commonAction.flag) {
+        Object.entries(commonAction.flag).forEach(([k, v]) => {
+          state.flags[k] = (state.flags[k] || 0) + v;
+        });
+      }
+      const logText = pick(commonAction.results);
+      addLog('action', `【${commonAction.name}】${logText}`);
+      checkEnd();
+      UI.render();
+      return;
+    }
+
     const actions = ACTIONS[state.player.track];
     const action = actions.find(a => a.id === actionId);
     if (!action) return;
@@ -2108,8 +2215,10 @@ const Game = (() => {
       applyEffect({ [origin.traitBonus.key]: origin.traitBonus.val });
     }
 
-    // 随机被动事件（65%概率）——包含世界记忆条件事件
-    if (Math.random() < 0.65) {
+    // 随机被动事件——打探消息可将触发概率减半
+    const passiveChance = (state.flags.informed || 0) > 0 ? 0.32 : 0.65;
+    if ((state.flags.informed || 0) > 0) state.flags.informed = 0; // 消耗 informed 状态（一次性）
+    if (Math.random() < passiveChance) {
       let pool = PASSIVE_EVENTS[state.player.track].slice();
       // 满足条件的世界记忆事件加入池（行为积累越深，占比越高，被抽概率越大）
       const worldEvts = WORLD_EVENTS[state.player.track] || [];
@@ -2482,6 +2591,11 @@ const Game = (() => {
           ? '过客忆述："曾见一白衣女剑客，孤身行走天涯，不问名利，只问公道——那是真正的女侠。"'
           : '过客忆述："曾见一白衣剑客，孤身行走天涯，不问名利，只问公道——那是真正的侠客。"';
     }
+    // 接济百姓积累的仁善注脚（跨赛道，benevolent≥3 时生效）
+    if ((f.benevolent || 0) >= 3)
+      return isFemale
+        ? '民间相传："此女在位之时，常散财济贫，有德者事成——此乃仁者之福报。"'
+        : '民间相传："此人在位之时，常散财济贫，有德者事成——此乃仁者之福报。"';
     return null; // 无特别注脚
   }
 
@@ -2574,5 +2688,5 @@ const Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS };
 })();
