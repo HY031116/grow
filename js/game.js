@@ -460,7 +460,235 @@ const ACTIONS = {
   ]
 };
 
+// ==================== NPC 关系数据 ====================
+// 每个 NPC 有 id / name / icon / desc / 关联赛道 / 事件池（按关系层级）
+const NPC_DATA = {
+  // 权相：官场路核心 NPC，可以是盟友也可以是政敌
+  minister: {
+    id: 'minister',
+    name: '李崇',
+    icon: '🎭',
+    title: '当朝权相',
+    desc: '朝中最有权势之人，表面儒雅，内藏锋芒。与你同朝为官——究竟是盟友还是对手？',
+    tracks: ['court'],
+    events: {
+      // 关系值 < 20：政敌阶段
+      hostile: [
+        {
+          scene: '李崇在皇帝面前暗中参了你一本，言辞颇为犀利。你的圣眷受到波及。',
+          choices: [
+            { text: '忍气吞声，以退为进',  effect: { favor: -8 },          flag: 'patient',  result: '你选择隐忍，李崇的攻势暂时得手，但你的克制也赢得了部分同僚的好感。' },
+            { text: '立即反击，以牙还牙',  effect: { favor: -5, power: -8 }, flag: 'factioner', result: '你当场还击，两人公开交锋，伤敌八百自损一千，但你的强硬让政敌忌惮了几分。' }
+          ]
+        }
+      ],
+      // 关系值 20-60：普通相处
+      neutral: [
+        {
+          scene: '李崇私下派人送来一封密信，邀你在府中一叙，言辞暧昧。',
+          choices: [
+            { text: '赴约，探探他的底细', effect: { power: 12 },            flag: 'factioner', result: '李崇试探了你的立场，你也摸清了他的一些底牌。关系微妙地往前走了一步。' },
+            { text: '婉拒，保持距离',     effect: { favor: 5 },             flag: 'loyal',    result: '你礼貌回绝了李崇的邀约。皇帝似乎知道了此事，对你独立的态度颇为欣慰。' }
+          ]
+        }
+      ],
+      // 关系值 >= 60：盟友阶段
+      ally: [
+        {
+          scene: '李崇向你传递了一条重要情报：皇帝有意调整朝中布局，你若提前布置可借此大涨权柄。',
+          choices: [
+            { text: '按他的建议行事',      effect: { power: 20, favor: -5 }, flag: 'factioner', result: '借助李崇的情报，你抢先布置，权柄大涨——但你和他的利益已深度捆绑。' },
+            { text: '上报皇帝，彰显忠诚', effect: { favor: 18 },            flag: 'loyal',    result: '你将此事如实上报皇帝，皇帝对你的忠诚大加赞赏，圣眷显著提升。' }
+          ]
+        }
+      ]
+    }
+  },
+
+  // 江湖宗主：侠客路核心 NPC，江湖势力的代表
+  master: {
+    id: 'master',
+    name: '燕无双',
+    icon: '🗡️',
+    title: '武林宗主',
+    desc: '一代武林宗主，行事豪气，恩怨分明。你在江湖中的路，早晚要和他有所交集。',
+    tracks: ['hero'],
+    events: {
+      hostile: [
+        {
+          scene: '燕无双在江湖中散布消息，称你行事不够光明磊落，你的名望因此受损。',
+          choices: [
+            { text: '公开挑战，当众对决',  effect: { martial: -10, fame: 15 }, flag: 'brave',     result: '你登门挑战，两人大战三百回合，虽败下阵来，却赢得了江湖人的钦佩。' },
+            { text: '以行动证明自己',      effect: { fame: 12, bonds: 8 },    flag: 'righteous', result: '你不理会流言，以一次路见不平拔刀的壮举，让江湖人自己做出判断。' }
+          ]
+        }
+      ],
+      neutral: [
+        {
+          scene: '燕无双托人带话，有意与你切磋武艺，既是考验也是结交之意。',
+          choices: [
+            { text: '欣然应约，全力以赴',  effect: { martial: 12, fame: 10 }, flag: 'brave',  result: '你们大战一场，燕无双颇为满意，江湖中关注你的人越来越多了。' },
+            { text: '谦虚推辞，改日再说',  effect: { bonds: 5 },             flag: 'patient', result: '你婉言推辞，表现出谦逊，燕无双反而对你多了几分好奇。' }
+          ]
+        }
+      ],
+      ally: [
+        {
+          scene: '燕无双愿意在武林大会上公开为你背书，这将极大提升你的江湖名望。',
+          choices: [
+            { text: '接受，借助宗主之名',  effect: { fame: 25, bonds: 10 },   flag: 'sworn',     result: '武林大会上，燕无双当众称你为江湖豪杰，你的名望一飞冲天。' },
+            { text: '婉拒，名望靠自己挣',  effect: { fame: 12, martial: 8 },  flag: 'lone_hero', result: '你独立自强，凭自己的本事赢得江湖人的钦佩，别有一番风骨。' }
+          ]
+        }
+      ]
+    }
+  },
+
+  // 巨贾：富商路核心 NPC，竞争对手兼合作者
+  tycoon: {
+    id: 'tycoon',
+    name: '沈万钧',
+    icon: '💰',
+    title: '天下首富',
+    desc: '当今商界执牛耳者，手握半个天下的商路。你若想成为天下首富，迟早要和他正面交锋。',
+    tracks: ['merchant'],
+    events: {
+      hostile: [
+        {
+          scene: '沈万钧暗中截断了你的一条商路，商誉和财富都受到波及。',
+          choices: [
+            { text: '正面抗衡，强行打通', effect: { gold: -20, routes: 1 },      flag: 'cunning',  result: '你强行打通了商路，代价不小，但商业版图守住了。沈万钧对你刮目相看。' },
+            { text: '另辟蹊径，开发新路', effect: { gold: -15, routes: 1, prestige: 10 }, flag: 'righteous', result: '你开辟了他意想不到的新商路，商誉因此大涨，让对方措手不及。' }
+          ]
+        }
+      ],
+      neutral: [
+        {
+          scene: '沈万钧派人来洽谈，有意与你合作开发一条新商路，条件颇为优厚。',
+          choices: [
+            { text: '接受合作，先壮大再说', effect: { routes: 1, wealth: 20 },   flag: 'cunning',  result: '合作顺利，财富与商路双丰收，和沈万钧的关系也进了一步。' },
+            { text: '拒绝，避免被他控制',   effect: { prestige: 15 },            flag: 'righteous', result: '你拒绝了合作，商界称你有骨气，商誉因此提升，但沈万钧对你有了戒心。' }
+          ]
+        }
+      ],
+      ally: [
+        {
+          scene: '沈万钧公开宣布与你联手，向朝廷申请皇商资质。此举将大大提升你的商誉。',
+          choices: [
+            { text: '全力推进，谋取皇商', effect: { prestige: 25, wealth: 15 }, flag: 'royal_merchant', result: '联手申请成功，皇商之名加持，你的商业版图一跃进入顶层。' },
+            { text: '婉拒皇商，保持独立',  effect: { prestige: 18 },            flag: 'righteous',      result: '你谢绝了皇商资质，以一介自由商人的身份立足，商誉反而因此特立独行。' }
+          ]
+        }
+      ]
+    }
+  },
+
+  // 义军将领：造反路核心 NPC，一同起兵的盟友
+  general: {
+    id: 'general',
+    name: '徐长风',
+    icon: '⚔️',
+    title: '义军将领',
+    desc: '与你一同起兵的将领，骁勇善战，却也有自己的野心。盟友还是对手，取决于你们之间的信义。',
+    tracks: ['rebel'],
+    events: {
+      hostile: [
+        {
+          scene: '徐长风暗中争夺你的将士，试图拉拢你麾下的将校，兵力出现动摇。',
+          choices: [
+            { text: '直接质问，当面对峙',  effect: { troops: -10, morale: -8 },  flag: 'ruthless', result: '你当面质问，徐长风承认了野心，两人关系公开破裂，但你保住了核心将校。' },
+            { text: '以恩义笼络自己的人',  effect: { gold: -15, morale: 15 },    flag: 'righteous', result: '你以恩义稳住了将士之心，徐长风的小动作无功而返，你的民心反而上涨。' }
+          ]
+        }
+      ],
+      neutral: [
+        {
+          scene: '徐长风提出联合攻城，愿意分兵协助，但胜利后他要求分得三成地盘。',
+          choices: [
+            { text: '接受条件，共同攻城',  effect: { territory: 15, morale: 8 }, flag: 'cunning',  result: '联合攻城成功，双方各取所需，徐长风开始真正把你当平等的盟友。' },
+            { text: '拒绝，独力攻城',      effect: { territory: 8, troops: -8 },  flag: 'ruthless', result: '你独立作战，胜利来得更艰难，但所有地盘归你独有，实力更为集中。' }
+          ]
+        }
+      ],
+      ally: [
+        {
+          scene: '徐长风提议歃血为盟，共推你为盟主，统一义军指挥，共谋大业。',
+          choices: [
+            { text: '接受盟主之位，统一号令', effect: { territory: 10, morale: 20 }, flag: 'righteous', result: '歃血为盟，义军合流，战力大涨。徐长风从此令行禁止，大业有望。' },
+            { text: '推辞盟主，保持独立',      effect: { troops: 15 },              flag: 'lone_hero', result: '你谦让盟主之位，让各路义军自由协作，反而赢得更广泛的支持。' }
+          ]
+        }
+      ]
+    }
+  }
+};
+
+// ==================== NPC 行动（每条赛道新增的主动互动行动）====================
+const NPC_ACTIONS = {
+  court: {
+    id: 'visit_minister',
+    name: '拜访权相',
+    icon: '🎭',
+    npcId: 'minister',
+    cost: 1,
+    desc: '主动拜访李崇，投入精力经营关系。关系值提升后可解锁其关系事件。',
+    effect: { gold: -10 },
+    npcEffect: 18,   // 关系值+18
+    results: [
+      '你登门拜访，李崇客气相待，席间试探了彼此的底线，关系又近了一步。',
+      '你备了礼物登门，李崇笑纳，言谈间互有试探，关系缓和不少。',
+      '一番叙谈，你们各取所需，关系微妙地前进了一步。'
+    ]
+  },
+  rebel: {
+    id: 'bond_general',
+    name: '结义徐长风',
+    icon: '⚔️',
+    npcId: 'general',
+    cost: 1,
+    desc: '主动经营与徐长风的义气，把他真正变成你的盟友。',
+    effect: { gold: -10 },
+    npcEffect: 18,
+    results: [
+      '你与徐长风把酒言欢，彼此坦诚了几分，义气又深了一层。',
+      '你主动化解了一些嫌隙，徐长风感受到了你的诚意，关系好转。',
+      '兄弟间的信义，一次次经营中加深——徐长风开始真正信任你了。'
+    ]
+  },
+  merchant: {
+    id: 'meet_tycoon',
+    name: '会见沈万钧',
+    icon: '💰',
+    npcId: 'tycoon',
+    cost: 1,
+    desc: '主动会见天下首富沈万钧，经营商业关系，伺机合作或竞争。',
+    effect: { gold: -12 },
+    npcEffect: 18,
+    results: [
+      '你主动拜访，沈万钧态度不冷不热，但话里话外已经在试探你的实力。',
+      '会面顺利，沈万钧对你的商业嗅觉颇为赏识，关系有所改善。',
+      '你摸清了沈万钧的部分底牌，双方关系变得更加微妙而有趣。'
+    ]
+  },
+  hero: {
+    id: 'seek_master',
+    name: '拜访燕无双',
+    icon: '🗡️',
+    npcId: 'master',
+    cost: 1,
+    desc: '主动拜访武林宗主燕无双，在江湖中建立自己的人脉关系。',
+    effect: { gold: -8 },
+    npcEffect: 18,
+    results: [
+      '你登门拜访，燕无双淡淡看了你一眼，但愿意和你说几句话——这已经是不小的面子。',
+      '你言谈之间展现了几分侠义，燕无双对你的印象好了不少。',
+      '你和燕无双切磋了几招，他点头称道，江湖关系深了一步。'
+    ]
+  }
+};
+
 // ==================== 被动事件池 ====================
+
 
 const PASSIVE_EVENTS = {
   court: [
@@ -1622,7 +1850,11 @@ const Game = (() => {
       pendingStory: null,
       pendingTransition: null,
       log: [],
-      currentEnding: null
+      currentEnding: null,
+      // NPC 关系值（0-100），由 setTrack 时按赛道初始化
+      npcs: {},
+      // NPC 事件冷却（记录已触发事件，防止频繁重复）
+      npcCooldown: {}
     };
     UI.render();
   }
@@ -1649,12 +1881,40 @@ const Game = (() => {
     state.resources = { ...origin.resources[trackId] };
     state.player.title = state.player.gender === 'male' ? origin.titleMale : origin.titleFemale;
     state.phase = 'play';
+    // 初始化该赛道的 NPC 关系值（初始 20，代表陌生人但有所耳闻）
+    Object.values(NPC_DATA).forEach(npc => {
+      if (npc.tracks.includes(trackId)) {
+        state.npcs[npc.id] = 20;
+      }
+    });
     const trackName = TRACKS[trackId].name;
     addLog('system', `${state.player.title}，你踏上了【${trackName}】。你的传奇，从此刻开始。`);
     UI.render();
   }
 
   function doAction(actionId) {
+    // 优先检查是否是 NPC 互动行动
+    const npcAction = NPC_ACTIONS[state.player.track];
+    if (npcAction && npcAction.id === actionId) {
+      const remaining = state.actionPoints - state.usedPoints;
+      if (npcAction.cost > remaining) {
+        addLog('warn', '行动点不足，无法执行此行动。');
+        UI.render();
+        return;
+      }
+      state.usedPoints += npcAction.cost;
+      applyEffect(npcAction.effect);
+      // 提升 NPC 关系值
+      const nid = npcAction.npcId;
+      state.npcs[nid] = Math.min(100, (state.npcs[nid] || 0) + npcAction.npcEffect);
+      const logText = pick(npcAction.results);
+      const npc = NPC_DATA[nid];
+      addLog('npc', `【${npc.name}】${logText}`);
+      checkEnd();
+      UI.render();
+      return;
+    }
+
     const actions = ACTIONS[state.player.track];
     const action = actions.find(a => a.id === actionId);
     if (!action) return;
@@ -1754,7 +2014,7 @@ const Game = (() => {
       return;
     }
 
-    // 先检查胜负条件（优先于故事事件）
+    // 先检查胜负条件（最高优先级）
     checkEnd();
     if (state.phase !== 'play') {
       UI.render();
@@ -1772,7 +2032,68 @@ const Game = (() => {
       return;
     }
 
+    // 最后检查 NPC 关系事件（优先级最低，不覆盖主线故事）
+    checkNpcEvent();
+
     saveGame(); // 自动存档
+    UI.render();
+  }
+
+  // ==================== NPC 关系事件触发 ====================
+  function checkNpcEvent() {
+    if (Math.random() > 0.35) return;  // 35% 概率触发 NPC 事件
+    const track = state.player.track;
+    // 找到关联当前赛道且关系值 > 0 的 NPC
+    const activeNpc = Object.values(NPC_DATA).find(npc =>
+      npc.tracks.includes(track) && (state.npcs[npc.id] || 0) > 0
+    );
+    if (!activeNpc) return;
+    const rel = state.npcs[activeNpc.id] || 0;
+    // 根据关系值选事件层级
+    let tier;
+    if (rel < 35)      tier = 'hostile';
+    else if (rel < 65) tier = 'neutral';
+    else               tier = 'ally';
+    const pool = activeNpc.events[tier];
+    if (!pool || pool.length === 0) return;
+    // 防止同一事件连续触发（冷却2回合）
+    const coolKey = `${activeNpc.id}_${tier}`;
+    const lastRound = state.npcCooldown[coolKey] || 0;
+    if (state.round - lastRound < 3) return;
+    state.npcCooldown[coolKey] = state.round;
+    const evt = pool[Math.floor(Math.random() * pool.length)];
+    // 将 NPC 事件挂入 pendingStory（复用故事事件界面）
+    state.pendingStory = {
+      isNpcEvent: true,
+      npcId: activeNpc.id,
+      npcName: activeNpc.name,
+      npcTitle: activeNpc.title,
+      npcIcon: activeNpc.icon,
+      scene: evt.scene,
+      choices: evt.choices.map(c => ({ ...c }))
+    };
+    state.triggeredStories.push(coolKey);
+    state.phase = 'story';
+  }
+
+  // 处理 NPC 关系事件选择（复用 chooseStory 接口）
+  function chooseNpcStory(choiceIndex) {
+    const story = state.pendingStory;
+    if (!story || !story.isNpcEvent) return;
+    const choice = story.choices[choiceIndex];
+    if (!choice) return;
+    // 应用资源效果
+    if (choice.effect) applyEffect(choice.effect);
+    // 应用 flag
+    if (choice.flag) state.flags[choice.flag] = (state.flags[choice.flag] || 0) + 1;
+    // 选择本身会轻微影响 NPC 关系（不同选项关系变化不同）
+    const relDelta = choiceIndex === 0 ? 5 : -5;
+    const nid = story.npcId;
+    state.npcs[nid] = Math.max(0, Math.min(100, (state.npcs[nid] || 0) + relDelta));
+    addLog('npc', `【${story.npcName}】${choice.result}`);
+    state.pendingStory = null;
+    state.phase = 'play';
+    saveGame();
     UI.render();
   }
 
@@ -1844,6 +2165,11 @@ const Game = (() => {
   function chooseStory(idx) {
     const story = state.pendingStory;
     if (!story || !story.choices[idx]) return;
+    // 路由到 NPC 事件处理
+    if (story.isNpcEvent) {
+      chooseNpcStory(idx);
+      return;
+    }
     const choice = story.choices[idx];
 
     applyEffect(choice.effect);
@@ -2106,5 +2432,5 @@ const Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS };
 })();

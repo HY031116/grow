@@ -113,9 +113,27 @@ const UI = (() => {
         </div>`;
     }).join('');
 
-    // 行动列表
+    // 行动列表（原有行动 + NPC 互动行动）
     const actPanel = document.getElementById('actions-panel');
     const actions = ACTIONS[s.player.track];
+    const npcAction = Game.NPC_ACTIONS[s.player.track];
+    const npcActHtml = npcAction ? (() => {
+      const canUse = npcAction.cost <= remaining;
+      const npcDef = Game.NPC_DATA[npcAction.npcId];
+      const curRel = s.npcs[npcAction.npcId] || 0;
+      const relLabel = curRel < 35 ? '陌生' : curRel < 65 ? '相识' : '盟友';
+      return `
+        <button class="action-btn npc-action-btn${canUse ? '' : ' action-disabled'}"
+                onclick="if(!this.classList.contains('action-disabled')) Game.doAction('${npcAction.id}')">
+          <div class="act-top">
+            <span class="act-icon">${npcAction.icon}</span>
+            <span class="act-name">${npcAction.name}</span>
+            <span class="act-cost">${'●'.repeat(npcAction.cost)}</span>
+          </div>
+          <div class="act-desc">${npcAction.desc}</div>
+          <div class="act-effect npc-rel-status">${npcDef ? npcDef.name + '（' + relLabel + ' ' + curRel + '/100）' : ''} +关系${npcAction.npcEffect}</div>
+        </button>`;
+    })() : '';
     actPanel.innerHTML = actions.map(act => {
       const canUse = act.cost <= remaining;
       const effectStr = fmtEffect(act.effect);
@@ -130,7 +148,35 @@ const UI = (() => {
           <div class="act-desc">${act.desc}</div>
           <div class="act-effect">${effectStr}</div>
         </button>`;
-    }).join('');
+    }).join('') + npcActHtml;
+
+    // NPC 关系面板（资源面板下方）
+    const npcPanelEl = document.getElementById('npc-panel');
+    if (npcPanelEl) {
+      const npcEntries = Object.values(Game.NPC_DATA)
+        .filter(npc => npc.tracks.includes(s.player.track))
+        .map(npc => {
+          const rel = s.npcs[npc.id] || 0;
+          const pct = rel;
+          const label = rel < 35 ? '陌生' : rel < 65 ? '相识' : '盟友';
+          const barColor = rel < 35 ? '#e07' : rel < 65 ? '#fa0' : '#2c9';
+          return `
+            <div class="npc-item">
+              <div class="npc-header">
+                <span class="npc-icon">${npc.icon}</span>
+                <span class="npc-name">${npc.name}</span>
+                <span class="npc-title-label">${npc.title}</span>
+                <span class="npc-rel-label" style="color:${barColor}">${label} ${rel}</span>
+              </div>
+              <div class="npc-bar-track">
+                <div class="npc-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+              </div>
+            </div>`;
+        }).join('');
+      npcPanelEl.innerHTML = npcEntries
+        ? `<div class="npc-panel-title">人脉关系</div>${npcEntries}`
+        : '';
+    }
 
     // 结束回合按钮
     const endBtn = document.getElementById('btn-end-round');
@@ -177,7 +223,13 @@ const UI = (() => {
     const story = s.pendingStory;
     if (!story) return;
 
-    document.getElementById('story-title').textContent = story.title;
+    // NPC 关系事件：特殊头部（显示 NPC 名称和图标）
+    if (story.isNpcEvent) {
+      document.getElementById('story-title').textContent =
+        `${story.npcIcon} ${story.npcName} · ${story.npcTitle}`;
+    } else {
+      document.getElementById('story-title').textContent = story.title;
+    }
     document.getElementById('story-scene').textContent = story.scene;
 
     const choicesEl = document.getElementById('story-choices');

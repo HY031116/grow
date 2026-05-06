@@ -468,6 +468,59 @@ html, body {
 .res-item.res-low .res-name { color: #c0392b; }
 .res-item.res-high .res-val { color: var(--gold-lt); }
 
+/* NPC 关系面板 */
+.npc-panel {
+  margin-top: 14px;
+}
+.npc-panel-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.npc-item {
+  margin-bottom: 10px;
+}
+.npc-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+.npc-icon { font-size: 0.9rem; }
+.npc-name { font-size: 0.78rem; color: var(--text-main); font-weight: 600; }
+.npc-title-label { font-size: 0.62rem; color: var(--text-muted); margin-left: 2px; }
+.npc-rel-label { font-size: 0.7rem; font-weight: 700; margin-left: auto; }
+.npc-bar-track {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.npc-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* NPC 行动按钮高亮 */
+.npc-action-btn {
+  border-left: 3px solid #7c5cbf !important;
+}
+.npc-rel-status {
+  color: #a98de8 !important;
+  font-style: italic;
+}
+
+/* 日志：npc 类型 */
+.log-npc {
+  border-left-color: #8a6bc4;
+}
+.log-npc .log-text { color: #c9b8f0; }
+
 /* 中部：行动区 */
 .play-main {
   padding: 18px 18px 80px;
