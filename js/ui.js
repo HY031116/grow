@@ -99,7 +99,7 @@ const UI = (() => {
       const isLow  = val < (def.lowVal  !== undefined ? def.lowVal  : 20);
       const isHigh = val >= (def.highVal !== undefined ? def.highVal : 70);
       const extraInfo = def.key === 'favor' && s.player.track === 'court'
-        ? `<span class="res-sublabel">${getCourtTitle(val)}</span>` : '';
+        ? `<span class="res-sublabel">${getCourtTitle(val, s.player.gender)}</span>` : '';
       return `
         <div class="res-item ${isLow ? 'res-low' : ''} ${isHigh ? 'res-high' : ''}">
           <div class="res-header">
@@ -203,7 +203,15 @@ const UI = (() => {
     document.getElementById('result-badge').textContent = ending.badge;
     document.getElementById('result-badge').className =
       `result-badge result-${ending.type}`;
-    document.getElementById('result-title').textContent = ending.title;
+    // 女性玩家官场路的 badge 使用女性称谓
+    let resultTitle = ending.title;
+    if (s.player.gender === 'female') {
+      if (ending.id === 'favor_triumph')       resultTitle = '巾帼名臣';
+      if (ending.id === 'favor_triumph_judge') resultTitle = '铁面诰命';
+      if (ending.id === 'power_triumph')       resultTitle = '权倾天下';
+      if (ending.id === 'power_triumph_usurper') resultTitle = '权妃乱国';
+    }
+    document.getElementById('result-title').textContent = resultTitle;
     document.getElementById('result-story').textContent = ending.story;
     // 历史注脚（flag 相关，有则显示）
     const footnoteEl = document.getElementById('result-footnote');
@@ -223,7 +231,7 @@ const UI = (() => {
     statsEl.innerHTML = track.resources.map(def => {
       const val = s.resources[def.key] ?? 0;
       const extra = def.key === 'favor' && s.player.track === 'court'
-        ? ` (${getCourtTitle(val)})` : '';
+        ? ` (${getCourtTitle(val, s.player.gender)})` : '';
       return `
         <div class="stat-row">
           <span class="stat-label">${def.icon} ${def.name}</span>
@@ -406,7 +414,15 @@ const UI = (() => {
 
     const chosen = condPool || basePool;
     // 用 round 作为确定性索引，同一回合独白不变
-    return '「' + chosen[round % chosen.length] + '」';
+    let text = chosen[round % chosen.length];
+    // 女性玩家替换含男性称谓的文本
+    if (s.player.gender === 'female') {
+      text = text
+        .replace('大丈夫立于天地间，岂能任人宰割，当奋起一战！', '女子岂可任人宰割？立于天地间，巾帼亦要奋起一战！')
+        .replace('半生征战，山河已改，吾之名，或将永载史册。', '半生征战，山河已改，巾帼女将之名，或将永载史册。')
+        .replace('结义兄弟情深', '结义姐妹情深');
+    }
+    return '「' + text + '」';
   }
 
   function fmtEffect(effect) {
