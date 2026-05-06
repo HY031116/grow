@@ -918,6 +918,40 @@ html, body {
   transition: width 0.3s ease;
 }
 
+/* ==================== 天下地图面板 ==================== */
+.map-panel {
+  margin-top: 12px;
+}
+.map-panel-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b8fa3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.map-legend {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  opacity: 0.75;
+}
+.map-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+.map-legend-item {
+  font-size: 0.62rem;
+  opacity: 0.7;
+}
+.map-leg-origin { color: #e8b84b; }
+.map-leg-active  { color: #5b8fe8; }
+.map-leg-high    { color: #4caf81; }
+
 /* ==================== 志向选择页 ==================== */#screen-ambition {
   display: flex;
   flex-direction: column;

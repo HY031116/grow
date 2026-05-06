@@ -259,6 +259,12 @@ var UI = (() => {
         </div>`;
     }
 
+    // 天下地图面板
+    const mapPanelEl = document.getElementById('map-panel');
+    if (mapPanelEl) {
+      mapPanelEl.innerHTML = renderMapPanel(s);
+    }
+
     // 结束回合按钮
     const endBtn = document.getElementById('btn-end-round');
     endBtn.textContent = remaining > 0
@@ -651,6 +657,118 @@ var UI = (() => {
         const sign = v > 0 ? '+' : '';
         return `<span class="${cls}">${sign}${v}${names[k] || k}</span>`;
       }).join(' ');
+  }
+
+  // ============================
+  // 天下地图面板
+  // ============================
+  // 城市定义：id / 名称 / SVG坐标 / 出身归属 / 赛道标签
+  const MAP_CITIES = [
+    { id: 'capital',  name: '燕京', x: 120, y: 52,  origin: null,       tracks: ['court'],              isCapital: true },
+    { id: 'north',    name: '塞外', x: 120, y: 16,  origin: null,       tracks: ['rebel'],              isFrontier: true },
+    { id: 'youzhou',  name: '幽州', x: 178, y: 34,  origin: 'warrior',  tracks: ['rebel','court'],      isFrontier: true },
+    { id: 'guanzhong',name: '关中', x: 68,  y: 50,  origin: 'scholar',  tracks: ['court'],              isFrontier: false },
+    { id: 'yangzhou', name: '扬州', x: 192, y: 90,  origin: 'merchant', tracks: ['merchant'],           isFrontier: false },
+    { id: 'jiangnan', name: '江南', x: 182, y: 130, origin: null,       tracks: ['merchant','hero'],    isFrontier: false },
+    { id: 'jingchu',  name: '荆楚', x: 112, y: 118, origin: null,       tracks: ['rebel','hero'],       isFrontier: false },
+    { id: 'shudi',    name: '蜀地', x: 54,  y: 110, origin: 'wanderer', tracks: ['hero'],               isFrontier: false },
+    { id: 'lingnan',  name: '岭南', x: 138, y: 158, origin: null,       tracks: ['merchant','hero'],    isFrontier: false }
+  ];
+
+  // 道路连接
+  const MAP_ROADS = [
+    ['capital','north'],['capital','youzhou'],['capital','guanzhong'],['capital','yangzhou'],
+    ['capital','jingchu'],['youzhou','north'],['guanzhong','shudi'],['yangzhou','jiangnan'],
+    ['jiangnan','jingchu'],['jiangnan','lingnan'],['jingchu','shudi'],['jingchu','lingnan']
+  ];
+
+  function renderMapPanel(s) {
+    const track = s.player.track;
+    const origin = s.player.origin;
+    const res = s.resources;
+
+    // 根据赛道和资源决定每个城市的高亮状态
+    function getCityState(city) {
+      // 玩家出身地：永远显示出发标记
+      if (city.origin === origin) return 'origin';
+      // 首都：官场始终高亮
+      if (city.isCapital && track === 'court') {
+        return (res.favor || 0) >= 50 ? 'active-high' : 'active';
+      }
+      // 造反：按地盘值高亮城市（每约12点地盘多亮一座）
+      if (track === 'rebel') {
+        const territory = res.territory || 0;
+        const controlledCount = Math.floor(territory / 12);
+        const rebelOrder = ['youzhou','north','jingchu','shudi','guanzhong','jiangnan','lingnan','yangzhou','capital'];
+        const pos = rebelOrder.indexOf(city.id);
+        if (pos < controlledCount) return 'active';
+        return 'inactive';
+      }
+      // 富商：按商路值高亮贸易城市
+      if (track === 'merchant') {
+        const routes = res.routes || 0;
+        if (!city.tracks.includes('merchant')) return 'inactive';
+        const merchantOrder = ['yangzhou','jiangnan','capital','jingchu','lingnan'];
+        const pos = merchantOrder.indexOf(city.id);
+        if (pos < routes + 1) return routes >= 3 ? 'active-high' : 'active';
+        return 'inactive';
+      }
+      // 侠客：按名望高亮城市
+      if (track === 'hero') {
+        const fame = res.fame || 0;
+        if (!city.tracks.includes('hero')) return 'inactive';
+        const heroOrder = ['shudi','jingchu','jiangnan','lingnan'];
+        const pos = heroOrder.indexOf(city.id);
+        if (pos < Math.floor(fame / 25) + 1) return fame >= 70 ? 'active-high' : 'active';
+        return 'inactive';
+      }
+      // 官场非首都
+      if (track === 'court' && city.tracks.includes('court')) {
+        return (res.power || 0) >= 40 ? 'active' : 'inactive';
+      }
+      return 'inactive';
+    }
+
+    // 生成 SVG
+    const cityElems = MAP_CITIES.map(city => {
+      const state = getCityState(city);
+      const r = city.isCapital ? 7 : 5;
+      const fillMap = { origin: '#e8b84b', 'active-high': '#4caf81', active: '#5b8fe8', inactive: '#2e2e2e' };
+      const strokeMap = { origin: '#ffd700', 'active-high': '#2c9', active: '#8ab4f8', inactive: '#555' };
+      const fill = fillMap[state] || '#2e2e2e';
+      const stroke = strokeMap[state] || '#555';
+      // 城市标记（圆点 + 名称）
+      const isOrigin = city.origin === origin;
+      const starMark = city.isCapital ? `<text x="${city.x}" y="${city.y - 10}" text-anchor="middle" font-size="10" fill="#c9a84c">★</text>` : '';
+      const originMark = isOrigin ? `<circle cx="${city.x}" cy="${city.y}" r="${r+4}" fill="none" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="3,2"/>` : '';
+      return `${originMark}${starMark}
+        <circle cx="${city.x}" cy="${city.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" class="map-city map-city-${state}"/>
+        <text x="${city.x}" y="${city.y + r + 9}" text-anchor="middle" font-size="8.5" fill="${state === 'inactive' ? '#666' : '#ccc'}" font-family="serif">${city.name}</text>`;
+    }).join('');
+
+    const roadElems = MAP_ROADS.map(([a, b]) => {
+      const ca = MAP_CITIES.find(c => c.id === a);
+      const cb = MAP_CITIES.find(c => c.id === b);
+      if (!ca || !cb) return '';
+      return `<line x1="${ca.x}" y1="${ca.y}" x2="${cb.x}" y2="${cb.y}" stroke="#3a3a3a" stroke-width="1"/>`;
+    }).join('');
+
+    // 当前赛道提示标签
+    const trackLabel = { court: '朝廷势力范围', rebel: '义军控制地盘', merchant: '商贸辐射范围', hero: '侠名所至之地' };
+
+    return `
+      <div class="map-panel-title">天下地图</div>
+      <div class="map-legend">${trackLabel[track] || ''}</div>
+      <svg viewBox="0 0 240 180" width="100%" style="max-height:160px;display:block;" xmlns="http://www.w3.org/2000/svg">
+        <rect width="240" height="180" rx="6" fill="#1a1a1a"/>
+        ${roadElems}
+        ${cityElems}
+      </svg>
+      <div class="map-footer">
+        <span class="map-legend-item map-leg-origin">● 出身地</span>
+        <span class="map-legend-item map-leg-active">● 势力范围</span>
+        <span class="map-legend-item map-leg-high">● 鼎盛之地</span>
+      </div>`;
   }
 
   return { render };
