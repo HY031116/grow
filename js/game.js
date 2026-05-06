@@ -1167,6 +1167,89 @@ const CRISIS_EVENTS = {
 // 每个事件在指定回合结束后触发，触发一次即标记，不重复。
 // choices[i].flagSet 里的值会累加到 state.flags（数值型叠加，布尔型直接设true）
 
+// ==================== 轻量级小事件（填充空白回合） ====================
+// 格式与 STORY_EVENTS 相同，但文本更短、效果更轻
+const MINOR_EVENTS = {
+  court: [
+    {
+      id: 'court_m1',
+      triggerRound: 7,
+      title: '同僚试探',
+      scene: '你在翰林院偶遇老同僚徐文远，他压低声音道："如今大人虽有圣眷，朝中暗流涌动，倒不如与我等结个善缘，日后互为倚靠。"',
+      choices: [
+        { text: '与其寒暄，虚以委蛇', effect: { favor: 3 },  result: '朝堂人脉，总有一用。' },
+        { text: '淡然回应，不卑不亢', effect: { favor: 1 }, flagSet: { loyal: 1 }, result: '君子坦荡，不与小人为伍。' }
+      ]
+    }
+  ],
+  rebel: [
+    {
+      id: 'rebel_m1',
+      triggerRound: 4,
+      title: '兵中流言',
+      scene: '队伍中流传着关于你出身的谣言。一名老兵找到你，递上一份名单："这些人在散布闲话，大人，如何处置？"',
+      choices: [
+        { text: '严惩，以儆效尤', effect: { morale: 5, troops: -5 }, flagSet: { iron_rule: 1 }, result: '雷厉风行，从此无人敢小觑。' },
+        { text: '公开辩解，以力服人', effect: { morale: 10 }, result: '你一矢穿七叶，全军为之折服。' }
+      ]
+    },
+    {
+      id: 'rebel_m2',
+      triggerRound: 7,
+      title: '异族来使',
+      scene: '北方部族的使者悄然抵营，带来丰厚礼物与结盟提议。谋士皱眉："引狼入室，大人需三思。"',
+      choices: [
+        { text: '接受结盟，借力打力', effect: { troops: 15, morale: -5 }, result: '铁骑助阵，天下为之侧目。' },
+        { text: '婉拒结盟，保持独立', effect: { morale: 6, gold: 8 }, result: '你的拒绝赢得了部下的心，也守住了脊梁。' }
+      ]
+    }
+  ],
+  merchant: [
+    {
+      id: 'merchant_m1',
+      triggerRound: 4,
+      title: '粮价风波',
+      scene: '旱灾谣言导致粮价暴涨，坊间商人纷纷囤积居奇。你的掌柜凑上来说："东家，这可是发财的好时机……"',
+      choices: [
+        { text: '趁势囤积，大赚一笔', effect: { gold: 25, prestige: -5 }, result: '财帛入囊，却有人在背后指指点点。' },
+        { text: '平价出售，积累口碑', effect: { prestige: 8 }, flagSet: { benevolent: 1 }, result: '你的仁义之名，从此传遍市井。' }
+      ]
+    },
+    {
+      id: 'merchant_m2',
+      triggerRound: 7,
+      title: '差役登门',
+      scene: '县衙差役笑里藏刀地站在铺前："最近生意不错啊，大人说了，这月的孝敬得多备些。"',
+      choices: [
+        { text: '忍气吞声，破财消灾', effect: { gold: -20 }, result: '这笔钱买了安稳，但你心中有一团火。' },
+        { text: '暗中联络同行，集体抵制', effect: { prestige: 10, gold: -10 }, flagSet: { merchant_guild: 1 }, result: '商会的雏形，在这一天悄然成形。' }
+      ]
+    }
+  ],
+  hero: [
+    {
+      id: 'hero_m1',
+      triggerRound: 4,
+      title: '擂台帖子',
+      scene: '一张金色擂台帖送到你手中，某大侠以武会友，邀天下好汉共聚。赴会，还是潜心苦练？',
+      choices: [
+        { text: '赴擂，一展身手', effect: { martial: 8, fame: 6 }, result: '你的身影出现在擂台，江湖又多了一段传说。' },
+        { text: '婉拒，闭关苦练', effect: { martial: 14 }, result: '一月苦练，自此小有所成。' }
+      ]
+    },
+    {
+      id: 'hero_m2',
+      triggerRound: 7,
+      title: '冤案求援',
+      scene: '一名少年跪倒在你面前，声称其师父被恶霸诬陷入狱，求你仗义出手。此事棘手，且风险不小。',
+      choices: [
+        { text: '拔刀相助，替人申冤', effect: { fame: 10, gold: -15 }, flagSet: { righteous: 1 }, result: '江湖皆知，你是那个有求必应的人。' },
+        { text: '力有不逮，赠银送行', effect: { gold: -10, fame: 3 }, result: '力所不及，但你赠银相助，算是尽了心。' }
+      ]
+    }
+  ]
+};
+
 const STORY_EVENTS = {
   court: [
     {
@@ -2648,6 +2731,14 @@ var Game = (() => {
       !state.triggeredStories.includes(e.id)
     ) || null;
     if (regular) return regular;
+
+    // 轻量级小事件（填充空白回合，优先级低于主线）
+    const minorPool = MINOR_EVENTS[state.player.track] || [];
+    const minor = minorPool.find(e =>
+      e.triggerRound === state.round &&
+      !state.triggeredStories.includes(e.id)
+    ) || null;
+    if (minor) return minor;
 
     // 危机事件：第 10-14 回合之间，40% 概率触发，仅触发一次
     const crisis = CRISIS_EVENTS[state.player.track];
