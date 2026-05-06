@@ -302,6 +302,14 @@ html, body {
   white-space: nowrap;
 }
 
+.time-age {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  margin-left: 2px;
+}
+
 .situation-text {
   font-size: 0.85rem;
   color: var(--text-dim);

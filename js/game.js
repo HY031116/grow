@@ -2026,6 +2026,26 @@ const Game = (() => {
     localStorage.removeItem(SAVE_KEY_AUTO);
   }
 
+  // ==================== 时间显示 ====================
+
+  // 将回合数转换为古代时间感（乾明年号 + 季节 + 年龄）
+  function getTimeDisplay() {
+    const r = state.round;
+    const SEASONS = ['春', '夏', '秋', '冬'];
+    const NUMS = ['元', '二', '三', '四', '五', '六', '七', '八', '九', '十',
+                  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'];
+    const year = NUMS[Math.min(r - 1, 19)] || String(r); // 乾明元年→二十年
+    const season = SEASONS[(r - 1) % 4];
+    const age = 19 + r; // 开局20岁（第1回合），第20回合39岁
+    let ageTitle;
+    if (age <= 22)      ageTitle = '弱冠';
+    else if (age <= 29) ageTitle = '青年';
+    else if (age <= 35) ageTitle = '而立';
+    else if (age <= 39) ageTitle = '盛年';
+    else                ageTitle = '不惑';
+    return { year, season, age, ageTitle };
+  }
+
   function addLog(type, text) {
     state.log.unshift({ type, text, round: state.round });
     if (state.log.length > 12) state.log.pop();
@@ -2037,5 +2057,5 @@ const Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay };
 })();

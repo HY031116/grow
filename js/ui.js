@@ -42,8 +42,11 @@ const UI = (() => {
     if (saveInfo && continueSection) {
       const d = new Date(saveInfo.savedAt);
       const dateStr = `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      const NUMS_S = ['元','二','三','四','五','六','七','八','九','十',
+                      '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
+      const yrStr = NUMS_S[Math.min(saveInfo.round - 1, 19)];
       document.getElementById('continue-info').textContent =
-        `${saveInfo.originName} · ${saveInfo.trackName} · 第${saveInfo.round}/${saveInfo.maxRounds}回合 · ${dateStr}`;
+        `${saveInfo.originName} · ${saveInfo.trackName} · 乾明${yrStr}年 · ${dateStr}`;
       continueSection.classList.remove('hidden');
     } else if (continueSection) {
       continueSection.classList.add('hidden');
@@ -74,9 +77,10 @@ const UI = (() => {
     const track = TRACKS[s.player.track];
     const remaining = s.actionPoints - s.usedPoints;
 
-    // 顶部信息
-    document.getElementById('round-display').textContent =
-      `第 ${s.round} 回合 · 共 ${s.maxRounds} 回合`;
+    // 顶部信息（时间感沉浸式展示）
+    const td = Game.getTimeDisplay();
+    document.getElementById('round-display').innerHTML =
+      `乾明${td.year}年 · ${td.season} <span class="time-age">（${td.ageTitle}，${td.age}岁）</span>`;
     document.getElementById('situation-text').textContent = getSituation(s);
     document.getElementById('ap-display').innerHTML =
       `${'<span class="ap-dot used"></span>'.repeat(s.usedPoints)}` +
@@ -132,14 +136,19 @@ const UI = (() => {
 
     // 事件日志
     const logEl = document.getElementById('event-log');
+    const NUMS_SHORT = ['元','二','三','四','五','六','七','八','九','十',
+                        '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十'];
     if (s.log.length === 0) {
       logEl.innerHTML = '<div class="log-empty">事件记录将在此显示……</div>';
     } else {
-      logEl.innerHTML = s.log.slice(0, 6).map(entry => `
+      logEl.innerHTML = s.log.slice(0, 6).map(entry => {
+        const yr = NUMS_SHORT[Math.min((entry.round || 1) - 1, 19)];
+        return `
         <div class="log-entry log-${entry.type}">
-          <span class="log-round">第${entry.round}回合</span>
+          <span class="log-round">乾明${yr}年</span>
           <span class="log-text">${entry.text}</span>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
   }
 
@@ -202,8 +211,9 @@ const UI = (() => {
         footnoteEl.classList.add('hidden');
       }
     }
+    const tdEnd = Game.getTimeDisplay();
     document.getElementById('result-rounds').textContent =
-      `${origin.name} · ${track.name} · 历经 ${s.round - 1} 回合`;
+      `${origin.name} · ${track.name} · 乾明${tdEnd.year}年 · 享年${tdEnd.age}岁`;
 
     const statsEl = document.getElementById('result-stats');
     statsEl.innerHTML = track.resources.map(def => {
