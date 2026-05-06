@@ -690,6 +690,95 @@ console.log('\n== 人生时间线 ==');
 }
 
 // ─────────────────────────────────────────────
+// 动态结局分支测试（v2.10）
+// ─────────────────────────────────────────────
+console.log('\n== 动态结局分支 ==');
+
+// 官场·朝堂棋手：cunning>=2 且 factioner>=2
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.resources.power = 90; s.resources.favor = 90;
+  s.round = 10;
+  s.flags.cunning = 2; s.flags.factioner = 2;
+  Game.endRound();
+  s = Game.getState();
+  assert('cunning+factioner>=2 → 朝堂棋手结局', s.currentEnding && s.currentEnding.id === 'power_triumph_schemer');
+}
+
+// 官场·社稷忠魂：loyal>=3（无judge）
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.resources.power = 30; s.resources.favor = 90;
+  s.round = 10;
+  s.flags.loyal = 3;
+  Game.endRound();
+  s = Game.getState();
+  assert('loyal>=3（无judge）→ 社稷忠魂结局', s.currentEnding && s.currentEnding.id === 'favor_triumph_loyal');
+}
+
+// 造反·铁血枭雄：ruthless>=2
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.resources.territory = 90; s.resources.morale = 90;
+  s.round = 10;
+  s.flags.ruthless = 2;
+  Game.endRound();
+  s = Game.getState();
+  assert('ruthless>=2（无righteous）→ 铁血枭雄结局', s.currentEnding && s.currentEnding.id === 'territory_triumph_ruthless');
+}
+
+// 造反·谋定天下：cunning>=2（无righteous/ruthless）
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.resources.territory = 90; s.resources.morale = 90;
+  s.round = 10;
+  s.flags.cunning = 2;
+  Game.endRound();
+  s = Game.getState();
+  assert('cunning>=2（无righteous/ruthless）→ 谋定天下结局', s.currentEnding && s.currentEnding.id === 'territory_triumph_cunning');
+}
+
+// 富商·商界枭雄：cunning>=2（无righteous）
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  s.resources.wealth = 140; s.resources.routes = 8;
+  s.round = 10;
+  s.flags.cunning = 2;
+  Game.endRound();
+  s = Game.getState();
+  assert('富商cunning>=2（无righteous）→ 商界枭雄结局', s.currentEnding && s.currentEnding.id === 'wealth_triumph_cunning');
+}
+
+// 侠客·武道宗师：brave>=2（无bonds）
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.resources.fame = 90; s.resources.martial = 90; s.resources.bonds = 0;
+  s.round = 10;
+  s.flags.brave = 2;
+  Game.endRound();
+  s = Game.getState();
+  assert('brave>=2（bonds=0）→ 武道宗师结局', s.currentEnding && s.currentEnding.id === 'hero_triumph_brave');
+}
+
+// 侠客·孤侠传说：lone_hero>=1（无bonds/brave）
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.resources.fame = 90; s.resources.martial = 90; s.resources.bonds = 0;
+  s.round = 10;
+  s.flags.lone_hero = 1;
+  Game.endRound();
+  s = Game.getState();
+  assert('lone_hero>=1（bonds=0，无brave）→ 孤侠传说结局', s.currentEnding && s.currentEnding.id === 'hero_triumph_lone');
+}
+
+// ─────────────────────────────────────────────
 // 汇总
 // ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));

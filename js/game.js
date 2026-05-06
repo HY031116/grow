@@ -2790,6 +2790,64 @@ const ENDINGS = {
     title: '宗主传承',
     badge: '✦ 武林新主',
     story: '燕无双亲自将武林盟主的位置传给你——这是他在江湖中漂泊数十年后，第一次真正信任一个人。\n\n武林大会上，你接过令牌，江湖中所有门派俯首拜贺。燕无双在台下，罕见地展露了一个真诚的笑容。\n\n你成为了一代宗主。而那段从陌生到知己的情谊，比武艺、比名望，更让你珍视——它让你知道：侠义不是孤独的事。'
+  },
+
+  // ==================== 动态分支结局（flag驱动）====================
+
+  // 官场·朝堂棋手：cunning>=2 且 factioner>=2 → 以智谋操控朝局，不同于单纯权臣
+  power_triumph_schemer: {
+    type: 'victory',
+    title: '朝堂棋手',
+    badge: '✦ 运筹帷幄',
+    story: '你从未出手伤人，却让对手一个个倒在自己的失误里。借力打力，以势压人，满朝文武皆以为自己是你的棋子，却不知你才是那个落子无悔的人。\n\n史书上，你不会被称为"奸臣"，也不会被誉为"忠臣"——你是那种让后世史家研究了千年仍争论不休的谜一样的人物。'
+  },
+
+  // 官场·社稷忠魂：loyal>=3，极度忠诚，无铁面之名却有赤胆之心
+  favor_triumph_loyal: {
+    type: 'victory',
+    title: '社稷忠魂',
+    badge: '✦ 一代忠臣',
+    story: '你以一腔赤忱效忠皇帝，不曾背叛，不曾算计，所得所失皆出于本心。朝堂风云变幻，你始终站在皇帝身边。\n\n皇帝临终前握住你的手说："天下若多几个你这样的人，朕何愁大业不成。"后人称你为"天子第一忠臣"——那是你用一生换来的最高赞誉。'
+  },
+
+  // 造反·铁血枭雄：ruthless>=2，以雷霆手段定天下
+  territory_triumph_ruthless: {
+    type: 'victory',
+    title: '铁血枭雄',
+    badge: '✦ 杀伐果决',
+    story: '你的旗帜之下，从无二心之人，也从无叛逃之将——因为所有人都知道，背叛的代价是什么。你以雷霆之势荡平乱世，问鼎天下之路上，手段冷酷，但每一刀都指向目标。\n\n后世对你褒贬不一：有人说你残暴，有人说你是乱世必须的那把刀。无论如何，天下太平了。那把刀的功过，就由后人去评说吧。'
+  },
+
+  // 造反·谋定天下：cunning>=2，以谋略而非蛮力定鼎江山
+  territory_triumph_cunning: {
+    type: 'victory',
+    title: '谋定天下',
+    badge: '✦ 谋略无双',
+    story: '你很少亲自上战场，却赢得了每一场关键的战争。借刀杀人，以利诱人，以势逼人——当别人还在拼兵力的时候，你已经把结局算好了。\n\n天下归一，史家评你："此人不战而屈人之兵，真正的乱世军师——然而他是主公，不是谋士。"这比任何赞誉都更令人玩味。'
+  },
+
+  // 富商·商界枭雄：cunning>=2，以算计横扫商界
+  wealth_triumph_cunning: {
+    type: 'victory',
+    title: '商界枭雄',
+    badge: '✦ 市无对手',
+    story: '你从不打没把握的仗。情报先行，时机再行，出手必胜。竞争对手们发现，和你做生意，他们总是在不知不觉间落入你布置好的局中。\n\n天下首富，不是靠运气，是靠算计。你的对手中，有人佩服你，有人恨你，但没有人敢轻视你——这，才是商界最真实的尊重。'
+  },
+
+  // 侠客·武道宗师：brave>=2，以无畏勇气名震天下
+  hero_triumph_brave: {
+    type: 'victory',
+    title: '武道宗师',
+    badge: '✦ 天下无双',
+    story: '二十年行侠仗义，你的剑从未斩向无辜，却也从未在强敌面前退缩。每一场硬仗，你都是第一个冲上去的人。\n\n武林中人都说：此人胆气天下第一。燕无双亲口承认："与他交手，我从未在任何人眼中见过那种勇气。"后世将你列为"武道宗师"，不仅因为武艺，更因为那份令人动容的勇气。'
+  },
+
+  // 侠客·孤侠传说：lone_hero>=1，无门无派却令天下折服
+  hero_triumph_lone: {
+    type: 'victory',
+    title: '孤侠传说',
+    badge: '✦ 独行天下',
+    story: '你从不依附任何门派，也不需要任何人为你背书。一人一剑，走遍天下，以实力和德行赢得了整个江湖的尊重。\n\n江湖人说：天下侠客有门派的，也有无门无派的。但无门无派还能令天下人折服的，只有这一个。这种孤绝的风骨，反而成了最令人向往的传说。'
   }
 };
 
@@ -3379,27 +3437,43 @@ var Game = (() => {
   }
 
   function pickPowerEnding() {
+    // cunning>=2 且 factioner>=2 → 朝堂棋手（智谋操控优先于单纯权臣）
+    if ((state.flags.cunning || 0) >= 2 && (state.flags.factioner || 0) >= 2) return 'power_triumph_schemer';
     return (state.flags.usurper || 0) >= 1 ? 'power_triumph_usurper' : 'power_triumph';
   }
   function pickFavorEnding() {
     // NPC 盟友加成：与权相李崇关系值≥70，解锁专属结局
     if ((state.npcs.minister || 0) >= 70) return 'favor_triumph_npc_minister';
-    return (state.flags.judge || 0) >= 1 ? 'favor_triumph_judge' : 'favor_triumph';
+    if ((state.flags.judge || 0) >= 1) return 'favor_triumph_judge';
+    // loyal>=3 且无judge → 社稷忠魂（赤忱忠诚但不以铁面出名）
+    if ((state.flags.loyal || 0) >= 3) return 'favor_triumph_loyal';
+    return 'favor_triumph';
   }
   function pickTerritoryEnding() {
     // NPC 盟友加成：与徐长风关系值≥70，解锁专属结局
     if ((state.npcs.general || 0) >= 70) return 'territory_triumph_npc_general';
-    return (state.flags.righteous || 0) >= 2 ? 'territory_triumph_righteous' : 'territory_triumph';
+    if ((state.flags.righteous || 0) >= 2) return 'territory_triumph_righteous';
+    // ruthless>=2 → 铁血枭雄；cunning>=2 → 谋定天下
+    if ((state.flags.ruthless || 0) >= 2) return 'territory_triumph_ruthless';
+    if ((state.flags.cunning || 0) >= 2) return 'territory_triumph_cunning';
+    return 'territory_triumph';
   }
   function pickWealthEnding() {
     // NPC 盟友加成：与沈万钧关系值≥70，解锁专属结局
     if ((state.npcs.tycoon || 0) >= 70) return 'wealth_triumph_npc_tycoon';
-    return (state.flags.righteous || 0) >= 2 ? 'wealth_triumph_righteous' : 'wealth_triumph';
+    if ((state.flags.righteous || 0) >= 2) return 'wealth_triumph_righteous';
+    // cunning>=2 → 商界枭雄（算计横扫商界）
+    if ((state.flags.cunning || 0) >= 2) return 'wealth_triumph_cunning';
+    return 'wealth_triumph';
   }
   function pickHeroEnding() {
     // NPC 盟友加成：与燕无双关系值≥70，解锁专属结局
     if ((state.npcs.master || 0) >= 70) return 'hero_triumph_npc_master';
-    return (state.resources.bonds || 0) >= 20 ? 'hero_triumph_justice' : 'hero_triumph';
+    if ((state.resources.bonds || 0) >= 20) return 'hero_triumph_justice';
+    // brave>=2 → 武道宗师；lone_hero>=1 → 孤侠传说
+    if ((state.flags.brave || 0) >= 2) return 'hero_triumph_brave';
+    if ((state.flags.lone_hero || 0) >= 1) return 'hero_triumph_lone';
+    return 'hero_triumph';
   }
 
   function confirmTransition(confirm) {
