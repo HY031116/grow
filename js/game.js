@@ -2111,7 +2111,12 @@ const Game = (() => {
       // NPC 关系值（0-100），由 setTrack 时按赛道初始化
       npcs: {},
       // NPC 事件冷却（记录已触发事件，防止频繁重复）
-      npcCooldown: {}
+      npcCooldown: {},
+      // 世界状态指标
+      world: {
+        stability: 70,  // 天下安定（0-100），高=治世，低=乱世
+        unrest: 25      // 民间动荡（0-100），高=民不聊生，低=安居乐业
+      }
     };
     UI.render();
   }
@@ -2319,9 +2324,52 @@ const Game = (() => {
       worldEvts.forEach(we => {
         if (we.cond(state.flags, state.resources)) pool.push(we);
       });
+      // 世界动荡高时，额外增加负面事件权重（将负面事件再入池一次）
+      if ((state.world.unrest || 0) >= 60) {
+        const negEvts = pool.filter(e =>
+          Object.values(e.effect || {}).some(v => v < 0));
+        pool = pool.concat(negEvts);
+      }
+      // 造反赛道+天下大乱时，正面事件概率提升（额外入池）
+      if (state.player.track === 'rebel' && (state.world.stability || 70) <= 40) {
+        const posEvts = pool.filter(e =>
+          Object.values(e.effect || {}).every(v => v >= 0));
+        pool = pool.concat(posEvts);
+      }
       const evt = pool[Math.floor(Math.random() * pool.length)];
       applyEffect(evt.effect);
       addLog('event', `【天下事】${evt.text}`);
+    }
+
+    // ========== 世界状态更新 ==========
+    const w = state.world;
+    // 自然漂移：天下安定随时间略微降低，民间动荡略微升高
+    w.stability = Math.max(0, Math.min(100, w.stability + (Math.random() < 0.35 ? -2 : 1)));
+    w.unrest    = Math.max(0, Math.min(100, w.unrest    + (Math.random() < 0.25 ? -1 : 2)));
+    // 玩家行为影响世界状态
+    if (state.player.track === 'court') {
+      // 官场玩家圣眷高→稳定天下
+      const favLvl = Math.round((state.resources.favor || 0) / 40);
+      w.stability = Math.min(100, w.stability + favLvl);
+    }
+    if (state.player.track === 'rebel') {
+      // 造反玩家兵多→天下动乱
+      const troopPressure = Math.floor((state.resources.troops || 0) / 25);
+      w.stability = Math.max(0, w.stability - troopPressure);
+      w.unrest    = Math.min(100, w.unrest + 2);
+    }
+    // 接济百姓（benevolent）降低民间动荡
+    if ((state.flags.benevolent || 0) > 0) {
+      w.unrest = Math.max(0, w.unrest - (state.flags.benevolent || 0) * 2);
+    }
+    // 官场压榨（extort_used）增加民间动荡
+    if ((state.flags.extort_used || 0) >= 3) {
+      w.unrest = Math.min(100, w.unrest + 2);
+    }
+    // 官场安定低时，圣眷额外衰减（体现官场高压）
+    if (state.player.track === 'court' && w.stability < 35) {
+      applyEffect({ favor: -3 });
+      addLog('event', '【天下】乱世之象已现，朝廷动荡，圣眷难维。');
     }
 
     state.round++;

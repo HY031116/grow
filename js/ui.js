@@ -220,6 +220,38 @@ const UI = (() => {
         : '';
     }
 
+    // 世界状态面板（NPC面板下方）
+    const worldPanelEl = document.getElementById('world-panel');
+    if (worldPanelEl && s.world) {
+      const stab = s.world.stability || 0;
+      const unr  = s.world.unrest    || 0;
+      const stabLabel = stab >= 70 ? '治世' : stab >= 40 ? '动荡' : '乱世';
+      const unrLabel  = unr  <= 30 ? '安居' : unr  <= 60 ? '不安' : '动乱';
+      const stabColor = stab >= 70 ? '#4caf81' : stab >= 40 ? '#e8a04b' : '#d94f5c';
+      const unrColor  = unr  <= 30 ? '#4caf81' : unr  <= 60 ? '#e8a04b' : '#d94f5c';
+      worldPanelEl.innerHTML = `
+        <div class="world-panel-title">天下格局</div>
+        <div class="world-item">
+          <div class="world-row">
+            <span class="world-label">🌐 天下安定</span>
+            <span class="world-val" style="color:${stabColor}">${stabLabel} ${stab}</span>
+          </div>
+          <div class="world-bar-track">
+            <div class="world-bar-fill" style="width:${stab}%;background:${stabColor}"></div>
+          </div>
+        </div>
+        <div class="world-item">
+          <div class="world-row">
+            <span class="world-label">⚡ 民间动荡</span>
+            <span class="world-val" style="color:${unrColor}">${unrLabel} ${unr}</span>
+          </div>
+          <div class="world-bar-track">
+            <div class="world-bar-fill" style="width:${unr}%;background:${unrColor}"></div>
+          </div>
+        </div>`;
+    }
+    }
+
     // 结束回合按钮
     const endBtn = document.getElementById('btn-end-round');
     endBtn.textContent = remaining > 0
