@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>权谋录 · 古代人生模拟器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===========================
+       创建角色
+       =========================== -->
+  <div id="screen-create" class="screen">
+    <div class="game-logo">
+      <h1 class="game-title">权 谋 录</h1>
+      <p class="game-subtitle">穿越古代 · 再活一世</p>
+    </div>
+
+    <div class="create-body">
+
+      <!-- 性别 -->
+      <section class="create-section">
+        <h3 class="section-label">◆ 性别</h3>
+        <div class="gender-group">
+          <button class="gender-btn active" data-gender="male"   onclick="Game.setGender('male')">♂ 男</button>
+          <button class="gender-btn"        data-gender="female" onclick="Game.setGender('female')">♀ 女</button>
+        </div>
+      </section>
+
+      <!-- 出身 -->
+      <section class="create-section">
+        <h3 class="section-label">◆ 出身</h3>
+        <div class="origin-group">
+
+          <div class="origin-card" data-origin="scholar" onclick="Game.setOrigin('scholar')">
+            <div class="origin-icon">📚</div>
+            <div class="origin-name">寒门学子</div>
+            <div class="origin-desc">满腹经纶，才华横溢。一朝中举踏入仕途，脑子是你最大的本钱。</div>
+            <div class="origin-trait">★ 博学多才：每回合圣眷 +5</div>
+            <div class="origin-recommend">推荐：官场之路</div>
+          </div>
+
+          <div class="origin-card" data-origin="warrior" onclick="Game.setOrigin('warrior')">
+            <div class="origin-icon">⚔️</div>
+            <div class="origin-name">边境武将</div>
+            <div class="origin-desc">沙场宿将，手握兵权。乱世之中，刀剑比笔杆更有力。</div>
+            <div class="origin-trait">★ 沙场宿将：每次征兵额外 +5 兵力</div>
+            <div class="origin-recommend">推荐：造反之路</div>
+          </div>
+
+          <div class="origin-card" data-origin="merchant" onclick="Game.setOrigin('merchant')">
+            <div class="origin-icon">💰</div>
+            <div class="origin-name">落魄商贾</div>
+            <div class="origin-desc">家道中落，积蓄仍厚，四方人脉广布。银子是最万能的武器。</div>
+            <div class="origin-trait">★ 富甲一方：每回合钱粮 +5</div>
+            <div class="origin-recommend">推荐：富商之路</div>
+          </div>
+
+          <div class="origin-card" data-origin="wanderer" onclick="Game.setOrigin('wanderer')">
+            <div class="origin-icon">🗡️</div>
+            <div class="origin-name">游侠少年</div>
+            <div class="origin-desc">行走江湖多年，剑术精进，路见不平则拔刀相助。没有钱财背景，却有一身好武艺与赤子之心。</div>
+            <div class="origin-trait">★ 游侠本色：侠客赛道每回合武艺 +3</div>
+            <div class="origin-recommend">推荐：侠客之路</div>
+          </div>
+
+        </div>
+      </section>
+
+      <button id="btn-create" class="btn-primary large" disabled onclick="Game.confirmCreate()">
+        请先选择出身
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       赛道选择
+       =========================== -->
+  <div id="screen-track" class="screen hidden">
+    <div class="track-header">
+      <h2>你的命运，从此刻分叉</h2>
+      <p>出身 · <span id="track-origin-name"></span>，选择你这一生的方向</p>
+    </div>
+
+    <div class="track-group">
+
+      <div class="track-card" data-track="court" onclick="Game.setTrack('court')">
+        <span class="recommend-badge">✦ 推荐</span>
+        <div class="track-icon">👑</div>
+        <div class="track-name">官场之路</div>
+        <div class="track-sub">忠臣 · 奸臣</div>
+        <div class="track-desc">
+          踏入朝堂，在圣眷与权柄之间寻找平衡。辅佐明君，或架空皇帝——
+          史书如何记载你，全凭你的选择。
+        </div>
+        <div class="track-conditions">
+          <div class="track-win">▲ 胜：权柄 ≥ 80 或 圣眷 ≥ 85</div>
+          <div class="track-lose">▼ 败：钱粮归零 或 圣眷归零</div>
+        </div>
+        <div class="track-res-preview">
+          <span>🌾 钱粮</span><span>👑 圣眷</span><span>⚖️ 权柄</span>
+        </div>
+      </div>
+
+      <div class="track-card" data-track="rebel" onclick="Game.setTrack('rebel')">
+        <span class="recommend-badge">✦ 推荐</span>
+        <div class="track-icon">⚔️</div>
+        <div class="track-name">造反之路</div>
+        <div class="track-sub">诸侯 · 枭雄</div>
+        <div class="track-desc">
+          揭竿而起，招募义军，攻城略地。有朝一日问鼎天下——
+          或者兵败身死，身首异处。
+        </div>
+        <div class="track-conditions">
+          <div class="track-win">▲ 胜：地盘 ≥ 80 且 民心 ≥ 60</div>
+          <div class="track-lose">▼ 败：钱粮归零 或 兵力归零</div>
+        </div>
+        <div class="track-res-preview">
+          <span>🌾 钱粮</span><span>⚔️ 兵力</span><span>❤️ 民心</span><span>🏯 地盘</span>
+        </div>
+      </div>
+      <div class="track-card" data-track="merchant" onclick="Game.setTrack('merchant')">
+        <span class="recommend-badge">❆ 推荐</span>
+        <div class="track-icon">💰</div>
+        <div class="track-name">富商之路</div>
+        <div class="track-sub">商贾 · 巨富</div>
+        <div class="track-desc">
+          以銀子开路，打通商道，垒断贸易。富可敌国之时，
+          天下权贵皆需仰你鼻息，一掷千金，再造坤坤。
+        </div>
+        <div class="track-conditions">
+          <div class="track-win">▲ 胜：财富 ≥ 100 且 商路 ≥ 3</div>
+          <div class="track-lose">▼ 败：钱粮归零 或 商誉归零</div>
+        </div>
+        <div class="track-res-preview">
+          <span>🌾 钱粮</span><span>💎 财富</span><span>🛤️ 商路</span><span>🏾e 商誉</span>
+        </div>
+      </div>
+
+      <div class="track-card" data-track="hero" onclick="Game.setTrack('hero')">
+        <span class="recommend-badge">❆ 推荐</span>
+        <div class="track-icon">🗡️</div>
+        <div class="track-name">侠客之路</div>
+        <div class="track-sub">游侠 · 大侠</div>
+        <div class="track-desc">
+          仗剑走天涯，行侠仗义，恩仇必报。当你的名字令奸邪胆寒之时，
+          就是真正的江湖传说。
+        </div>
+        <div class="track-conditions">
+          <div class="track-win">▲ 胜：名望 ≥ 80 且 武艺 ≥ 60</div>
+          <div class="track-lose">▼ 败：钱粮归零</div>
+        </div>
+        <div class="track-res-preview">
+          <span>🌾 钱粮</span><span>⚔️ 武艺</span><span>⭐ 名望</span><span>🤝 恩义</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       游戏主界面
+       =========================== -->
+  <div id="screen-play" class="screen hidden">
+
+    <!-- 顶部信息栏 -->
+    <div class="play-topbar">
+      <span id="round-display" class="round-display">第 1 回合</span>
+      <span id="situation-text" class="situation-text"></span>
+      <div class="ap-group">
+        <span class="ap-label">行动点</span>
+        <div id="ap-display"></div>
+      </div>
+    </div>
+
+    <!-- 主体三栏 -->
+    <div class="play-content">
+
+      <!-- 左：资源 -->
+      <aside class="play-sidebar">
+        <div class="panel-title">势力状态</div>
+        <div id="resources-panel"></div>
+      </aside>
+
+      <!-- 中：行动 -->
+      <main class="play-main">
+        <div class="panel-title">本回合行动</div>
+        <div id="actions-panel" class="actions-panel"></div>
+        <button id="btn-end-round" class="btn-primary end-round-btn" onclick="Game.endRound()">
+          结束本回合
+        </button>
+      </main>
+
+      <!-- 右：日志 -->
+      <aside class="play-log">
+        <div class="panel-title">事件记录</div>
+        <div id="event-log" class="event-log"></div>
+      </aside>
+
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       赛道转换确认页
+       =========================== -->
+  <div id="screen-transition" class="screen hidden">
+    <div class="story-body">
+      <div class="story-chapter-badge">⚡ 命运转折</div>
+      <h2 id="transition-title" class="story-title"></h2>
+      <div id="transition-scene" class="story-scene"></div>
+      <div class="story-choices">
+        <button id="transition-confirm" class="story-choice-btn" onclick="Game.confirmTransition(true)">
+          <div class="choice-text" id="transition-confirm-text"></div>
+        </button>
+        <button id="transition-decline" class="story-choice-btn" onclick="Game.confirmTransition(false)">
+          <div class="choice-text" id="transition-decline-text"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       主线剧情事件（弹出式选择）
+       =========================== -->
+  <div id="screen-story" class="screen hidden">
+    <div class="story-body">
+      <div class="story-chapter-badge">⚡ 关键事件</div>
+      <h2 id="story-title" class="story-title"></h2>
+      <div id="story-scene" class="story-scene"></div>
+      <div id="story-choices" class="story-choices"></div>
+    </div>
+  </div>
+
+
+  <!-- ===========================
+       结局页面
+       =========================== -->
+  <div id="screen-result" class="screen hidden">
+    <div class="result-body">
+      <div id="result-badge" class="result-badge"></div>
+      <h2 id="result-title" class="result-title"></h2>
+      <p id="result-story" class="result-story"></p>
+      <p id="result-footnote" class="result-footnote hidden"></p>
+      <div id="result-rounds" class="result-rounds"></div>
+
+      <div class="result-stats-box">
+        <h4>最终状态</h4>
+        <div id="result-stats"></div>
+      </div>
+
+      <button class="btn-primary large" onclick="Game.init()">再活一世</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    Game.init();
+  });
+</script>
+</body>
+</html>

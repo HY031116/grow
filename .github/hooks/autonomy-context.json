@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "windows": "powershell -ExecutionPolicy Bypass -File ./.github/hooks/scripts/inject-autonomy-context.ps1 SessionStart",
+        "timeout": 5
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "windows": "powershell -ExecutionPolicy Bypass -File ./.github/hooks/scripts/inject-autonomy-context.ps1 UserPromptSubmit",
+        "timeout": 5
+      }
+    ]
+  }
+}
