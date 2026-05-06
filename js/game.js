@@ -2185,6 +2185,7 @@ var Game = (() => {
       pendingStory: null,
       pendingTransition: null,
       log: [],
+      timeline: [],      // 人生时间线（里程碑事件，无上限）
       currentEnding: null,
       // NPC 关系值（0-100），由 setTrack 时按赛道初始化
       npcs: {},
@@ -2240,6 +2241,8 @@ var Game = (() => {
     const amb = AMBITIONS[ambitionId];
     const trackName = TRACKS[state.player.track].name;
     addLog('system', `${state.player.title}，志在【${amb.name}】，踏上【${trackName}】之路。传奇，从此刻开始。`);
+    // 人生时间线：开局里程碑
+    addTimeline('🌅', `踏上【${trackName}】之路，立志【${amb.name}】`);
     UI.render();
   }
 
@@ -2487,6 +2490,18 @@ var Game = (() => {
     state.round++;
     state.usedPoints = 0;
 
+    // 里程碑年份写入人生时间线（第5/10/15/20年）
+    const milestoneYears = { 5: '初识世界', 10: '壮志渐显', 15: '沧桑已半', 20: '人生将暮' };
+    if (milestoneYears[state.round]) {
+      const track = state.player.track;
+      const r = state.resources;
+      const mainResMap = { court: r.favor, rebel: r.morale || r.troops, merchant: r.prestige, hero: r.fame || r.martial };
+      const mainVal = mainResMap[track] || 0;
+      const milestone = milestoneYears[state.round];
+      const resDesc = mainVal >= 70 ? '声名鹊起' : mainVal >= 40 ? '稳步前行' : '命途多舛';
+      addTimeline('⭐', `乾明${state.round}年·${milestone}——${resDesc}`);
+    }
+
     if (state.round > state.maxRounds) {
       // 自然死亡结局：按主资源水平分三级
       triggerEnding(buildDeathEnding(state.player.track, state.resources, state.flags));
@@ -2570,6 +2585,11 @@ var Game = (() => {
     const nid = story.npcId;
     state.npcs[nid] = Math.max(0, Math.min(100, (state.npcs[nid] || 0) + relDelta));
     addLog('npc', `【${story.npcName}】${choice.result}`);
+    // NPC 关系达到盟友阈值时写入时间线
+    const newRel = state.npcs[nid] || 0;
+    if (newRel >= 65 && (newRel - relDelta) < 65) {
+      addTimeline('🤝', `与【${story.npcName}】结为挚友`);
+    }
     state.pendingStory = null;
     state.phase = 'play';
     saveGame();
@@ -2659,6 +2679,8 @@ var Game = (() => {
     }
 
     addLog('story', `【${story.title}】${choice.result}`);
+    // 人生时间线：主线故事完成
+    addTimeline('📖', `【${story.title}】${choice.result.slice(0, 22)}${choice.result.length > 22 ? '…' : ''}`);
     state.pendingStory = null;
     state.phase = 'play';
 
@@ -2933,6 +2955,11 @@ var Game = (() => {
   function addLog(type, text) {
     state.log.unshift({ type, text, round: state.round });
     if (state.log.length > 12) state.log.pop();
+  }
+
+  // 人生时间线（里程碑，无上限，贯穿全局）
+  function addTimeline(icon, text) {
+    state.timeline.push({ round: state.round, icon, text });
   }
 
   function pick(arr) {

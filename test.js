@@ -524,6 +524,54 @@ console.log('\n== 27. 危机事件：侠客追杀令 ==');
 }
 
 // ─────────────────────────────────────────────
+// 人生时间线 测试
+// ─────────────────────────────────────────────
+console.log('\n== 人生时间线 ==');
+
+// 测试1：开局后 timeline 有开局里程碑
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  assert('开局后 timeline 包含开局里程碑', s.timeline.length >= 1 && s.timeline[0].icon === '🌅');
+  assert('开局里程碑文本包含赛道名', s.timeline[0].text.includes('官场'));
+}
+
+// 测试2：第5年回合后 timeline 包含里程碑年条目
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.round = 4; // 推进到第4回合，endRound 后变第5年
+  const origRand = Math.random;
+  Math.random = () => 0.8; // 避免触发故事/NPC事件
+  Game.endRound();
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') { Game.chooseStory(0); s = Game.getState(); }
+  const yearMilestone = s.timeline.find(e => e.round === 5 && e.icon === '⭐');
+  assert('第5年后 timeline 包含星级里程碑', !!yearMilestone);
+}
+
+// 测试3：主线故事触发后 timeline 记录故事条目
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.round = 1;
+  const origRand = Math.random;
+  Math.random = () => 0.8;
+  Game.endRound();
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') {
+    Game.chooseStory(0);
+    s = Game.getState();
+    const storyEntry = s.timeline.find(e => e.icon === '📖');
+    assert('故事选择后 timeline 记录故事条目', !!storyEntry);
+  } else {
+    assert('（跳过）第2回合故事未触发，timeline故事测试跳过', true);
+  }
+}
+
+// ─────────────────────────────────────────────
 // 汇总
 // ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));

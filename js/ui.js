@@ -382,6 +382,24 @@ var UI = (() => {
           <span class="stat-val">${val}${extra}</span>
         </div>`;
     }).join('');
+
+    // 人生时间线
+    const timelineEl = document.getElementById('result-timeline');
+    if (timelineEl && s.timeline && s.timeline.length > 0) {
+      timelineEl.innerHTML = `
+        <div class="timeline-title">— 一生轨迹 —</div>
+        <ul class="timeline-list">
+          ${s.timeline.map(entry => `
+            <li class="timeline-item">
+              <span class="timeline-icon">${entry.icon}</span>
+              <span class="timeline-year">乾明${entry.round}年</span>
+              <span class="timeline-text">${entry.text}</span>
+            </li>`).join('')}
+        </ul>`;
+      timelineEl.classList.remove('hidden');
+    } else if (timelineEl) {
+      timelineEl.classList.add('hidden');
+    }
   }
 
   // ============================

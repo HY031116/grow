@@ -834,6 +834,45 @@ html, body {
   letter-spacing: 0.08em;
 }
 
+/* ==================== 人生时间线 ==================== */
+.result-timeline {
+  margin: 20px 0;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.timeline-title {
+  font-size: 0.78rem;
+  color: #8a7a5a;
+  letter-spacing: 0.2em;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.timeline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.timeline-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.timeline-item:last-child { border-bottom: none; }
+.timeline-icon { font-size: 0.9rem; min-width: 20px; }
+.timeline-year {
+  color: #8a7a5a;
+  font-size: 0.75rem;
+  min-width: 68px;
+  flex-shrink: 0;
+}
+.timeline-text { color: #c8c0a8; }
+
 /* ==================== 世界状态面板 ==================== */
 .world-panel {
   margin-top: 12px;
