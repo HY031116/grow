@@ -26,6 +26,8 @@ function newGame(origin, track) {
   Game.setOrigin(origin);
   Game.confirmCreate();
   Game.setTrack(track);
+  // 志向选择阶段：测试使用默认志向 'legacy'
+  Game.setAmbition('legacy');
 }
 
 // ─────────────────────────────────────────────

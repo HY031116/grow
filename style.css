@@ -813,8 +813,93 @@ html, body {
   font-size: 0.8rem;
   color: var(--text-dim);
   letter-spacing: 0.1em;
-  margin-bottom: 28px;
+  margin-bottom: 8px;
 }
+.result-ambition {
+  font-size: 0.82rem;
+  color: #8acfb0;
+  letter-spacing: 0.12em;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+/* ==================== 志向选择页 ==================== */
+#screen-ambition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 48px 24px 80px;
+  overflow-y: auto;
+}
+.ambition-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.ambition-header h2 {
+  font-size: 1.7rem;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.ambition-header p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+}
+.ambition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  width: 100%;
+}
+.ambition-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--divider);
+  border-left: 4px solid #8acfb0;
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.ambition-card:hover {
+  background: rgba(255,255,255,0.05);
+  border-left-color: var(--gold);
+}
+.amb-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.amb-body { flex: 1; }
+.amb-name {
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.amb-desc {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.amb-bonus {
+  font-size: 0.78rem;
+  color: #8acfb0;
+  margin-bottom: 6px;
+}
+.amb-tag {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
 
 .result-stats-box {
   background: var(--card);

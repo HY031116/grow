@@ -8,6 +8,7 @@ const UI = (() => {
     switch (s.phase) {
       case 'create':     renderCreate(s);     break;
       case 'track':      renderTrack(s);      break;
+      case 'ambition':   renderAmbition(s);   break;
       case 'play':       renderPlay(s);       break;
       case 'story':      renderStory(s);      break;
       case 'transition': renderTransition(s); break;
@@ -67,6 +68,27 @@ const UI = (() => {
       const badge = card.querySelector('.recommend-badge');
       if (badge) badge.style.display = origin.recommended === trackId ? 'block' : 'none';
     });
+  }
+
+  // ============================
+  // 个人志向选择页
+  // ============================
+  function renderAmbition(s) {
+    show('screen-ambition');
+    const track = TRACKS[s.player.track];
+    document.getElementById('ambition-track-name').textContent = track.name;
+    const ambitions = Game.AMBITIONS;
+    const container = document.getElementById('ambition-list');
+    container.innerHTML = Object.values(ambitions).map(amb => `
+      <div class="ambition-card" onclick="Game.setAmbition('${amb.id}')">
+        <div class="amb-icon">${amb.icon}</div>
+        <div class="amb-body">
+          <div class="amb-name">${amb.name}</div>
+          <div class="amb-desc">${amb.desc}</div>
+          <div class="amb-bonus">⚡ ${amb.bonusDesc}</div>
+          <div class="amb-tag">${amb.tag}</div>
+        </div>
+      </div>`).join('');
   }
 
   // ============================
@@ -298,6 +320,16 @@ const UI = (() => {
     const tdEnd = Game.getTimeDisplay();
     document.getElementById('result-rounds').textContent =
       `${origin.name} · ${track.name} · 乾明${tdEnd.year}年 · 享年${tdEnd.age}岁`;
+
+    // 个人志向标记
+    const ambEl = document.getElementById('result-ambition');
+    if (ambEl && s.player.ambition && Game.AMBITIONS[s.player.ambition]) {
+      const amb = Game.AMBITIONS[s.player.ambition];
+      ambEl.textContent = `${amb.icon} ${amb.name} · ${amb.tag}`;
+      ambEl.classList.remove('hidden');
+    } else if (ambEl) {
+      ambEl.classList.add('hidden');
+    }
 
     const statsEl = document.getElementById('result-stats');
     statsEl.innerHTML = track.resources.map(def => {

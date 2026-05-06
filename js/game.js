@@ -460,6 +460,66 @@ const ACTIONS = {
   ]
 };
 
+// ==================== 个人志向数据 ====================
+// 玩家在赛道选择后选定，影响特定行动的额外加成和结局标记
+const AMBITIONS = {
+  legacy: {
+    id: 'legacy',
+    name: '功名传世',
+    icon: '📜',
+    desc: '以学识功绩名垂青史，令后人铭记此生所为。',
+    bonusDesc: '每次「读书增智」，额外获得当前赛道主要资源 +8。',
+    bonusActionId: 'study',
+    bonusKey: 'mainRes',
+    bonusVal: 8,
+    tag: '✦ 青史留名'
+  },
+  wealth: {
+    id: 'wealth',
+    name: '富甲天下',
+    icon: '💰',
+    desc: '积财万贯，令天下人皆仰慕此富贵。',
+    bonusDesc: '每次「游历四方」，额外获得 金钱 +12。',
+    bonusActionId: 'wander',
+    bonusKey: 'gold',
+    bonusVal: 12,
+    tag: '✦ 万贯家财'
+  },
+  martial: {
+    id: 'martial',
+    name: '以武立身',
+    icon: '⚔️',
+    desc: '凭真本事在世间立足，强者自有强者的尊严。',
+    bonusDesc: '每次「游历四方」，额外获得当前赛道主要资源 +10。',
+    bonusActionId: 'wander',
+    bonusKey: 'mainRes',
+    bonusVal: 10,
+    tag: '✦ 强者之道'
+  },
+  justice: {
+    id: 'justice',
+    name: '兼济天下',
+    icon: '🌿',
+    desc: '行仁义于天下，泽被苍生，此生无憾。',
+    bonusDesc: '每次「接济百姓」，仁善积累加倍（额外 +1 benevolent）。',
+    bonusActionId: 'charity',
+    bonusKey: 'benevolent',
+    bonusVal: 1,
+    tag: '✦ 天下仁心'
+  },
+  freedom: {
+    id: 'freedom',
+    name: '逍遥世外',
+    icon: '🌐',
+    desc: '随遇而安，不为名利所缚，心随天地游。',
+    bonusDesc: '每次「休养生息」，额外获得 金钱 +12。',
+    bonusActionId: 'rest',
+    bonusKey: 'gold',
+    bonusVal: 12,
+    tag: '✦ 天地逍遥'
+  }
+};
+
 // ==================== NPC 关系数据 ====================
 // 每个 NPC 有 id / name / icon / desc / 关联赛道 / 事件池（按关系层级）
 const NPC_DATA = {
@@ -2034,6 +2094,7 @@ const Game = (() => {
         gender: 'male',
         origin: null,
         track: null,
+        ambition: null,  // 个人志向（ambition 阶段选定）
         title: ''
       },
       resources: {},
@@ -2076,16 +2137,47 @@ const Game = (() => {
     const origin = ORIGINS[state.player.origin];
     state.resources = { ...origin.resources[trackId] };
     state.player.title = state.player.gender === 'male' ? origin.titleMale : origin.titleFemale;
-    state.phase = 'play';
     // 初始化该赛道的 NPC 关系值（初始 20，代表陌生人但有所耳闻）
     Object.values(NPC_DATA).forEach(npc => {
       if (npc.tracks.includes(trackId)) {
         state.npcs[npc.id] = 20;
       }
     });
-    const trackName = TRACKS[trackId].name;
-    addLog('system', `${state.player.title}，你踏上了【${trackName}】。你的传奇，从此刻开始。`);
+    // 进入志向选择阶段（而非直接进入 play）
+    state.phase = 'ambition';
     UI.render();
+  }
+
+  // ==================== 个人志向选定 ====================
+  function setAmbition(ambitionId) {
+    if (!AMBITIONS[ambitionId]) return;
+    state.player.ambition = ambitionId;
+    state.phase = 'play';
+    const amb = AMBITIONS[ambitionId];
+    const trackName = TRACKS[state.player.track].name;
+    addLog('system', `${state.player.title}，志在【${amb.name}】，踏上【${trackName}】之路。传奇，从此刻开始。`);
+    UI.render();
+  }
+
+  // ==================== 志向加成辅助函数 ====================
+  // 赛道主资源映射（用于 mainRes 类型志向加成）
+  const TRACK_MAIN_RES = { court: 'favor', rebel: 'morale', merchant: 'prestige', hero: 'martial' };
+
+  function applyAmbitionBonus(actionId) {
+    const amb = state.player.ambition ? AMBITIONS[state.player.ambition] : null;
+    if (!amb || amb.bonusActionId !== actionId) return;
+    const bonusEffect = {};
+    if (amb.bonusKey === 'mainRes') {
+      const resKey = TRACK_MAIN_RES[state.player.track] || 'gold';
+      bonusEffect[resKey] = amb.bonusVal;
+    } else if (amb.bonusKey === 'benevolent') {
+      // benevolent 存在 flags 中
+      state.flags.benevolent = (state.flags.benevolent || 0) + amb.bonusVal;
+    } else {
+      bonusEffect[amb.bonusKey] = amb.bonusVal;
+    }
+    if (Object.keys(bonusEffect).length > 0) applyEffect(bonusEffect);
+    addLog('action', `【${amb.name}】顺应志向，额外收获。`);
   }
 
   function doAction(actionId) {
@@ -2132,6 +2224,8 @@ const Game = (() => {
           state.flags[k] = (state.flags[k] || 0) + v;
         });
       }
+      // 应用个人志向加成
+      applyAmbitionBonus(actionId);
       const logText = pick(commonAction.results);
       addLog('action', `【${commonAction.name}】${logText}`);
       checkEnd();
@@ -2688,5 +2782,5 @@ const Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, setAmbition, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS, AMBITIONS };
 })();
