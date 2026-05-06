@@ -586,6 +586,62 @@ console.log('\n== 晚期小事件（round17）==');
 }
 
 // ─────────────────────────────────────────────
+// 终章故事事件（round 18）
+// ─────────────────────────────────────────────
+console.log('\n== 终章故事事件（round 18）==');
+
+// 测试1：造反 rebel_s6 在 round 18 触发
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.triggeredStories = ['rebel_s1','rebel_s2','rebel_s3','rebel_s4','rebel_s5',
+    'rebel_m1','rebel_m2','rebel_m3'];
+  s.round = 17;
+  const origRand = Math.random;
+  Math.random = () => 0.9;
+  Game.endRound();
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') { Game.chooseStory(0); s = Game.getState(); }
+  assert('造反 round18 触发 rebel_s6（最后一战）',
+    s.triggeredStories.includes('rebel_s6'));
+}
+
+// 测试2：富商 merchant_s6 在 round 18 触发
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  s.triggeredStories = ['merchant_s1','merchant_s2','merchant_s3','merchant_s4','merchant_s5',
+    'merchant_m1','merchant_m2','merchant_m3'];
+  s.round = 17;
+  const origRand = Math.random;
+  Math.random = () => 0.9;
+  Game.endRound();
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') { Game.chooseStory(0); s = Game.getState(); }
+  assert('富商 round18 触发 merchant_s6（百年商号）',
+    s.triggeredStories.includes('merchant_s6'));
+}
+
+// 测试3：侠客 hero_s6 在 round 18 触发
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.triggeredStories = ['hero_s1','hero_s2','hero_s3','hero_s4','hero_s5',
+    'hero_m1','hero_m2','hero_m3'];
+  s.round = 17;
+  const origRand = Math.random;
+  Math.random = () => 0.9;
+  Game.endRound();
+  Math.random = origRand;
+  s = Game.getState();
+  if (s.phase === 'story') { Game.chooseStory(0); s = Game.getState(); }
+  assert('侠客 round18 触发 hero_s6（一刀封神）',
+    s.triggeredStories.includes('hero_s6'));
+}
+
+// ─────────────────────────────────────────────
 // 人生时间线 测试
 // ─────────────────────────────────────────────
 console.log('\n== 人生时间线 ==');
