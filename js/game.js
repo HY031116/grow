@@ -2084,7 +2084,7 @@ const ENDINGS = {
 
 // ==================== 游戏状态机 ====================
 
-const Game = (() => {
+var Game = (() => {
   let state = null;
 
   function init() {

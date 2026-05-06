@@ -1,6 +1,6 @@
 'use strict';
 
-const UI = (() => {
+var UI = (() => {
 
   function render() {
     const s = Game.getState();
