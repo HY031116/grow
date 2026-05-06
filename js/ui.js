@@ -662,17 +662,26 @@ var UI = (() => {
   // ============================
   // 天下地图面板
   // ============================
-  // 城市定义：id / 名称 / SVG坐标 / 出身归属 / 赛道标签
+  // 城市定义：id / 名称 / SVG坐标 / 出身归属 / 赛道标签 / 背景描述
   const MAP_CITIES = [
-    { id: 'capital',  name: '燕京', x: 120, y: 52,  origin: null,       tracks: ['court'],              isCapital: true },
-    { id: 'north',    name: '塞外', x: 120, y: 16,  origin: null,       tracks: ['rebel'],              isFrontier: true },
-    { id: 'youzhou',  name: '幽州', x: 178, y: 34,  origin: 'warrior',  tracks: ['rebel','court'],      isFrontier: true },
-    { id: 'guanzhong',name: '关中', x: 68,  y: 50,  origin: 'scholar',  tracks: ['court'],              isFrontier: false },
-    { id: 'yangzhou', name: '扬州', x: 192, y: 90,  origin: 'merchant', tracks: ['merchant'],           isFrontier: false },
-    { id: 'jiangnan', name: '江南', x: 182, y: 130, origin: null,       tracks: ['merchant','hero'],    isFrontier: false },
-    { id: 'jingchu',  name: '荆楚', x: 112, y: 118, origin: null,       tracks: ['rebel','hero'],       isFrontier: false },
-    { id: 'shudi',    name: '蜀地', x: 54,  y: 110, origin: 'wanderer', tracks: ['hero'],               isFrontier: false },
-    { id: 'lingnan',  name: '岭南', x: 138, y: 158, origin: null,       tracks: ['merchant','hero'],    isFrontier: false }
+    { id: 'capital',   name: '燕京', x: 120, y: 52,  origin: null,       tracks: ['court'],           isCapital: true,
+      desc: '帝都，天下权柄汇聚之所。百官列朝，圣眷难测，一言可决万人命运。' },
+    { id: 'north',     name: '塞外', x: 120, y: 16,  origin: null,       tracks: ['rebel'],           isFrontier: true,
+      desc: '边疆荒漠，狼烟不息。草莽英雄最初揭竿之地，战马嘶鸣，刀剑为证。' },
+    { id: 'youzhou',   name: '幽州', x: 178, y: 34,  origin: 'warrior',  tracks: ['rebel','court'],   isFrontier: true,
+      desc: '东北重镇，三面皆山，易守难攻。将门子弟世代驻守，弓马娴熟，精兵辈出。' },
+    { id: 'guanzhong', name: '关中', x: 68,  y: 50,  origin: 'scholar',  tracks: ['court'],           isFrontier: false,
+      desc: '古都旧地，四塞之固，人杰地灵。书院林立，士子赴京赶考的必经之路。' },
+    { id: 'yangzhou',  name: '扬州', x: 192, y: 90,  origin: 'merchant', tracks: ['merchant'],        isFrontier: false,
+      desc: '江南门户，水运要道，商贾云集。天下商货多由此中转，富庶甲于一方。' },
+    { id: 'jiangnan',  name: '江南', x: 182, y: 130, origin: null,       tracks: ['merchant','hero'], isFrontier: false,
+      desc: '鱼米之乡，丝绸重镇。运河如织，酒楼歌肆间藏着无数侠客与商贾的传奇。' },
+    { id: 'jingchu',   name: '荆楚', x: 112, y: 118, origin: null,       tracks: ['rebel','hero'],    isFrontier: false,
+      desc: '中原腹地，四通八达，兵家必争之地。义军与朝廷在此拉锯，侠士也在此留名。' },
+    { id: 'shudi',     name: '蜀地', x: 54,  y: 110, origin: 'wanderer', tracks: ['hero'],            isFrontier: false,
+      desc: '天府之国，山高路险，藏龙卧虎。奇人异士隐居深山，出奇兵之所，游侠故土。' },
+    { id: 'lingnan',   name: '岭南', x: 138, y: 158, origin: null,       tracks: ['merchant','hero'], isFrontier: false,
+      desc: '南海之滨，异域风物荟萃。海船往来，香料珍宝汇聚于此，海贸通衢。' }
   ];
 
   // 道路连接
@@ -682,20 +691,78 @@ var UI = (() => {
     ['jiangnan','jingchu'],['jiangnan','lingnan'],['jingchu','shudi'],['jingchu','lingnan']
   ];
 
+  // 当前地图游戏状态缓存（供 mapCityClick 使用）
+  let _mapState = null;
+
+  // 根据赛道/资源/当前city状态，生成城市当前状态说明
+  function getCityStatusText(city, s) {
+    const track = s.player.track;
+    const origin = s.player.origin;
+    const res = s.resources;
+    if (city.origin === origin) {
+      return '🏠 你的故土——从这里出发，踏上一生的征途。';
+    }
+    if (city.isCapital && track === 'court') {
+      const fav = res.favor || 0;
+      if (fav >= 70) return `★ 帝都核心——你的圣眷已达 ${fav}，皇帝对你青眼有加。`;
+      if (fav >= 40) return `★ 帝都——圣眷 ${fav}，在朝堂中尚有立足之地。`;
+      return `★ 帝都——圣眷仅余 ${fav}，处境岌岌可危。`;
+    }
+    if (track === 'rebel') {
+      const territory = res.territory || 0;
+      const rebelOrder = ['youzhou','north','jingchu','shudi','guanzhong','jiangnan','lingnan','yangzhou','capital'];
+      const pos = rebelOrder.indexOf(city.id);
+      const controlledCount = Math.floor(territory / 12);
+      if (pos < controlledCount) return `⚔️ 已在你麾下——义军地盘 ${territory}，此地已归控制。`;
+      return `○ 尚未攻取——地盘 ${territory} 点，此地仍在观望中。`;
+    }
+    if (track === 'merchant') {
+      const routes = res.routes || 0;
+      const merchantOrder = ['yangzhou','jiangnan','capital','jingchu','lingnan'];
+      const pos = merchantOrder.indexOf(city.id);
+      if (pos < routes + 1) return `🛤️ 商路已通——此地已纳入你的贸易网络（共 ${routes} 条商路）。`;
+      if (!city.tracks.includes('merchant')) return `○ 暂无商路——此地尚未开拓商业。`;
+      return `○ 待开拓——商路 ${routes} 条，此地尚未纳入贸易版图。`;
+    }
+    if (track === 'hero') {
+      const fame = res.fame || 0;
+      const heroOrder = ['shudi','jingchu','jiangnan','lingnan'];
+      const pos = heroOrder.indexOf(city.id);
+      if (pos < Math.floor(fame / 25) + 1) return `🗡️ 侠名已至——名望 ${fame}，此地百姓知晓你的名字。`;
+      if (!city.tracks.includes('hero')) return `○ 侠迹未至——此地与你暂无交集。`;
+      return `○ 尚未扬名——名望 ${fame}，此地还不知你的存在。`;
+    }
+    if (track === 'court' && city.tracks.includes('court')) {
+      return (res.power || 0) >= 40 ? `✦ 势力已延伸至此——权柄 ${res.power}。` : `○ 尚未渗透——权柄 ${res.power || 0}，力量尚弱。`;
+    }
+    return '○ 此地与你目前无直接关联。';
+  }
+
+  // 城市点击处理（通过 UI.mapCityClick 暴露）
+  function mapCityClick(cityId) {
+    const city = MAP_CITIES.find(c => c.id === cityId);
+    if (!city) return;
+    const detailEl = document.getElementById('map-detail');
+    if (!detailEl) return;
+    const statusText = _mapState ? getCityStatusText(city, _mapState) : '';
+    detailEl.innerHTML = `
+      <div class="map-detail-name">${city.isCapital ? '★ ' : ''}${city.name}</div>
+      <div class="map-detail-desc">${city.desc}</div>
+      ${statusText ? `<div class="map-detail-status">${statusText}</div>` : ''}`;
+  }
+
   function renderMapPanel(s) {
+    _mapState = s; // 缓存当前状态供点击事件使用
     const track = s.player.track;
     const origin = s.player.origin;
     const res = s.resources;
 
     // 根据赛道和资源决定每个城市的高亮状态
     function getCityState(city) {
-      // 玩家出身地：永远显示出发标记
       if (city.origin === origin) return 'origin';
-      // 首都：官场始终高亮
       if (city.isCapital && track === 'court') {
         return (res.favor || 0) >= 50 ? 'active-high' : 'active';
       }
-      // 造反：按地盘值高亮城市（每约12点地盘多亮一座）
       if (track === 'rebel') {
         const territory = res.territory || 0;
         const controlledCount = Math.floor(territory / 12);
@@ -704,7 +771,6 @@ var UI = (() => {
         if (pos < controlledCount) return 'active';
         return 'inactive';
       }
-      // 富商：按商路值高亮贸易城市
       if (track === 'merchant') {
         const routes = res.routes || 0;
         if (!city.tracks.includes('merchant')) return 'inactive';
@@ -713,7 +779,6 @@ var UI = (() => {
         if (pos < routes + 1) return routes >= 3 ? 'active-high' : 'active';
         return 'inactive';
       }
-      // 侠客：按名望高亮城市
       if (track === 'hero') {
         const fame = res.fame || 0;
         if (!city.tracks.includes('hero')) return 'inactive';
@@ -722,28 +787,31 @@ var UI = (() => {
         if (pos < Math.floor(fame / 25) + 1) return fame >= 70 ? 'active-high' : 'active';
         return 'inactive';
       }
-      // 官场非首都
       if (track === 'court' && city.tracks.includes('court')) {
         return (res.power || 0) >= 40 ? 'active' : 'inactive';
       }
       return 'inactive';
     }
 
-    // 生成 SVG
+    // 生成 SVG（每座城市包含可点击的 <g> 元素）
     const cityElems = MAP_CITIES.map(city => {
-      const state = getCityState(city);
+      const cityState = getCityState(city);
       const r = city.isCapital ? 7 : 5;
       const fillMap = { origin: '#e8b84b', 'active-high': '#4caf81', active: '#5b8fe8', inactive: '#2e2e2e' };
       const strokeMap = { origin: '#ffd700', 'active-high': '#2c9', active: '#8ab4f8', inactive: '#555' };
-      const fill = fillMap[state] || '#2e2e2e';
-      const stroke = strokeMap[state] || '#555';
-      // 城市标记（圆点 + 名称）
+      const fill = fillMap[cityState] || '#2e2e2e';
+      const stroke = strokeMap[cityState] || '#555';
       const isOrigin = city.origin === origin;
-      const starMark = city.isCapital ? `<text x="${city.x}" y="${city.y - 10}" text-anchor="middle" font-size="10" fill="#c9a84c">★</text>` : '';
-      const originMark = isOrigin ? `<circle cx="${city.x}" cy="${city.y}" r="${r+4}" fill="none" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="3,2"/>` : '';
-      return `${originMark}${starMark}
-        <circle cx="${city.x}" cy="${city.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" class="map-city map-city-${state}"/>
-        <text x="${city.x}" y="${city.y + r + 9}" text-anchor="middle" font-size="8.5" fill="${state === 'inactive' ? '#666' : '#ccc'}" font-family="serif">${city.name}</text>`;
+      const starMark = city.isCapital ? `<text x="${city.x}" y="${city.y - 10}" text-anchor="middle" font-size="10" fill="#c9a84c" pointer-events="none">★</text>` : '';
+      const originMark = isOrigin ? `<circle cx="${city.x}" cy="${city.y}" r="${r+4}" fill="none" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="3,2" pointer-events="none"/>` : '';
+      // 可点击透明热区（比圆点大，易于触摸）
+      const hitArea = `<circle cx="${city.x}" cy="${city.y}" r="${r + 8}" fill="transparent" onclick="UI.mapCityClick('${city.id}')" style="cursor:pointer"/>`;
+      return `<g class="map-city-g">
+        ${originMark}${starMark}
+        <circle cx="${city.x}" cy="${city.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" pointer-events="none"/>
+        <text x="${city.x}" y="${city.y + r + 9}" text-anchor="middle" font-size="8.5" fill="${cityState === 'inactive' ? '#666' : '#ccc'}" font-family="serif" pointer-events="none">${city.name}</text>
+        ${hitArea}
+      </g>`;
     }).join('');
 
     const roadElems = MAP_ROADS.map(([a, b]) => {
@@ -753,7 +821,6 @@ var UI = (() => {
       return `<line x1="${ca.x}" y1="${ca.y}" x2="${cb.x}" y2="${cb.y}" stroke="#3a3a3a" stroke-width="1"/>`;
     }).join('');
 
-    // 当前赛道提示标签
     const trackLabel = { court: '朝廷势力范围', rebel: '义军控制地盘', merchant: '商贸辐射范围', hero: '侠名所至之地' };
 
     return `
@@ -764,6 +831,7 @@ var UI = (() => {
         ${roadElems}
         ${cityElems}
       </svg>
+      <div id="map-detail" class="map-detail"><span class="map-detail-hint">点击城市查看详情</span></div>
       <div class="map-footer">
         <span class="map-legend-item map-leg-origin">● 出身地</span>
         <span class="map-legend-item map-leg-active">● 势力范围</span>
@@ -771,5 +839,5 @@ var UI = (() => {
       </div>`;
   }
 
-  return { render };
+  return { render, mapCityClick };
 })();

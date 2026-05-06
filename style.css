@@ -952,6 +952,37 @@ html, body {
 .map-leg-active  { color: #5b8fe8; }
 .map-leg-high    { color: #4caf81; }
 
+/* 城市详情卡片 */
+.map-detail {
+  margin-top: 6px;
+  min-height: 38px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.map-detail-hint {
+  color: #555;
+  font-size: 0.65rem;
+}
+.map-detail-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c9a84c;
+  margin-bottom: 3px;
+}
+.map-detail-desc {
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  margin-bottom: 3px;
+}
+.map-detail-status {
+  color: #8ab4f8;
+  font-size: 0.67rem;
+}
+
 /* ==================== 志向选择页 ==================== */#screen-ambition {
   display: flex;
   flex-direction: column;
