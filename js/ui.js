@@ -108,9 +108,17 @@ const UI = (() => {
       `${'<span class="ap-dot used"></span>'.repeat(s.usedPoints)}` +
       `${'<span class="ap-dot"></span>'.repeat(remaining)}`;
 
-    // 内心独白（每回合固定）
+    // 内心独白（每回合固定，关键年份附加成长感悟）
     const monoEl = document.getElementById('monologue-text');
-    if (monoEl) monoEl.textContent = getMonologue(s);
+    if (monoEl) {
+      const monoText = getMonologue(s);
+      if (monoText.includes('\n')) {
+        const parts = monoText.split('\n');
+        monoEl.innerHTML = parts[0] + '<br><span class="growth-arc">' + parts[1] + '</span>';
+      } else {
+        monoEl.textContent = monoText;
+      }
+    }
 
     // 资源面板（含胜利目标进度条）
     const resPanel = document.getElementById('resources-panel');
@@ -558,7 +566,52 @@ const UI = (() => {
         .replace('半生征战，山河已改，吾之名，或将永载史册。', '半生征战，山河已改，巾帼女将之名，或将永载史册。')
         .replace('结义兄弟情深', '结义姐妹情深');
     }
+
+    // 成长弧感悟：在关键年份（第5/10/15/20年）追加一句基于 flag 的成长感悟
+    const growthText = getGrowthArc(s);
+    if (growthText) {
+      return '「' + text + '」\n' + growthText;
+    }
     return '「' + text + '」';
+  }
+
+  // 成长弧：关键年份生成基于 flag 的感悟文字
+  function getGrowthArc(s) {
+    const round = s.round;
+    const f = s.flags || {};
+    const r = s.player.track;
+    // 只在第5/10/15/20年触发
+    if (![5, 10, 15, 20].includes(round)) return null;
+
+    const stageLabel = round === 5 ? '初' : round === 10 ? '中' : round === 15 ? '暮' : '终';
+
+    // 基于 flag 优先级生成感悟（先看特殊行为，再看赛道默认）
+    if ((f.benevolent || 0) >= 2) {
+      const pool = [
+        '施恩于人，方知天下并非只有尔虞我诈。',
+        '济弱扶倾，此乃吾心中不灭之光。',
+        '多行善举，渐觉心中有所沉淀。'
+      ];
+      return `——${stageLabel}悟：${pool[round % pool.length]}`;
+    }
+    if (f.loyal) {
+      return `——${stageLabel}悟：忠义二字，重若千钧，此生不改。`;
+    }
+    if (f.corrupt) {
+      return `——${stageLabel}悟：尝过权欲之味，方知人心之深渊难测。`;
+    }
+    if (f.righteous) {
+      return `——${stageLabel}悟：秉公执法，得罪了不少人，却问心无愧。`;
+    }
+    // 赛道默认感悟
+    const defaults = {
+      court: ['宦海沉浮，已渐明白进退之道。', '庙堂之上，学会了沉默与等待。', '朝堂岁月磨去了棱角，留下的是城府。'],
+      rebel: ['乱世之中，方知人心所向才是真正的胜负。', '征战数载，已不再执着于一城一地之得失。', '兵者凶器，然不得不用，此乃乱世之悲。'],
+      merchant: ['商道即人道，诚信才是立身之本。', '走南闯北，财富之外，更懂得了人情冷暖。', '富贵浮云，真正留得住的只有口碑与信誉。'],
+      hero: ['江湖岁月，早已磨去了少年意气，留下的是沉稳。', '行侠仗义，方知路见不平并非只靠拳头。', '闯荡已久，明白了强者的责任在于保护弱者。']
+    };
+    const pool = defaults[r] || ['岁月如梭，已渐有所悟。'];
+    return `——${stageLabel}悟：${pool[Math.floor(round / 5 - 1) % pool.length]}`;
   }
 
   function fmtEffect(effect) {
