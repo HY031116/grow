@@ -935,7 +935,7 @@ var UI = (() => {
       </div>`;
   }
 
-  return { render, mapCityClick, tutorialOpen, tutorialClose, tutorialNext, tutorialGoTo };
+  return { render, mapCityClick };
 })();
 
 /* ==========================================
