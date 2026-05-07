@@ -153,6 +153,21 @@ var UI = (() => {
     // 行动列表（原有行动 + NPC 互动行动）
     const actPanel = document.getElementById('actions-panel');
     const actions = ACTIONS[s.player.track];
+
+    // 季节指示器：列出本季强化的行动名
+    const seasonIcons = { '春': '🌸', '夏': '☀️', '秋': '🍂', '冬': '❄️' };
+    const boostedActions = actions.filter(a => a.seasonBonus && a.seasonBonus.season === s.season);
+    const seasonIndicatorHtml = boostedActions.length > 0
+      ? `<div class="season-indicator">
+           <span class="season-icon">${seasonIcons[s.season] || ''}</span>
+           <span class="season-label">${s.season}季强化：</span>
+           <span class="season-boosted-list">${boostedActions.map(a => a.name).join('、')}</span>
+         </div>` : '';
+
+    // 季节指示器插入（actions-panel 的父级或上方占位元素）
+    const actSectionHeader = document.getElementById('actions-section-header');
+    if (actSectionHeader) actSectionHeader.innerHTML = seasonIndicatorHtml;
+
     const npcAction = Game.NPC_ACTIONS[s.player.track];
     const npcActHtml = npcAction ? (() => {
       const canUse = npcAction.cost <= remaining;
@@ -178,9 +193,18 @@ var UI = (() => {
       const isSeasonBonus = act.seasonBonus && act.seasonBonus.season === s.season;
       const seasonTag = isSeasonBonus
         ? `<span class="act-season-badge" title="${act.seasonBonus.hint}">✦ ${act.seasonBonus.season}季强化</span>` : '';
-      // 高风险行动：显示胜率提示
+      // 高风险行动：计算胜率，生成悬停详情 tooltip
       const winRate = act.isRiskAction
-        ? `<span class="act-risk-badge">⚡ 搏一把</span>` : '';
+        ? (() => {
+            const chance = Math.round((1 - act.failChance) * 100);
+            const winStr = fmtEffect(act.effect);
+            const loseStr = fmtEffect(act.failEffect);
+            return `<span class="act-risk-badge">⚡ 搏一把</span>
+                    <div class="act-risk-tooltip">
+                      <div class="risk-tip-row"><span class="risk-tip-win">胜率 ${chance}%</span> 成功：${winStr}</div>
+                      <div class="risk-tip-row"><span class="risk-tip-lose">败率 ${100 - chance}%</span> 失败：${loseStr}</div>
+                    </div>`;
+          })() : '';
       const btnClass = `action-btn${canUse ? '' : ' action-disabled'}${isSeasonBonus ? ' action-season' : ''}${act.isRiskAction ? ' action-risk' : ''}`;
       return `
         <button class="${btnClass}"
@@ -191,7 +215,7 @@ var UI = (() => {
             <span class="act-cost">${'●'.repeat(act.cost)}</span>
           </div>
           <div class="act-desc">${act.desc}</div>
-          <div class="act-effect">${effectStr}${seasonTag}${winRate}</div>
+          <div class="act-effect${act.isRiskAction ? ' act-effect-risk' : ''}">${effectStr}${seasonTag}${winRate}</div>
         </button>`;
     }).join('') + npcActHtml;
 

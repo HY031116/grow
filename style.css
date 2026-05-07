@@ -680,6 +680,45 @@ html, body {
 .act-desc { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 5px; line-height: 1.5; }
 .act-effect { font-size: 0.78rem; }
 
+/* 高风险行动悬停详情 tooltip */
+.act-effect-risk { position: relative; cursor: default; }
+.act-risk-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  background: #1e1209;
+  border: 1px solid #c0445a;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  min-width: 220px;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.55);
+  pointer-events: none;
+}
+.act-effect-risk:hover .act-risk-tooltip { display: block; }
+.risk-tip-row { white-space: nowrap; }
+.risk-tip-win  { color: #4ade80; font-weight: 700; margin-right: 4px; }
+.risk-tip-lose { color: #f87171; font-weight: 700; margin-right: 4px; }
+
+/* 季节指示器 */
+.season-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  margin-bottom: 8px;
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: var(--radius);
+  font-size: 0.76rem;
+}
+.season-icon { font-size: 1rem; line-height: 1; }
+.season-label { color: var(--gold); font-weight: 700; }
+.season-boosted-list { color: var(--text-dim); }
+
 .eff-pos { color: #4ade80; margin-right: 6px; }
 .eff-neg { color: #f87171; margin-right: 6px; }
 
@@ -736,6 +775,9 @@ html, body {
 .log-event .log-text  { color: #89c4e1; }
 .log-system .log-text { color: #c39bd3; }
 .log-warn .log-text   { color: #e74c3c; }
+/* 季节加成/系统提示 */
+.log-hint { border-color: #c9a84c; background: rgba(201,168,76,0.06); }
+.log-hint .log-text { color: #e8c45a; font-style: italic; }
 
 /* ==========================================
    通用按钮
