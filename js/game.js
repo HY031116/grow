@@ -1290,6 +1290,179 @@ const MINOR_EVENTS = {
   ]
 };
 
+// ==================== 战役事件（手动战斗，3轮策略选择） ====================
+// 格式：type:'battle'，通过 getBattleEvent() 检测触发条件，优先级高于普通故事事件
+const BATTLE_EVENTS = {
+  court: [
+    {
+      id: 'battle_court_1',
+      type: 'battle',
+      title: '朝堂弹劾',
+      flavor: '政敌联合十余名朝官联名上奏，弹劾你结党营私。圣上将折子摔在你面前："卿可有话说？"朝堂一片寂静，此战只能赢，不能输！',
+      cond: (f, r, n, round) => round >= 9 && (r.prestige || r.favor || 0) >= 40,
+      enemyName: '权臣派系',
+      enemyHp: 65,
+      playerHp: 80,
+      maxRounds: 3,
+      moves: [
+        { label: '正面上奏', emoji: '📜', desc: '铁证如山，直接反驳政敌罪行，高风险高收益。', pDmg: [15, 25], eDmg: [18, 28] },
+        { label: '拉拢中立', emoji: '🤝', desc: '说服骑墙派官员联合声援，稳中求胜。', pDmg: [10, 18], eDmg: [10, 18] },
+        { label: '韬光养晦', emoji: '🧘', desc: '暂且认错示弱，积蓄后发之力。', pDmg: [3, 9], eDmg: [5, 11] }
+      ],
+      winEffect: { prestige: 15, wisdom: 8 },
+      loseEffect: { prestige: -12, gold: -10 },
+      winStory: '折子雪片飞来，政敌反被查出私吞军饷！圣上龙颜大悦，当众褒奖——此番朝堂之争，你大获全胜。',
+      loseStory: '局势对你不利，圣上虽未降罪，却当众训斥，颜面大损，需重振朝中声望。'
+    },
+    {
+      id: 'battle_court_2',
+      type: 'battle',
+      title: '储位博弈',
+      flavor: '两位皇子暗中争嫡，双方都来拉拢你——而最终你必须在朝堂上表明立场，错押宝则万劫不复。',
+      cond: (f, r, n, round) => round >= 15 && (r.prestige || r.favor || 0) >= 60,
+      enemyName: '对立皇子派',
+      enemyHp: 80,
+      playerHp: 85,
+      maxRounds: 3,
+      moves: [
+        { label: '陈情请命', emoji: '👑', desc: '直接向圣上陈言，力挺己方皇子，风险极高。', pDmg: [18, 28], eDmg: [20, 30] },
+        { label: '结盟朝臣', emoji: '🏛️', desc: '与重臣联合呼吁，借势压人。', pDmg: [12, 20], eDmg: [12, 20] },
+        { label: '明哲保身', emoji: '🛡️', desc: '托病不上朝，静观其变。', pDmg: [4, 10], eDmg: [6, 12] }
+      ],
+      winEffect: { prestige: 20, favor: 15 },
+      loseEffect: { prestige: -20, favor: -10 },
+      winStory: '皇子顺利入主东宫，你居功至伟——新储位感激涕零，圣上亦对你另眼相看，前途一片光明。',
+      loseStory: '站错阵营，政敌趁机打压，圣上颜面尽失，你的朝中地位大受挫伤。'
+    }
+  ],
+  rebel: [
+    {
+      id: 'battle_rebel_1',
+      type: 'battle',
+      title: '攻城之战',
+      flavor: '一座险关横亘眼前，守将悬旗示威——"此城固若金汤，叛军速速退去！"麾下将士目光炯炯，等你一声令下。',
+      cond: (f, r, n, round) => round >= 8 && (r.territory || 0) >= 35,
+      enemyName: '守关将领',
+      enemyHp: 70,
+      playerHp: 80,
+      maxRounds: 3,
+      moves: [
+        { label: '正面强攻', emoji: '⚔️', desc: '全军压上，不计伤亡，猛攻城门。', pDmg: [15, 26], eDmg: [18, 28] },
+        { label: '奇袭侧翼', emoji: '🏹', desc: '精锐小队绕后突入，出奇制胜。', pDmg: [12, 22], eDmg: [10, 18] },
+        { label: '围城耗敌', emoji: '🏕️', desc: '切断粮道，围而不攻，以逸待劳。', pDmg: [5, 12], eDmg: [6, 12] }
+      ],
+      winEffect: { territory: 15, morale: 8 },
+      loseEffect: { morale: -12, gold: -10 },
+      winStory: '旌旗猎猎，城门轰然洞开！此战大胜，三军振奋，地盘又拓一城，声望响彻四方。',
+      loseStory: '守将顽抗，攻城折戟。三军伤亡惨重，士气大挫，需重整旗鼓再战。'
+    },
+    {
+      id: 'battle_rebel_2',
+      type: 'battle',
+      title: '决战中原',
+      flavor: '朝廷终于调集大军决战——对方主帅旗帜高张，十万铁甲压境。生死存亡，就在此一役！',
+      cond: (f, r, n, round) => round >= 14 && (r.territory || 0) >= 55,
+      enemyName: '朝廷大军',
+      enemyHp: 90,
+      playerHp: 90,
+      maxRounds: 3,
+      moves: [
+        { label: '中军突破', emoji: '⚔️', desc: '亲率精锐直取主帅，险中求胜。', pDmg: [18, 30], eDmg: [22, 32] },
+        { label: '两翼包抄', emoji: '🏇', desc: '以骑兵迂回断敌退路，稳步压制。', pDmg: [13, 22], eDmg: [14, 22] },
+        { label: '坚守壁垒', emoji: '🛡️', desc: '据险固守，消耗敌军锐气。', pDmg: [6, 13], eDmg: [8, 14] }
+      ],
+      winEffect: { territory: 20, morale: 15 },
+      loseEffect: { territory: -10, morale: -15 },
+      winStory: '朝廷主帅阵亡，大军溃散！中原已入囊中，天下大势尽归于你。',
+      loseStory: '此战惨败，朝廷趁势反扑，数月辛苦付诸东流，形势万分危急。'
+    }
+  ],
+  merchant: [
+    {
+      id: 'battle_merchant_1',
+      type: 'battle',
+      title: '商场角力',
+      flavor: '最大的竞争对手宣布低价倾销，意图挤垮你的货路。行会的老人们都在看你——输了就意味着出局。',
+      cond: (f, r, n, round) => round >= 9 && (r.wealth || 0) >= 40,
+      enemyName: '竞争商号',
+      enemyHp: 60,
+      playerHp: 80,
+      maxRounds: 3,
+      moves: [
+        { label: '价格压制', emoji: '💰', desc: '砸钱低价抢市，消耗对手资金链。', pDmg: [15, 24], eDmg: [18, 26] },
+        { label: '联合行会', emoji: '🤝', desc: '借行会之势，联合排挤竞争者。', pDmg: [10, 18], eDmg: [10, 18] },
+        { label: '静观其变', emoji: '⚖️', desc: '保守应对，稳住现有货路。', pDmg: [4, 10], eDmg: [5, 11] }
+      ],
+      winEffect: { wealth: 20, influence: 10 },
+      loseEffect: { wealth: -15, gold: -15 },
+      winStory: '竞争对手资金链断裂，宣告歇业！你的货路独占鳌头，财源滚滚而来。',
+      loseStory: '商战落败，大批货物滞销，不得不低价抛售，元气大伤。'
+    },
+    {
+      id: 'battle_merchant_2',
+      type: 'battle',
+      title: '垄断之争',
+      flavor: '四大商行联手封锁你的货源，扬言三个月内令你关张——这是一场生死之战，绝不能退！',
+      cond: (f, r, n, round) => round >= 15 && (r.wealth || 0) >= 65,
+      enemyName: '四大商行联盟',
+      enemyHp: 85,
+      playerHp: 85,
+      maxRounds: 3,
+      moves: [
+        { label: '奇货居奇', emoji: '💎', desc: '独家控制稀缺货源，以奇制胜。', pDmg: [17, 27], eDmg: [20, 30] },
+        { label: '分化瓦解', emoji: '🧩', desc: '收买其中最弱的一家，打破联盟。', pDmg: [12, 20], eDmg: [12, 20] },
+        { label: '广结善缘', emoji: '🌐', desc: '扩大人脉，寻找新的合作渠道。', pDmg: [5, 12], eDmg: [6, 12] }
+      ],
+      winEffect: { wealth: 25, influence: 15 },
+      loseEffect: { wealth: -20, influence: -8 },
+      winStory: '联盟内讧，最终分崩离析！你趁机全面出击，一举垄断了这条最赚钱的货路，富甲一方。',
+      loseStory: '四大商行合力压制，你被迫放弃几条重要货路，元气大伤，需重新布局。'
+    }
+  ],
+  hero: [
+    {
+      id: 'battle_hero_1',
+      type: 'battle',
+      title: '江湖宿怨',
+      flavor: '一名仇家持帖挑战，说你沽名钓誉——"今日江湖当众见个高下，敢来否？"四周已围满观战的江湖人。',
+      cond: (f, r, n, round) => round >= 9 && (r.martial || 0) >= 40,
+      enemyName: '仇家高手',
+      enemyHp: 65,
+      playerHp: 80,
+      maxRounds: 3,
+      moves: [
+        { label: '迅猛出击', emoji: '⚡', desc: '以攻代守，先发制人，全力压制。', pDmg: [15, 25], eDmg: [18, 27] },
+        { label: '虚实相生', emoji: '🌀', desc: '声东击西，引对方露出破绽后再反击。', pDmg: [11, 20], eDmg: [10, 18] },
+        { label: '以守为攻', emoji: '🛡️', desc: '四两拨千斤，等待最佳时机。', pDmg: [4, 10], eDmg: [5, 10] }
+      ],
+      winEffect: { fame: 12, martial: 8 },
+      loseEffect: { fame: -8, martial: -5 },
+      winStory: '仇家大败，当众认输，你的武名从此在江湖中广为传颂，再无人敢轻视。',
+      loseStory: '此战落败，颜面大损，江湖上议论纷纷，需苦修内功以雪此耻。'
+    },
+    {
+      id: 'battle_hero_2',
+      type: 'battle',
+      title: '武林大会决战',
+      flavor: '武林大会决出最终擂主——对面站着当世第一人，眼神沉静如渊。台下万目睽睽，这一刻，你就是所有人的焦点。',
+      cond: (f, r, n, round) => round >= 15 && (r.martial || 0) >= 60,
+      enemyName: '武林第一高手',
+      enemyHp: 85,
+      playerHp: 85,
+      maxRounds: 3,
+      moves: [
+        { label: '全力出击', emoji: '🔥', desc: '倾尽全力，孤注一掷，以最强一击决胜负。', pDmg: [18, 30], eDmg: [22, 32] },
+        { label: '化劲借力', emoji: '🌀', desc: '以柔克刚，引对方之力反制。', pDmg: [12, 22], eDmg: [12, 20] },
+        { label: '绵里藏针', emoji: '🌸', desc: '看似守势，实则暗积内力，后发制人。', pDmg: [6, 14], eDmg: [7, 13] }
+      ],
+      winEffect: { fame: 20, martial: 12 },
+      loseEffect: { fame: -12, martial: -6 },
+      winStory: '高手含笑抱拳，拱手认输——武林大会，你夺得擂主！掌声雷动，名震天下！',
+      loseStory: '高手技高一筹，你败下阵来。但败得光明磊落，江湖人仍以礼相待，只是需要更多磨砺。'
+    }
+  ]
+};
+
 const STORY_EVENTS = {
   court: [
     {
@@ -3096,7 +3269,9 @@ var Game = (() => {
         unrest: 25      // 民间动荡（0-100），高=民不聊生，低=安居乐业
       },
       // 最近一次行动的资源变化量（用于 UI 浮动数字提示）
-      lastResDelta: {}
+      lastResDelta: {},
+      // 战役状态（手动战斗进行中时非 null）
+      battle: null
     };
     // 防御性调用：init 在 UI 可能尚未加载时执行
     if (typeof UI !== 'undefined') UI.render();
@@ -3420,11 +3595,31 @@ var Game = (() => {
       return;
     }
 
-    // 再检查是否触发主线剧情事件
+    // 再检查是否触发主线剧情事件（含战役事件）
     const storyEvt = getStoryEvent();
     if (storyEvt) {
-      state.pendingStory = resolveStoryEvent(storyEvt, state.flags, state.resources);
       state.triggeredStories.push(storyEvt.id);
+      // 战役事件：初始化战斗状态并进入战斗界面
+      if (storyEvt.type === 'battle') {
+        state.battle = {
+          event: storyEvt,
+          playerHp: storyEvt.playerHp,
+          playerMaxHp: storyEvt.playerHp,
+          enemyHp: storyEvt.enemyHp,
+          enemyMaxHp: storyEvt.enemyHp,
+          round: 1,
+          maxRounds: storyEvt.maxRounds || 3,
+          log: [],
+          done: false,
+          won: null
+        };
+        state.pendingStory = storyEvt; // 复用 phase 判断
+        state.phase = 'story';
+        saveGame();
+        UI.render();
+        return;
+      }
+            state.pendingStory = resolveStoryEvent(storyEvt, state.flags, state.resources);
       state.phase = 'story';
       saveGame(); // 自动存档
       UI.render();
@@ -3572,13 +3767,24 @@ var Game = (() => {
         Math.random() < 0.40) {
       return crisis;
     }
+
+    // 战役事件：优先级低于主线/小事件/危机，条件满足且未触发时激活
+    const battlePool = BATTLE_EVENTS[state.player.track] || [];
+    const battleEvt = battlePool.find(e =>
+      !state.triggeredStories.includes(e.id) &&
+      e.cond(state.flags, state.resources, state.npcs, state.round)
+    );
+    if (battleEvt) return battleEvt;
+
     return null;
   }
 
   // 玩家在剧情事件中做出选择
   function chooseStory(idx) {
     const story = state.pendingStory;
-    if (!story || !story.choices[idx]) return;
+    // 战役事件由 chooseMove / endBattle 处理，此处直接忽略
+    if (!story || story.type === 'battle') return;
+    if (!story.choices[idx]) return;
     state.lastResDelta = {}; // 故事选择前清零 delta
     // 路由到 NPC 事件处理
     if (story.isNpcEvent) {
@@ -3605,6 +3811,70 @@ var Game = (() => {
         addLog('story', `【${story.title}】${choice.result}`);
     // 人生时间线：主线故事完成
     addTimeline('📖', `【${story.title}】${choice.result.slice(0, 22)}${choice.result.length > 22 ? '…' : ''}`);
+    state.pendingStory = null;
+    state.phase = 'play';
+
+    checkEnd();
+    UI.render();
+  }
+
+  // ==================== 战役系统（手动战斗） ====================
+
+  // 辅助：随机整数 [min, max]
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // 玩家选择本轮出招（moveIdx: 0/1/2）
+  function chooseMove(moveIdx) {
+    const b = state.battle;
+    if (!b || b.done) return;
+    const move = b.event.moves[moveIdx];
+    if (!move) return;
+
+    // 计算伤害（随机区间）
+    const pDmg = randInt(move.pDmg[0], move.pDmg[1]); // 我方对敌伤害
+    const eDmg = randInt(move.eDmg[0], move.eDmg[1]); // 敌方对我伤害
+
+    b.enemyHp  = Math.max(0, b.enemyHp  - pDmg);
+    b.playerHp = Math.max(0, b.playerHp - eDmg);
+
+    b.log.push({
+      round: b.round,
+      move: move.label,
+      emoji: move.emoji,
+      pDmg,
+      eDmg,
+      playerHp: b.playerHp,
+      enemyHp: b.enemyHp
+    });
+
+    b.round++;
+
+    // 判断战斗结束
+    if (b.playerHp <= 0 || b.enemyHp <= 0 || b.round > b.maxRounds) {
+      b.done = true;
+      b.won = b.playerHp > 0 && b.playerHp >= b.enemyHp;
+    }
+
+    UI.render();
+  }
+
+  // 战役结算：应用效果并返回 play 阶段
+  function endBattle() {
+    const b = state.battle;
+    if (!b || !b.done) return;
+
+    state.lastResDelta = {};
+    const effect = b.won ? b.event.winEffect : b.event.loseEffect;
+    applyEffect(effect);
+
+    const resultText = b.won ? b.event.winStory : b.event.loseStory;
+    addLog('story', `【${b.event.title}】${resultText}`);
+    addTimeline(b.won ? '⚔️' : '💔',
+      `【${b.event.title}】${resultText.slice(0, 22)}${resultText.length > 22 ? '…' : ''}`);
+
+    state.battle = null;
     state.pendingStory = null;
     state.phase = 'play';
 
@@ -3920,5 +4190,5 @@ var Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, setAmbition, doAction, endRound, chooseStory, chooseNpcStory, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS, AMBITIONS };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, setAmbition, doAction, endRound, chooseStory, chooseNpcStory, chooseMove, endBattle, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS, AMBITIONS };
 })();

@@ -10,7 +10,11 @@ var UI = (() => {
       case 'track':      renderTrack(s);      break;
       case 'ambition':   renderAmbition(s);   break;
       case 'play':       renderPlay(s);       break;
-      case 'story':      renderStory(s);      break;
+      case 'story':
+        // 战役事件使用专属渲染
+        if (s.battle) { renderBattle(s); break; }
+        renderStory(s);
+        break;
       case 'transition': renderTransition(s); break;
       case 'result':     renderResult(s);     break;
     }
@@ -336,6 +340,90 @@ var UI = (() => {
           <div class="choice-effect">${effStr}</div>
         </button>`;
     }).join('');
+  }
+
+  // ============================
+  // 战役事件页（手动战斗）
+  // ============================
+  function renderBattle(s) {
+    show('screen-story');
+    const b = s.battle;
+    const ev = b.event;
+
+    // 血条百分比
+    const playerPct = Math.max(0, Math.round(b.playerHp / b.playerMaxHp * 100));
+    const enemyPct  = Math.max(0, Math.round(b.enemyHp  / b.enemyMaxHp  * 100));
+
+    // 战斗日志
+    const logHtml = b.log.map(l => `
+      <div class="battle-log-row">
+        <span class="battle-log-round">第${l.round}轮</span>
+        <span class="battle-log-move">${l.emoji} ${l.move}</span>
+        <span class="battle-log-dmg">
+          <span class="battle-dmg-pos">我方 -${l.eDmg}</span>
+          <span class="battle-dmg-neg">敌方 -${l.pDmg}</span>
+        </span>
+      </div>`).join('');
+
+    // 出招按钮或结算界面
+    let actionHtml;
+    if (b.done) {
+      const won = b.won;
+      const effStr = fmtEffect(won ? ev.winEffect : ev.loseEffect);
+      actionHtml = `
+        <div class="battle-result ${won ? 'battle-win' : 'battle-lose'}">
+          <div class="battle-result-icon">${won ? '🏆' : '💔'}</div>
+          <div class="battle-result-title">${won ? '胜利' : '败北'}</div>
+          <div class="battle-result-story">${won ? ev.winStory : ev.loseStory}</div>
+          <div class="battle-result-effect">${effStr}</div>
+          <button class="btn-primary battle-continue-btn" onclick="Game.endBattle()">继续 →</button>
+        </div>`;
+    } else {
+      actionHtml = `
+        <div class="battle-moves">
+          ${ev.moves.map((m, i) => `
+            <button class="battle-move-btn" onclick="Game.chooseMove(${i})">
+              <span class="move-emoji">${m.emoji}</span>
+              <span class="move-label">${m.label}</span>
+              <span class="move-desc">${m.desc}</span>
+              <span class="move-range">攻 ${m.pDmg[0]}-${m.pDmg[1]} ／ 受 ${m.eDmg[0]}-${m.eDmg[1]}</span>
+            </button>`).join('')}
+        </div>`;
+    }
+
+    document.getElementById('story-title').textContent = `⚔️ ${ev.title}`;
+    document.getElementById('story-scene').textContent = ev.flavor;
+
+    document.getElementById('story-choices').innerHTML = `
+      <div class="battle-ui">
+        <!-- 血条区 -->
+        <div class="battle-bars">
+          <div class="battle-bar-side">
+            <div class="battle-bar-label">你方</div>
+            <div class="battle-bar-track">
+              <div class="battle-bar-fill battle-bar-player" style="width:${playerPct}%"></div>
+            </div>
+            <div class="battle-bar-val">${b.playerHp} / ${b.playerMaxHp}</div>
+          </div>
+          <div class="battle-bar-vs">VS</div>
+          <div class="battle-bar-side">
+            <div class="battle-bar-label">${ev.enemyName}</div>
+            <div class="battle-bar-track">
+              <div class="battle-bar-fill battle-bar-enemy" style="width:${enemyPct}%"></div>
+            </div>
+            <div class="battle-bar-val">${b.enemyHp} / ${b.enemyMaxHp}</div>
+          </div>
+        </div>
+
+        <!-- 回合指示 -->
+        ${!b.done ? `<div class="battle-round-indicator">第 ${b.round} / ${b.maxRounds} 轮 — 请出招</div>` : ''}
+
+        <!-- 战斗日志 -->
+        ${b.log.length > 0 ? `<div class="battle-log">${logHtml}</div>` : ''}
+
+        <!-- 出招 / 结算 -->
+        ${actionHtml}
+      </div>`;
   }
 
   // ============================
