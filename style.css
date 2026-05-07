@@ -1421,3 +1421,144 @@ html, body {
   background: rgba(201,168,76,0.05);
 }
 .log-story .log-round { color: var(--gold); }
+
+/* ==========================================
+   新手指引弹窗
+   ========================================== */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+.tutorial-overlay.hidden { display: none; }
+
+.tutorial-modal {
+  background: linear-gradient(160deg, #1a130a 0%, #100c06 100%);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 12px;
+  padding: 32px 28px 24px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08);
+}
+
+.tutorial-step {
+  display: none;
+  text-align: center;
+  min-height: 200px;
+}
+.tutorial-step.active { display: block; }
+
+.tutorial-icon {
+  font-size: 3rem;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+.tutorial-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gold-lt);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+.tutorial-desc {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.tutorial-desc strong { color: var(--gold); }
+.tutorial-tip {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 6px;
+  padding: 8px 12px;
+  line-height: 1.6;
+}
+
+.tutorial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0 16px;
+}
+.tutorial-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tutorial-dot.active { background: var(--gold); }
+
+.tutorial-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+.tutorial-btn-skip {
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.25);
+  color: var(--text-dim);
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.tutorial-btn-skip:hover { border-color: var(--gold-dk); color: var(--text); }
+
+.tutorial-btn-next {
+  background: linear-gradient(135deg, #c9a84c, #a07830);
+  border: none;
+  color: #0a0804;
+  font-weight: 700;
+  padding: 7px 22px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.tutorial-btn-next:hover { opacity: 0.88; }
+
+.tutorial-no-show {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  justify-content: center;
+}
+.tutorial-no-show input { cursor: pointer; accent-color: var(--gold); }
+
+/* 帮助按钮（右下角固定） */
+.help-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 999;
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.help-btn:hover { background: rgba(201,168,76,0.28); transform: scale(1.08); }

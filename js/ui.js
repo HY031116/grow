@@ -847,5 +847,62 @@ var UI = (() => {
       </div>`;
   }
 
-  return { render, mapCityClick };
+  return { render, mapCityClick, tutorialOpen, tutorialClose, tutorialNext, tutorialGoTo };
+})();
+
+/* ==========================================
+   新手指引逻辑
+   ========================================== */
+(function() {
+  var TUTORIAL_KEY = 'quanmou_tutorial_seen';
+  var _currentStep = 1;
+
+  // 在 DOMContentLoaded 后挂载，避免 UI 对象尚未初始化
+  window.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem(TUTORIAL_KEY)) {
+      _showStep(1);
+      document.getElementById('tutorial-overlay').classList.remove('hidden');
+    }
+  });
+
+  function _showStep(n) {
+    _currentStep = n;
+    var steps = document.querySelectorAll('.tutorial-step');
+    var dots  = document.querySelectorAll('.tutorial-dot');
+    steps.forEach(function(el) {
+      el.classList.toggle('active', parseInt(el.dataset.step) === n);
+    });
+    dots.forEach(function(el) {
+      el.classList.toggle('active', parseInt(el.dataset.dot) === n);
+    });
+    var btn = document.getElementById('tutorial-btn-main');
+    if (btn) {
+      btn.textContent = n >= 3 ? '开始游戏 ✓' : '下一步 →';
+    }
+  }
+
+  window.UI.tutorialOpen = function() {
+    _showStep(1);
+    document.getElementById('tutorial-overlay').classList.remove('hidden');
+  };
+
+  window.UI.tutorialClose = function() {
+    var cb = document.getElementById('tutorial-no-show-cb');
+    if (cb && cb.checked) {
+      localStorage.setItem(TUTORIAL_KEY, '1');
+    }
+    document.getElementById('tutorial-overlay').classList.add('hidden');
+  };
+
+  window.UI.tutorialNext = function() {
+    if (_currentStep >= 3) {
+      UI.tutorialClose();
+    } else {
+      _showStep(_currentStep + 1);
+    }
+  };
+
+  window.UI.tutorialGoTo = function(n) {
+    _showStep(n);
+  };
 })();

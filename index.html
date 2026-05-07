@@ -296,6 +296,62 @@
 
 </div><!-- #app -->
 
+<!-- ===========================
+     新手指引弹窗
+     =========================== -->
+<div id="tutorial-overlay" class="tutorial-overlay hidden" onclick="UI.tutorialClose()">
+  <div class="tutorial-modal" onclick="event.stopPropagation()">
+    <div class="tutorial-steps">
+
+      <!-- 步骤 1 -->
+      <div class="tutorial-step active" data-step="1">
+        <div class="tutorial-icon">📜</div>
+        <h2 class="tutorial-title">欢迎来到《权谋录》</h2>
+        <p class="tutorial-desc">一款古代人生模拟游戏。你将选择一个出身，踏上四条截然不同的命运之路——官场、造反、富商、侠客。每次决策都将改变你的命运。</p>
+        <div class="tutorial-tip">🎯 共 20 个回合，每条赛道都有专属的胜利与失败条件</div>
+      </div>
+
+      <!-- 步骤 2 -->
+      <div class="tutorial-step" data-step="2">
+        <div class="tutorial-icon">⚡</div>
+        <h2 class="tutorial-title">每回合的核心循环</h2>
+        <p class="tutorial-desc">每回合你有 <strong>3 点行动点</strong>。执行行动消耗点数，积累各项资源。行动用完（或留着）后，点击<strong>「结束回合」</strong>推进剧情。</p>
+        <div class="tutorial-tip">💡 行动点不够时无法执行该行动；每回合开始时自动重置</div>
+      </div>
+
+      <!-- 步骤 3 -->
+      <div class="tutorial-step" data-step="3">
+        <div class="tutorial-icon">🌟</div>
+        <h2 class="tutorial-title">故事事件与 NPC 关系</h2>
+        <p class="tutorial-desc">回合结束时会随机触发<strong>故事事件</strong>，你的选择将积累 flag，影响后续剧情与最终结局。与 NPC 的关系值达到 65 可成为盟友，解锁专属高阶结局。</p>
+        <div class="tutorial-tip">🤝 钱粮归零或主要资源耗尽即告失败——注意别断炊！</div>
+      </div>
+
+    </div>
+
+    <!-- 进度点 -->
+    <div class="tutorial-dots">
+      <span class="tutorial-dot active" data-dot="1" onclick="UI.tutorialGoTo(1)"></span>
+      <span class="tutorial-dot" data-dot="2" onclick="UI.tutorialGoTo(2)"></span>
+      <span class="tutorial-dot" data-dot="3" onclick="UI.tutorialGoTo(3)"></span>
+    </div>
+
+    <!-- 按钮 -->
+    <div class="tutorial-actions">
+      <button class="tutorial-btn-skip" onclick="UI.tutorialClose()">跳过</button>
+      <button class="tutorial-btn-next" id="tutorial-btn-main" onclick="UI.tutorialNext()">下一步 →</button>
+    </div>
+
+    <!-- 不再显示 -->
+    <label class="tutorial-no-show">
+      <input type="checkbox" id="tutorial-no-show-cb"> 不再显示新手指引
+    </label>
+  </div>
+</div>
+
+<!-- 帮助按钮（右下角固定） -->
+<button class="help-btn" onclick="UI.tutorialOpen()" title="新手指引">？</button>
+
 <script src="js/game.js"></script>
 <script src="js/ui.js"></script>
 <script>
