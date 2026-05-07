@@ -91,7 +91,7 @@ const TRACKS = {
       { key: 'favor', name: '圣眷', icon: '👑', color: '#e8c45a', max: 100 },
       { key: 'power', name: '权柄', icon: '⚖️', color: '#9b59b6', max: 100 }
     ],
-    winText: '权柄 ≥ 80 或 圣眷 ≥ 85',
+    winText: '权柄 ≥ 60 且 圣眷 ≥ 65',
     loseText: '钱粮归零 或 圣眷归零'
   },
   rebel: {
@@ -198,8 +198,8 @@ const ACTIONS = {
       name: '上奏折',
       icon: '✍️',
       cost: 1,
-      desc: '直达天听，表明忠心与立场。可能大涨圣眷，也可能引火烧身。',
-      effect: { favor: 25, power: 5 },
+      desc: '直达天听，表明忠心与立场。天子信任有加，但朝中党羽可能因此疏远，权柄渐失。',
+      effect: { favor: 22, power: -8 },
       riskEffect: { favor: -12 },
       riskChance: 0.25,
       results: [
@@ -315,8 +315,8 @@ const ACTIONS = {
       name: '屯田积粮',
       icon: '🌾',
       cost: 1,
-      desc: '兵马未动，粮草先行。组织屯田，积蓄粮草，为大战做准备。',
-      effect: { gold: 28, morale: 5 },
+      desc: '组织军民屯田，积蓄粮草，为大战做准备。然而士卒耕作期间，军事训练停摆，战力有所削弱。',
+      effect: { gold: 25, troops: -8, morale: 8 },
       seasonBonus: { season: '秋', keys: { gold: 15 }, hint: '秋收丰年，屯粮事半功倍' },
       results: [
         '你号令军民屯田，一季之后粮仓渐满，军心稳固，民心也跟着涨了些。',
@@ -455,8 +455,8 @@ const ACTIONS = {
       name: '苦练武艺',
       icon: '🥋',
       cost: 1,
-      desc: '闭门苦练，精进拳脚与剑法。宝剑锋从磨砺出。',
-      effect: { martial: 25 },
+      desc: '闭门苦练，精进拳脚与剑法。宝剑锋从磨砺出，然而深居练功，江湖声名渐淡。',
+      effect: { martial: 25, fame: -8 },
       seasonBonus: { season: '冬', keys: { martial: 10 }, hint: '冬日闭关苦练，功力精进更快' },
       results: [
         '你每日拂晓起身，苦练至日落，武艺精进，剑势日盛。',
@@ -4060,8 +4060,7 @@ var Game = (() => {
         }
         triggerEnding('favor_zero'); return;
       }
-      if (state.round >= 8 && r.power >= 80) { triggerEnding(pickPowerEnding()); return; }
-      if (state.round >= 8 && r.favor >= 85) { triggerEnding(pickFavorEnding()); return; }
+      if (state.round >= 8 && r.power >= 60 && r.favor >= 65) { triggerEnding(pickEndingByStats()); return; }
     } else if (state.player.track === 'rebel') {
       if (r.troops <= 0) { triggerEnding('troops_zero'); return; }
       if (state.round >= 8 && r.territory >= 80 && r.morale >= 60) { triggerEnding(pickTerritoryEnding()); return; }
@@ -4073,6 +4072,22 @@ var Game = (() => {
     }
   }
 
+  function pickEndingByStats() {
+    // 行为标记优先：玩家的选择风格决定结局，不被资源快照干扰
+    // 权谋路 → 朝堂棋手（cunning+factioner 积累）
+    if ((state.flags.cunning || 0) >= 2 && (state.flags.factioner || 0) >= 2) return 'power_triumph_schemer';
+    // 篡位路 → 权臣专属
+    if ((state.flags.usurper || 0) >= 1) return 'power_triumph_usurper';
+    // NPC 盟友：与权相李崇关系>=70 → 专属结局
+    if ((state.npcs.minister || 0) >= 70) return 'favor_triumph_npc_minister';
+    // 铁面无私 → 断案如神
+    if ((state.flags.judge || 0) >= 1) return 'favor_triumph_judge';
+    // 赤忱忠诚（loyal>=3，无judge）→ 社稷忠魂
+    if ((state.flags.loyal || 0) >= 3) return 'favor_triumph_loyal';
+    // 无明显行为积累：资源偏向决定分支（power >= favor 走权柄，否则走圣眷）
+    const r = state.resources;
+    return r.power >= r.favor ? pickPowerEnding() : pickFavorEnding();
+  }
   function pickPowerEnding() {
     // cunning>=2 且 factioner>=2 → 朝堂棋手（智谋操控优先于单纯权臣）
     if ((state.flags.cunning || 0) >= 2 && (state.flags.factioner || 0) >= 2) return 'power_triumph_schemer';

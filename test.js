@@ -728,7 +728,7 @@ console.log('\n== 动态结局分支 ==');
 {
   newGame('scholar', 'court');
   s = Game.getState();
-  s.resources.power = 30; s.resources.favor = 90;
+  s.resources.power = 62; s.resources.favor = 90; // power<favor → 走圣眷分支
   s.round = 10;
   s.flags.loyal = 3;
   Game.endRound();
