@@ -3319,6 +3319,15 @@ var Game = (() => {
     addLog('system', `${state.player.title}，志在【${amb.name}】，踏上【${trackName}】。传奇，从此刻开始。`);
     // 人生时间线：开局里程碑
     addTimeline('🌅', `踏上【${trackName}】，立志【${amb.name}】`);
+    // 埋点：游戏开始
+    if (typeof trackEvent === 'function') {
+      trackEvent('game_start', {
+        origin: state.player.origin,
+        track: state.player.track,
+        gender: state.player.gender,
+        ambition: ambitionId
+      });
+    }
     UI.render();
   }
 
@@ -3496,6 +3505,10 @@ var Game = (() => {
   function endRound() {
     // 若游戏已结束则不执行（防止 story/transition 覆盖结局）
     if (state.phase !== 'play') return;
+    // 埋点：回合完成
+    if (typeof trackEvent === 'function') {
+      trackEvent('round_complete', { round: state.round, track: state.player.track });
+    }
     state.lastResDelta = {}; // 每个回合结束前清零 delta
     const origin = ORIGINS[state.player.origin];
     if (origin.traitBonus && !origin.traitBonus.action && !origin.traitBonus.track) {
@@ -3786,6 +3799,15 @@ var Game = (() => {
     if (!story || story.type === 'battle') return;
     if (!story.choices[idx]) return;
     state.lastResDelta = {}; // 故事选择前清零 delta
+    // 埋点：剧情选择
+    if (typeof trackEvent === 'function') {
+      trackEvent('story_choice', {
+        event_id: story.id || story.title,
+        choice_index: idx,
+        round: state.round,
+        track: state.player.track
+      });
+    }
     // 路由到 NPC 事件处理
     if (story.isNpcEvent) {
       chooseNpcStory(idx);
@@ -3873,6 +3895,16 @@ var Game = (() => {
     addLog('story', `【${b.event.title}】${resultText}`);
     addTimeline(b.won ? '⚔️' : '💔',
       `【${b.event.title}】${resultText.slice(0, 22)}${resultText.length > 22 ? '…' : ''}`);
+
+    // 埋点：战斗结果
+    if (typeof trackEvent === 'function') {
+      trackEvent('battle_end', {
+        battle_id: b.event.id || b.event.title,
+        result: b.won ? 'win' : 'lose',
+        track: state.player.track,
+        round: state.round
+      });
+    }
 
     state.battle = null;
     state.pendingStory = null;
@@ -4005,6 +4037,17 @@ var Game = (() => {
     state.currentEnding = Object.assign({ id: endingId }, ENDINGS[endingId]);
     // 根据 flags 追加历史注脚（最多匹配一条，最有代表性的优先）
     state.currentEnding.footnote = buildEndingFootnote(state.flags, state.player);
+    // 埋点：游戏结局
+    if (typeof trackEvent === 'function') {
+      trackEvent('game_end', {
+        ending_id: endingId,
+        track: state.player.track,
+        origin: state.player.origin,
+        gender: state.player.gender,
+        ambition: state.player.ambition,
+        rounds_survived: state.round
+      });
+    }
     UI.render();
   }
 
