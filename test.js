@@ -1032,6 +1032,63 @@ console.log('\n== NPC 二次突破事件 ==');
 }
 
 // ─────────────────────────────────────────────
+// sovereign / sworn 结局接入
+// ─────────────────────────────────────────────
+console.log('\n== sovereign/sworn 结局 ==');
+
+// 造反 sovereign>=1 + general>=70 → 天命所归
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.resources.territory = 95; s.resources.morale = 80;
+  s.npcs.general = 75; s.flags.sovereign = 1;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('造反 sovereign+general>=70 → territory_triumph_sovereign',
+    s.currentEnding && s.currentEnding.id === 'territory_triumph_sovereign');
+}
+
+// 造反 general>=70 但无 sovereign → 仍为 territory_triumph_npc_general
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.resources.territory = 95; s.resources.morale = 80;
+  s.npcs.general = 75;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('造反 general>=70 无sovereign → territory_triumph_npc_general',
+    s.currentEnding && s.currentEnding.id === 'territory_triumph_npc_general');
+}
+
+// 侠客 sworn>=1 + master>=70 → 武林盟主
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.resources.fame = 100; s.resources.martial = 80;
+  s.npcs.master = 75; s.flags.sworn = 1;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('侠客 sworn+master>=70 → hero_triumph_master_sworn',
+    s.currentEnding && s.currentEnding.id === 'hero_triumph_master_sworn');
+}
+
+// 侠客 master>=70 但无 sworn → 仍为 hero_triumph_npc_master
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.resources.fame = 100; s.resources.martial = 80;
+  s.npcs.master = 75;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('侠客 master>=70 无sworn → hero_triumph_npc_master',
+    s.currentEnding && s.currentEnding.id === 'hero_triumph_npc_master');
+}
+
+// ─────────────────────────────────────────────
 // 汇总
 // ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));

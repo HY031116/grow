@@ -3040,6 +3040,22 @@ const ENDINGS = {
     title: '孤侠传说',
     badge: '✦ 独行天下',
     story: '你从不依附任何门派，也不需要任何人为你背书。一人一剑，走遍天下，以实力和德行赢得了整个江湖的尊重。\n\n江湖人说：天下侠客有门派的，也有无门无派的。但无门无派还能令天下人折服的，只有这一个。这种孤绝的风骨，反而成了最令人向往的传说。'
+  },
+
+  // 造反路：sovereign>=1 且 general>=70 → 天命所归（最高阶开国结局）
+  territory_triumph_sovereign: {
+    type: 'victory',
+    title: '天命所归',
+    badge: '✦ 真命天子',
+    story: '徐长风亲手将受降旗交到你手中——这一刻，满营将士皆下跪称主。\n\n你们从生死患难中走来，他的忠诚不是因为你强大，而是因为你值得跟随。攻克京城之日，百姓箪食壶浆，迎接的不只是胜者，而是他们所期盼的天命之主。\n\n开国大典上，徐长风执剑立于你左侧。史书以"天命所归，万民来附"八个字，为你的继位作注脚——这是历史给予的最高背书。'
+  },
+
+  // 侠客路：sworn>=1 且 master>=70 → 武林盟主（正式受命，高于宗主传承）
+  hero_triumph_master_sworn: {
+    type: 'victory',
+    title: '武林盟主',
+    badge: '✦ 一代宗主',
+    story: '燕无双在大会上当众宣布："此人是我启迪的第一个，也是前无古人的最后一个——从此，武林总盟由他监管，江湖共鉴。"\n\n你接过令牌，全场江湖赤人齐声高呼。却记得当初与燕无双第一次相遇，他说："江湖路很宽，但能走到最后的人很少。"\n\n现在你走到了。利剑、名望、义气——这三者都属于你。当年那个骑马一人一剑仗剑走天涯的少年，成了江湖英雄们向往的一代宗主。'
   }
 };
 
@@ -3664,7 +3680,9 @@ var Game = (() => {
     return 'favor_triumph';
   }
   function pickTerritoryEnding() {
-    // NPC 盟友加成：与徐长风关系值≥70，解锁专属结局
+    // NPC 盟友 + sovereign flag → 天命所归（最高阶开国结局）
+    if ((state.npcs.general || 0) >= 70 && (state.flags.sovereign || 0) >= 1) return 'territory_triumph_sovereign';
+    // 仅 NPC 盟友（关系>=70）
     if ((state.npcs.general || 0) >= 70) return 'territory_triumph_npc_general';
     if ((state.flags.righteous || 0) >= 2) return 'territory_triumph_righteous';
     // ruthless>=2 → 铁血枭雄；cunning>=2 → 谋定天下
@@ -3681,7 +3699,9 @@ var Game = (() => {
     return 'wealth_triumph';
   }
   function pickHeroEnding() {
-    // NPC 盟友加成：与燕无双关系值≥70，解锁专属结局
+    // NPC 盟友 + sworn flag → 武林盟主（正式受命，最高阶结局）
+    if ((state.npcs.master || 0) >= 70 && (state.flags.sworn || 0) >= 1) return 'hero_triumph_master_sworn';
+    // 仅 NPC 盟友（关系>=70）
     if ((state.npcs.master || 0) >= 70) return 'hero_triumph_npc_master';
     if ((state.resources.bonds || 0) >= 20) return 'hero_triumph_justice';
     // brave>=2 → 武道宗师；lone_hero>=1 → 孤侠传说
