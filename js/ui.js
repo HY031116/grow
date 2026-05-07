@@ -574,11 +574,11 @@ var UI = (() => {
     let goals = [];
 
     if (t === 'court') {
-      const favPct = Math.min(100, Math.round(r.favor / 85 * 100));
-      const powPct = Math.min(100, Math.round(r.power / 80 * 100));
+      const favPct = Math.min(100, Math.round(r.favor / 65 * 100));
+      const powPct = Math.min(100, Math.round(r.power / 60 * 100));
       goals = [
-        { label: '圣眷目标', pct: favPct, done: r.favor >= 85, color: '#e8c45a' },
-        { label: '权柄目标', pct: powPct, done: r.power >= 80, color: '#9b59b6' }
+        { label: '圣眷目标', pct: favPct, done: r.favor >= 65, color: '#e8c45a' },
+        { label: '权柄目标', pct: powPct, done: r.power >= 60, color: '#9b59b6' }
       ];
     } else if (t === 'rebel') {
       const terPct = Math.min(100, Math.round(r.territory / 80 * 100));
