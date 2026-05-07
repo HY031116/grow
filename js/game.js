@@ -1657,6 +1657,30 @@ const STORY_EVENTS = {
       ]
     },
     {
+      // NPC 二次突破：官场·李崇密谋（round 14，minister>=65 触发）
+      id: 'court_npc_minister_bond2',
+      triggerRound: 14,
+      title: '密室之盟',
+      cond: (f, res, npcs) => (npcs.minister || 0) >= 65,
+      scene: '深夜，李崇的亲信领你入密室。地图铺开，烛火摇曳——他说出了一件惊天秘密：他准备废太子，扶持三皇子，并需要你在朝中的全力声援。此刻，你们的命运被绑在了同一根绳子上。',
+      choices: [
+        {
+          text: '共谋大事，与他同进退',
+          result: '你举起杯，一饮而尽，意味深长地说："既是同谋，荣辱与共。"李崇眼神一亮，说："好，我就知道你是此间最明白人。"此后，你们之间已不是盟友，而是真正的政治共同体。',
+          effect: { power: 25, favor: -12 },
+          flagSet: { factioner: 2 },
+          npcSet: { minister: 20 }
+        },
+        {
+          text: '听完，但劝他三思而后行',
+          result: '你没有拒绝，也没有立刻答应，而是冷静地指出其中三处风险。李崇沉默片刻，说："你这人，谨慎得让人放心。"你们的信任更深了一层，但你保留了更大的回旋余地。',
+          effect: { favor: 15, power: 8 },
+          flagSet: { judge: 1 },
+          npcSet: { minister: 10 }
+        }
+      ]
+    },
+    {
       id: 'court_s7',
       triggerRound: 18,
       title: '皇帝弥留',
@@ -1878,6 +1902,30 @@ const STORY_EVENTS = {
           result: '你感谢了他的援助，却没有做过多的承诺。徐长风看出了你的心思，笑道："你这人，精明得很。"语气中既有欣赏，也有几分遗憾——但你们的关系，比之前又深了一步。',
           effect: { troops: 10 },
           flagSet: { cunning: 1 },
+          npcSet: { general: 10 }
+        }
+      ]
+    },
+    {
+      // NPC 二次突破：造反·徐长风请主（round 14，general>=65 触发）
+      id: 'rebel_npc_general_pledge',
+      triggerRound: 14,
+      title: '问鼎之约',
+      cond: (f, res, npcs) => (npcs.general || 0) >= 65,
+      scene: '大决战前夕，徐长风深夜叩营，把腰间挂了多年的令牌放在案上，单膝跪地，字字铿锵："某愿以麾下三万铁骑，奉明主之命。"帐外，义军号角长鸣。这一刻，所有人都在等你的一句话。',
+      choices: [
+        {
+          text: '扶起他，正式受旗，承担问鼎之责',
+          result: '你将令牌收起，扶起了徐长风，说："好，此战之后，天下共见证。"义军欢声雷动，士气直冲云霄。你已不再只是领袖之一，而是义军唯一的旗帜。',
+          effect: { morale: 25, territory: 10 },
+          flagSet: { sovereign: 1 },
+          npcSet: { general: 20 }
+        },
+        {
+          text: '让他起身，说你们平起平坐，共谋天下',
+          result: '你将令牌推回，拍着他的肩说："这旗，我们一起扛。"徐长风愣了一下，随即哈哈大笑："也好，比独吞更有意思！"义军无主将独大，反而人心更齐。',
+          effect: { morale: 15, troops: 15 },
+          flagSet: { righteous: 1 },
           npcSet: { general: 10 }
         }
       ]
@@ -2180,6 +2228,30 @@ const STORY_EVENTS = {
           idx: 1,
           add: { prestige: 12 },
           result: '你的清誉让众多商家义无反顾地联署，甚至连平日不与你往来的竞争对手也加入其中。一份声势浩大的联名状呈上，官府雷厉风行，你在商界的话语权再上一层台阶。'
+        }
+      ]
+    },
+    {
+      // NPC 二次突破：富商·沈万钧正式结盟（round 14，tycoon>=65 触发）
+      id: 'merchant_npc_tycoon_bond2',
+      triggerRound: 14,
+      title: '天下同盟',
+      cond: (f, res, npcs) => (npcs.tycoon || 0) >= 65,
+      scene: '沈万钧在书房摆了两杯茶，把一份协议推到你面前——正式结成商业同盟，共同掌控江南七成的商路，对外统一口径，对内利润共享。这将是天下商界前所未有的格局。他说："只问一句：你信不信我？"',
+      choices: [
+        {
+          text: '接受协议，共建商业帝国',
+          result: '你提笔签下名字，说："信。"沈万钧大笑，当场拍桌："好！从今日起，天下商路，我们说了算！"此后，你们联手的消息传遍江南，无数商号争相依附。',
+          effect: { routes: 2, prestige: 20, wealth: 25 },
+          flagSet: { cunning: 1 },
+          npcSet: { tycoon: 20 }
+        },
+        {
+          text: '合作，但保留独立账目和商路自主权',
+          result: '你提出了修改条件，沈万钧皱了皱眉，随后点头："你这人，从来不吃亏。行，就按你说的。"修改后的协议，对你更有利，但合作仍然深度展开。',
+          effect: { prestige: 25, wealth: 20, routes: 1 },
+          flagSet: { righteous: 1 },
+          npcSet: { tycoon: 10 }
         }
       ]
     },
@@ -2514,6 +2586,30 @@ const STORY_EVENTS = {
           effect: { fame: 12, martial: 8 },
           flagSet: { lone_hero: 1 },
           npcSet: { master: 12 }
+        }
+      ]
+    },
+    {
+      // NPC 二次突破：侠客·燕无双提名盟主（round 14，master>=65 触发）
+      id: 'hero_npc_master_pledge',
+      triggerRound: 14,
+      title: '盟主之邀',
+      cond: (f, res, npcs) => (npcs.master || 0) >= 65,
+      scene: '武林大会在即。燕无双专程来访，说出了让你意外的话："我打算在大会上，公开提名你为候选盟主。"这是武林最高荣誉，也是最重的担子。他说："你有那个义气，也有那个本事。就看你敢不敢接这杆旗。"',
+      choices: [
+        {
+          text: '接受提名，担下武林领袖之责',
+          result: '你点头，说："既然是你开口，我接了。"燕无双击掌大笑，说："痛快！"武林大会上，你的名字被宣布，四方豪杰纷纷侧目。从此，你不再只是一名侠客，而是江湖共主的候选人。',
+          effect: { fame: 25, bonds: 12 },
+          flagSet: { sworn: 1 },
+          npcSet: { master: 20 }
+        },
+        {
+          text: '婉拒，只做自己的逍遥侠客',
+          result: '你摇头，说："盟主太重，我还是爱自在。"燕无双沉默片刻，说："你这人，真是走不进框的。"他没有失望，反而觉得你更是他理解的那个人——有些人，不需要旗帜，本身就是江湖的传说。',
+          effect: { fame: 15, martial: 12 },
+          flagSet: { lone_hero: 1 },
+          npcSet: { master: 10 }
         }
       ]
     },

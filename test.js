@@ -930,6 +930,108 @@ console.log('\n== NPC 突破事件 ==');
 }
 
 // ─────────────────────────────────────────────
+// NPC 二次突破事件（round 14，关系>=65）
+// ─────────────────────────────────────────────
+console.log('\n== NPC 二次突破事件 ==');
+
+// 官场 round14 minister>=65 → 密室之盟触发
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.npcs.minister = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  assert('官场 round14 minister>=65 → court_npc_minister_bond2 触发',
+    s.pendingStory && s.pendingStory.id === 'court_npc_minister_bond2');
+}
+
+// 官场 minister<65 round14 → 不触发二次突破
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.npcs.minister = 50;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  assert('官场 minister<65 round14 → 不触发二次突破',
+    !s.pendingStory || s.pendingStory.id !== 'court_npc_minister_bond2');
+}
+
+// 造反 round14 general>=65 → 问鼎之约触发
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.npcs.general = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  assert('造反 round14 general>=65 → rebel_npc_general_pledge 触发',
+    s.pendingStory && s.pendingStory.id === 'rebel_npc_general_pledge');
+}
+
+// 造反 选A → sovereign flag 设置
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.npcs.general = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'rebel_npc_general_pledge') {
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('造反 问鼎选A → sovereign flag 设置', (s.flags.sovereign || 0) >= 1);
+  } else {
+    assert('造反 问鼎选A（前置触发检查）', false);
+  }
+}
+
+// 富商 round14 tycoon>=65 → 天下同盟触发
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  s.npcs.tycoon = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  assert('富商 round14 tycoon>=65 → merchant_npc_tycoon_bond2 触发',
+    s.pendingStory && s.pendingStory.id === 'merchant_npc_tycoon_bond2');
+}
+
+// 侠客 round14 master>=65 → 盟主之邀触发
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.npcs.master = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  assert('侠客 round14 master>=65 → hero_npc_master_pledge 触发',
+    s.pendingStory && s.pendingStory.id === 'hero_npc_master_pledge');
+}
+
+// 侠客 选A → sworn flag 设置，fame 增加
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.npcs.master = 70;
+  s.round = 13;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'hero_npc_master_pledge') {
+    var prevFame = s.resources.fame;
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('侠客 盟主选A → sworn flag 设置', (s.flags.sworn || 0) >= 1);
+    assert('侠客 盟主选A → fame 增加', s.resources.fame > prevFame);
+  } else {
+    assert('侠客 盟主选A（前置触发检查）', false);
+    assert('侠客 盟主选A fame（前置触发检查）', false);
+  }
+}
+
+// ─────────────────────────────────────────────
 // 汇总
 // ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));
