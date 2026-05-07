@@ -125,7 +125,7 @@ var UI = (() => {
     const goalHtml = buildGoalProgress(s);
     resPanel.innerHTML = goalHtml + track.resources.map(def => {
       const val = s.resources[def.key] ?? 0;
-      const pct = Math.round(val / def.max * 100);
+      const pct = Math.min(100, Math.round(val / (def.displayMax || def.max) * 100));
       const isLow  = val < (def.lowVal  !== undefined ? def.lowVal  : 20);
       const isHigh = val >= (def.highVal !== undefined ? def.highVal : 70);
       const extraInfo = def.key === 'favor' && s.player.track === 'court'
