@@ -1008,52 +1008,152 @@ const COMMON_ACTIONS = [
 
 const PASSIVE_EVENTS = {
   court: [
-    { text: '朝中突发政争，皇帝召见，你随机应变，化险为夷，圣眷微涨。', effect: { favor: 10 } },
-    { text: '一位同僚在皇帝面前为你美言，龙颜欣慰。', effect: { favor: 8 } },
-    { text: '御史弹劾你的党羽，你花银子上下打点，才压了下去。', effect: { gold: -15, power: -5 } },
-    { text: '皇帝偶然发现你一份旧日政绩，龙颜大悦，大加赞赏。', effect: { favor: 10 } },
-    { text: '政敌散布谣言，你的名声受损，圣眷有所下滑。', effect: { favor: -12 } },
-    { text: '朝廷大赦，你的一名党羽得以脱罪，权柄微涨。', effect: { power: 8 } },
-    { text: '边境告急，朝廷紧急筹款，你趁机从中获利。', effect: { gold: 15 } },
-    { text: '一场宫廷宴会，你举止得体，大获皇帝赞誉。', effect: { favor: 12, power: 5 } },
-    { text: '皇帝心情不佳，无故斥责几位大臣，你也未能幸免，圣眷受损。', effect: { favor: -10 } },
-    { text: '你成功帮皇帝处置了一桩棘手案件，龙颜大悦，重重嘉奖。', effect: { favor: 12, gold: 10 } }
+    {
+      text: '政敌在背后散布谣言，你的名声受到冲击，如何应对？',
+      choices: [
+        { desc: '花银子上下打点，把风声压下去', effect: { gold: -18, favor: 8 } },
+        { desc: '公开揭发，正面交锋', effect: { power: 12, favor: -10 } }
+      ]
+    },
+    {
+      text: '一位官员递来请帖，有意与你深交，你该如何回应？',
+      choices: [
+        { desc: '热情回应，广结善缘', effect: { power: 12, gold: -10 } },
+        { desc: '婉拒，独善其身', effect: { favor: 8, power: -5 } }
+      ]
+    },
+    {
+      text: '边境告急，朝廷紧急筹款，你如何表态？',
+      choices: [
+        { desc: '主动慷慨解囊，忠心表态', effect: { gold: -22, favor: 14 } },
+        { desc: '观望推诿，明哲保身', effect: { favor: -8, gold: 5 } }
+      ]
+    },
+    {
+      text: '皇帝情绪不佳，朝中气氛压抑，你如何化解？',
+      choices: [
+        { desc: '主动进言，献策解忧', effect: { favor: 15, power: -8 } },
+        { desc: '沉默观望，保留权柄', effect: { power: 6, favor: -8 } }
+      ]
+    },
+    {
+      text: '宫廷宴会，你受邀出席，如何行事？',
+      choices: [
+        { desc: '广交权贵，热络周旋', effect: { gold: -12, power: 10, favor: 5 } },
+        { desc: '低调出席，避免树大招风', effect: { favor: 8, power: -4 } }
+      ]
+    }
   ],
   rebel: [
-    { text: '附近一支溃军来投，你收编残部，兵力大涨。', effect: { troops: 15, gold: -10 } },
-    { text: '一场时疫在军中蔓延，士卒减员，民心也受影响。', effect: { troops: -12, morale: -8 } },
-    { text: '当地豪绅献粮投诚，粮仓大有充实，百姓欢欣鼓舞。', effect: { gold: 20, morale: 8 } },
-    { text: '朝廷大军在附近集结，军中人心惶惶，民心动摇。', effect: { morale: -15 } },
-    { text: '大旱之年，粮食减产，军粮吃紧。', effect: { gold: -18 } },
-    { text: '一位名将率部来投，军队战斗力大增，士气沸腾。', effect: { troops: 20, morale: 10 } },
-    { text: '附近村民自发加入义军，兵力与民心齐涨。', effect: { troops: 10, morale: 12 } },
-    { text: '与邻近势力发生小冲突，损兵折将，但缴获了一批粮草。', effect: { troops: -8, gold: 15 } },
-    { text: '你的仁义之名传开，有流民扶老携幼前来投奔。', effect: { morale: 15, gold: -5 } },
-    { text: '军中爆发哗变，你及时镇压，但元气大伤。', effect: { troops: -10, morale: -10 } }
+    {
+      text: '一批溃军千里来投，是否全部收编？',
+      choices: [
+        { desc: '全部收编，扩充兵力', effect: { troops: 20, gold: -12, morale: -8 } },
+        { desc: '精选良才，其余遣散', effect: { troops: 8, morale: 6 } }
+      ]
+    },
+    {
+      text: '一场时疫在军中蔓延，如何处置？',
+      choices: [
+        { desc: '花粮草大力救治，稳定军心', effect: { gold: -18, troops: -3, morale: 12 } },
+        { desc: '隔离减损，保全主力', effect: { troops: -15, morale: -10 } }
+      ]
+    },
+    {
+      text: '当地豪绅愿意献粮归顺，但要求保留部分自治，如何决定？',
+      choices: [
+        { desc: '接受条件，先得物资再说', effect: { gold: 22, morale: 5, territory: -4 } },
+        { desc: '拒绝，坚守主权原则', effect: { territory: 5, morale: 8 } }
+      ]
+    },
+    {
+      text: '大旱之年，流民四处逃荒涌来，如何应对？',
+      choices: [
+        { desc: '开仓赈灾，广收民心', effect: { gold: -22, morale: 18 } },
+        { desc: '趁机扩充兵源，壮大队伍', effect: { troops: 18, gold: -8, morale: -5 } }
+      ]
+    },
+    {
+      text: '朝廷使节到访，暗示若归降可保留兵权，如何回应？',
+      choices: [
+        { desc: '假意周旋，刺探消息', effect: { territory: 5, morale: 5 } },
+        { desc: '断然拒绝，鼓舞士气', effect: { morale: 15, troops: 5, territory: -3 } }
+      ]
+    }
   ],
   merchant: [
-    { text: '一批货物滞销，占压了大量资金，你不得不忍痛低价出售。', effect: { wealth: -15 } },
-    { text: '商道遭遇土匪，押运钱粮受损，所幸损失不大。', effect: { gold: -12 } },
-    { text: '朝廷开辟新的贸易路线，你得到内部消息，先一步布局，大获其利。', effect: { wealth: 20, prestige: 8 } },
-    { text: '一位老客户大量进货，财富一下子涨了不少。', effect: { wealth: 18 } },
-    { text: '同行散布谣言，说你货品掺假，商誉受损。', effect: { prestige: -12 } },
-    { text: '你资助了当地灾民，善名远播，商誉在商界大涨。', effect: { gold: -10, prestige: 15 } },
-    { text: '节庆将至，你提前备货，高价出手，财富暴涨。', effect: { gold: -5, wealth: 22 } },
-    { text: '一位官员欣赏你的生意头脑，主动为你疏通一条商路。', effect: { prestige: 10, routes: 1 } },
-    { text: '账房先生结算，发现一笔闲置资金，你顺势再度投入，财富微涨。', effect: { wealth: 12 } },
-    { text: '货物运输途中遭遇大雨，损毁不少，这笔损失只得自认了。', effect: { wealth: -18, gold: -8 } }
+    {
+      text: '一批货物滞销，大量资金被占压，如何处理？',
+      choices: [
+        { desc: '忍痛低价出售，回笼现金', effect: { wealth: -15, gold: 12 } },
+        { desc: '继续持有，等待行情好转', effect: { gold: -8, prestige: 5 } }
+      ]
+    },
+    {
+      text: '一位官员公然索贿，否则将刁难你的生意，如何应对？',
+      choices: [
+        { desc: '如数奉上，买个平安', effect: { gold: -20, prestige: 8 } },
+        { desc: '拒绝行贿，公开抗议', effect: { prestige: -10, wealth: 6 } }
+      ]
+    },
+    {
+      text: '同行联合排挤，邀你加入他们的价格联盟，如何决定？',
+      choices: [
+        { desc: '加入联盟，合作共赢', effect: { wealth: 10, routes: 1, gold: -12 } },
+        { desc: '拒绝，独走差异化路线', effect: { prestige: 10, wealth: -8 } }
+      ]
+    },
+    {
+      text: '市场突然出现商机，需要快速决断投入多少资金？',
+      choices: [
+        { desc: '倾囊押注，全力投入', effect: { gold: -20, wealth: 35 } },
+        { desc: '谨慎试水，小额跟进', effect: { gold: -8, wealth: 15, prestige: 5 } }
+      ]
+    },
+    {
+      text: '有消费者公开举报你的商品质量有问题，如何应对？',
+      choices: [
+        { desc: '主动赔偿，诚信经营', effect: { gold: -15, prestige: 15, wealth: -8 } },
+        { desc: '私下压制，秘密处理', effect: { gold: -6, prestige: -12, wealth: 5 } }
+      ]
+    }
   ],
   hero: [
-    { text: '你救了一名路人，对方原来是当地富绅，感激之下赠你钱财。', effect: { gold: 15, bonds: 5 } },
-    { text: '江湖中流传起你的事迹，慕名拜访者络绎不绝，名望大涨。', effect: { fame: 12 } },
-    { text: '比武切磋中输给一位高手，对方指点你一番，武艺微进，但挫败感难免影响名声。', effect: { martial: 8, fame: -5 } },
-    { text: '有人假借你的名义行骗，你四处解释，声誉受损。', effect: { fame: -10 } },
-    { text: '旅途中盘缠告急，你只能低调行路，不得张扬。', effect: { gold: -12 } },
-    { text: '你主动帮助一个小村庄解决了纷争，当地人将你的名字编入歌谣。', effect: { fame: 15, bonds: 8 } },
-    { text: '一次宴请结交了几位江湖豪杰，钱财散出去不少，但朋友多了几个。', effect: { gold: -10, bonds: 10 } },
-    { text: '你拾金不昧，将一笔巨款悉数归还失主，侠义之名传遍方圆百里。', effect: { fame: 15 } },
-    { text: '闭关苦练，偶然领悟一门绝技，武艺大进。', effect: { martial: 15 } },
-    { text: '陈年旧伤复发，你不得不停下来调养，耗了不少盘缠。', effect: { gold: -8, martial: -5 } }
+    {
+      text: '江湖中有名号的高手找上门公开叫阵，如何回应？',
+      choices: [
+        { desc: '应战，全力一搏', effect: { martial: 12, fame: 10 } },
+        { desc: '以和为贵，礼让对方', effect: { fame: 5, martial: -5 } }
+      ]
+    },
+    {
+      text: '一队遭劫的旅行商人向你求救，你该如何？',
+      choices: [
+        { desc: '出手相助，护送至安全地带', effect: { fame: 12, bonds: 8, gold: 8 } },
+        { desc: '避开纠纷，绕道而行', effect: { gold: 5, martial: 3, fame: -10 } }
+      ]
+    },
+    {
+      text: '一位武学前辈提出愿意指点你，但需驻留修炼数日，如何决定？',
+      choices: [
+        { desc: '虚心拜师，深居苦练', effect: { martial: 18, fame: -8, gold: -8 } },
+        { desc: '感谢婉拒，继续行侠', effect: { fame: 10, martial: 5 } }
+      ]
+    },
+    {
+      text: '有人要把你的事迹刻书立传，广为流传，你是否配合？',
+      choices: [
+        { desc: '接受采访，配合宣传', effect: { fame: 18, gold: -5 } },
+        { desc: '低调拒绝，不愿张扬', effect: { martial: 5, bonds: 8, fame: -5 } }
+      ]
+    },
+    {
+      text: '突遇大雨，被困山中无法出行，如何度过这段时光？',
+      choices: [
+        { desc: '闭关苦练，磨砺武艺', effect: { martial: 15, fame: -5, gold: -5 } },
+        { desc: '与当地人交流，结交朋友', effect: { bonds: 10, gold: -8, fame: 8 } }
+      ]
+    }
   ]
 };
 
@@ -3624,34 +3724,60 @@ var Game = (() => {
       applyEffect({ [origin.traitBonus.key]: origin.traitBonus.val });
     }
 
-    // 随机被动事件——打探消息可将触发概率减半
+    // 随机被动/互动事件
     const passiveChance = (state.flags.informed || 0) > 0 ? 0.32 : 0.65;
     if ((state.flags.informed || 0) > 0) state.flags.informed = 0; // 消耗 informed 状态（一次性）
     if (Math.random() < passiveChance) {
-      let pool = PASSIVE_EVENTS[state.player.track].slice();
-      // 满足条件的世界记忆事件加入池（行为积累越深，占比越高，被抽概率越大）
+      // 优先检查：世界记忆事件（玩家行为的因果反馈，自动应用）
       const worldEvts = WORLD_EVENTS[state.player.track] || [];
-      worldEvts.forEach(we => {
-        if (we.cond(state.flags, state.resources)) pool.push(we);
-      });
-      // 世界动荡高时，额外增加负面事件权重（将负面事件再入池一次）
+      const matchedWorld = worldEvts.filter(we => we.cond(state.flags, state.resources));
+      // 动荡高时，负面世界事件权重加倍
+      let worldPool = matchedWorld.slice();
       if ((state.world.unrest || 0) >= 60) {
-        const negEvts = pool.filter(e =>
-          Object.values(e.effect || {}).some(v => v < 0));
-        pool = pool.concat(negEvts);
+        worldPool = worldPool.concat(worldPool.filter(e => Object.values(e.effect || {}).some(v => v < 0)));
       }
-      // 造反赛道+天下大乱时，正面事件概率提升（额外入池）
-      if (state.player.track === 'rebel' && (state.world.stability || 70) <= 40) {
-        const posEvts = pool.filter(e =>
-          Object.values(e.effect || {}).every(v => v >= 0));
-        pool = pool.concat(posEvts);
+
+      if (worldPool.length > 0 && Math.random() < 0.6) {
+        // 世界记忆事件：自动应用（行为后果，不需玩家决策）
+        const worldEvt = worldPool[Math.floor(Math.random() * worldPool.length)];
+        applyEffect(worldEvt.effect);
+        addLog('event', `【天下事】${worldEvt.text}`);
+      } else {
+        // 互动事件：需玩家做选择
+        const pool = PASSIVE_EVENTS[state.player.track].slice();
+        const evt = pool[Math.floor(Math.random() * pool.length)];
+        if (typeof window !== 'undefined') {
+          // 浏览器：暂停等待玩家选择，在 chooseReaction() 中继续
+          state.pendingEvent = evt;
+          state.phase = 'react';
+          UI.render();
+          return;
+        } else {
+          // Node.js/测试模式：自动选第一个选项
+          applyEffect(evt.choices[0].effect);
+          addLog('event', `【天下事】${evt.text}`);
+        }
       }
-      const evt = pool[Math.floor(Math.random() * pool.length)];
-      applyEffect(evt.effect);
-      addLog('event', `【天下事】${evt.text}`);
     }
 
-    // ========== 世界状态更新 ==========
+    continueRoundEnd();
+  }
+
+  // 玩家对互动事件做出选择后继续回合
+  function chooseReaction(choiceIdx) {
+    if (state.phase !== 'react') return;
+    const evt = state.pendingEvent;
+    if (!evt || !evt.choices || !evt.choices[choiceIdx]) return;
+    const choice = evt.choices[choiceIdx];
+    applyEffect(choice.effect);
+    addLog('event', `【天下事】${evt.text}（${choice.desc}）`);
+    state.pendingEvent = null;
+    state.phase = 'play';
+    continueRoundEnd();
+  }
+
+  // 回合结束后半程：世界状态更新 → round++ → 结局检查 → 故事/NPC事件
+  function continueRoundEnd() {
     const w = state.world;
     // 自然漂移：天下安定随时间略微降低，民间动荡略微升高
     w.stability = Math.max(0, Math.min(100, w.stability + (Math.random() < 0.35 ? -2 : 1)));
@@ -4353,5 +4479,5 @@ var Game = (() => {
 
   function getState() { return state; }
 
-  return { init, setGender, setOrigin, confirmCreate, setTrack, setAmbition, doAction, endRound, chooseStory, chooseNpcStory, chooseMove, endBattle, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS, AMBITIONS };
+  return { init, setGender, setOrigin, confirmCreate, setTrack, setAmbition, doAction, endRound, chooseReaction, chooseStory, chooseNpcStory, chooseMove, endBattle, confirmTransition, getState, saveGame, loadGame, getSaveInfo, deleteSave, getTimeDisplay, NPC_DATA, NPC_ACTIONS, COMMON_ACTIONS, AMBITIONS };
 })();

@@ -10,6 +10,7 @@ var UI = (() => {
       case 'track':      renderTrack(s);      break;
       case 'ambition':   renderAmbition(s);   break;
       case 'play':       renderPlay(s);       break;
+      case 'react':      renderReact(s);      break;
       case 'story':
         // 战役事件使用专属渲染
         if (s.battle) { renderBattle(s); break; }
@@ -344,6 +345,24 @@ var UI = (() => {
     document.getElementById('transition-scene').textContent = t.scene;
     document.getElementById('transition-confirm-text').textContent = t.confirmText;
     document.getElementById('transition-decline-text').textContent = t.declineText;
+  }
+
+  // ============================
+  // 互动事件选择页（react 阶段）
+  // ============================
+  function renderReact(s) {
+    show('screen-react');
+    const evt = s.pendingEvent;
+    if (!evt) return;
+    document.getElementById('react-event-text').textContent = evt.text;
+    document.getElementById('react-choices').innerHTML = evt.choices.map((c, i) => {
+      const effStr = fmtEffect(c.effect);
+      return `
+        <button class="react-choice-btn" onclick="Game.chooseReaction(${i})">
+          <div class="react-choice-desc">${c.desc}</div>
+          <div class="react-choice-effect">${effStr}</div>
+        </button>`;
+    }).join('');
   }
 
   // ============================
