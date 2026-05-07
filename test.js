@@ -63,10 +63,10 @@ assert('endRound后 round推进或story触发', s.round === 2 || s.phase === 'st
 console.log('\n== 3. 官场胜利守卫 ==');
 newGame('scholar', 'court');
 s = Game.getState();
-// 直接篡改资源，测试 round<8 时不触发胜利
-s.resources.power = 90; s.resources.favor = 90;
+// 直接篡改资源，测试 round<14 时不触发胜利（固定 Math.random=0.8 防被动事件随机归零）
+s.resources.power = 90; s.resources.favor = 90; s.resources.gold = 1000;
 s.round = 5;
-Game.endRound();
+{ const _r = Math.random; Math.random = () => 0.8; Game.endRound(); Math.random = _r; }
 s = Game.getState();
 assert('round<8 不触发权柄/圣眷胜利', s.phase !== 'result');
 
@@ -300,9 +300,9 @@ testDeath('wanderer', 'hero');
 console.log('\n== 20. 故事事件系统 ==');
 newGame('scholar', 'court');
 s = Game.getState();
-// 推进到回合2，应触发 court_s1
+// 推进到回合2，应触发 court_s1（固定 Math.random=0.8 防被动事件随机归零干扰故事触发）
 s.round = 1;
-Game.endRound();
+{ const _r = Math.random; Math.random = () => 0.8; Game.endRound(); Math.random = _r; }
 s = Game.getState();
 assert('第2回合触发故事事件', s.phase === 'story');
 assert('故事事件有选项', s.pendingStory && s.pendingStory.choices && s.pendingStory.choices.length > 0);
@@ -318,7 +318,7 @@ console.log('\n== 21. 富商故事事件 ==');
 newGame('merchant', 'merchant');
 s = Game.getState();
 s.round = 1;
-Game.endRound();
+{ const _r = Math.random; Math.random = () => 0.8; Game.endRound(); Math.random = _r; }
 s = Game.getState();
 assert('富商第2回合触发故事事件', s.phase === 'story');
 assert('富商故事事件-第一桶金', s.pendingStory && s.pendingStory.id === 'merchant_s1');
@@ -333,7 +333,7 @@ console.log('\n== 22. 侠客故事事件 ==');
 newGame('wanderer', 'hero');
 s = Game.getState();
 s.round = 1;
-Game.endRound();
+{ const _r = Math.random; Math.random = () => 0.8; Game.endRound(); Math.random = _r; }
 s = Game.getState();
 assert('侠客第2回合触发故事事件', s.phase === 'story');
 assert('侠层故事事件-第一血战', s.pendingStory && s.pendingStory.id === 'hero_s1');
@@ -711,13 +711,16 @@ console.log('\n== 人生时间线 ==');
 // 动态结局分支测试（v2.10）
 // ─────────────────────────────────────────────
 console.log('\n== 动态结局分支 ==');
+// 固定 Math.random = 0.9 避免被动事件/危机事件随机干扰结局判断
+const _origRandom = Math.random;
+Math.random = () => 0.9;
 
 // 官场·朝堂棋手：cunning>=2 且 factioner>=2
 {
   newGame('scholar', 'court');
   s = Game.getState();
   s.resources.power = 90; s.resources.favor = 90;
-  s.round = 10;
+  s.round = 13;
   s.flags.cunning = 2; s.flags.factioner = 2;
   Game.endRound();
   s = Game.getState();
@@ -728,8 +731,8 @@ console.log('\n== 动态结局分支 ==');
 {
   newGame('scholar', 'court');
   s = Game.getState();
-  s.resources.power = 62; s.resources.favor = 90; // power<favor → 走圣眷分支
-  s.round = 10;
+  s.resources.power = 82; s.resources.favor = 90; // power<favor → 走圣眷分支
+  s.round = 13;
   s.flags.loyal = 3;
   Game.endRound();
   s = Game.getState();
@@ -795,6 +798,13 @@ console.log('\n== 动态结局分支 ==');
   s = Game.getState();
   assert('lone_hero>=1（bonds=0，无brave）→ 孤侠传说结局', s.currentEnding && s.currentEnding.id === 'hero_triumph_lone');
 }
+
+// 恢复 Math.random
+Math.random = _origRandom;
+
+// 固定 Math.random = 0.8：避免被动事件/危机事件/world 事件随机干扰 NPC 和战役触发测试
+// 0.8 > passiveChance(0.65) → 不触发被动事件；0.8 > crisisChance(0.40) → 不触发危机事件
+Math.random = () => 0.8;
 
 // ─────────────────────────────────────────────
 // NPC 突破事件（round 11）
@@ -1182,6 +1192,9 @@ console.log('\n== 11. 战役系统 ==');
   const isStory  = s.phase === 'story' && !s.battle;
   assert('官场 round9 prestige>=40 → 触发战役或故事', isBattle || isStory);
 }
+
+// 恢复 Math.random
+Math.random = _origRandom;
 
 // ─────────────────────────────────────────────
 // 汇总

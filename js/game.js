@@ -91,7 +91,7 @@ const TRACKS = {
       { key: 'favor', name: '圣眷', icon: '👑', color: '#e8c45a', max: 100 },
       { key: 'power', name: '权柄', icon: '⚖️', color: '#9b59b6', max: 100 }
     ],
-    winText: '权柄 ≥ 60 且 圣眷 ≥ 65',
+    winText: '权柄 ≥ 80 且 圣眷 ≥ 85',
     loseText: '钱粮归零 或 圣眷归零'
   },
   rebel: {
@@ -4186,7 +4186,7 @@ var Game = (() => {
         }
         triggerEnding('favor_zero'); return;
       }
-      if (state.round >= 8 && r.power >= 60 && r.favor >= 65) { triggerEnding(pickEndingByStats()); return; }
+      if (state.round >= 14 && r.power >= 80 && r.favor >= 85) { triggerEnding(pickEndingByStats()); return; }
     } else if (state.player.track === 'rebel') {
       if (r.troops <= 0) { triggerEnding('troops_zero'); return; }
       if (state.round >= 8 && r.territory >= 80 && r.morale >= 60) { triggerEnding(pickTerritoryEnding()); return; }
