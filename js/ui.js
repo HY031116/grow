@@ -123,6 +123,7 @@ var UI = (() => {
     // 资源面板（含胜利目标进度条）
     const resPanel = document.getElementById('resources-panel');
     const goalHtml = buildGoalProgress(s);
+    const delta = s.lastResDelta || {};
     resPanel.innerHTML = goalHtml + track.resources.map(def => {
       const val = s.resources[def.key] ?? 0;
       const pct = Math.min(100, Math.round(val / (def.displayMax || def.max) * 100));
@@ -130,12 +131,14 @@ var UI = (() => {
       const isHigh = val >= (def.highVal !== undefined ? def.highVal : 70);
       const extraInfo = def.key === 'favor' && s.player.track === 'court'
         ? `<span class="res-sublabel">${getCourtTitle(val, s.player.gender)}</span>` : '';
+      const d = delta[def.key];
+      const deltaHtml = d ? `<span class="res-delta ${d > 0 ? 'res-delta-pos' : 'res-delta-neg'}">${d > 0 ? '+' : ''}${d}</span>` : '';
       return `
         <div class="res-item ${isLow ? 'res-low' : ''} ${isHigh ? 'res-high' : ''}">
           <div class="res-header">
             <span class="res-icon">${def.icon}</span>
             <span class="res-name">${def.name}${extraInfo}</span>
-            <span class="res-val">${val}</span>
+            <span class="res-val">${val}${deltaHtml}</span>
           </div>
           <div class="res-track">
             <div class="res-fill" style="width:${pct}%; background:${def.color}"></div>

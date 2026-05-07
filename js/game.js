@@ -3078,7 +3078,9 @@ var Game = (() => {
       world: {
         stability: 70,  // 天下安定（0-100），高=治世，低=乱世
         unrest: 25      // 民间动荡（0-100），高=民不聊生，低=安居乐业
-      }
+      },
+      // 最近一次行动的资源变化量（用于 UI 浮动数字提示）
+      lastResDelta: {}
     };
     // 防御性调用：init 在 UI 可能尚未加载时执行
     if (typeof UI !== 'undefined') UI.render();
@@ -3151,7 +3153,7 @@ var Game = (() => {
   }
 
   function doAction(actionId) {
-    // 优先检查是否是 NPC 互动行动
+    state.lastResDelta = {}; // 每次行动前清零 delta
     const npcAction = NPC_ACTIONS[state.player.track];
     if (npcAction && npcAction.id === actionId) {
       const remaining = state.actionPoints - state.usedPoints;
@@ -3303,6 +3305,7 @@ var Game = (() => {
   function endRound() {
     // 若游戏已结束则不执行（防止 story/transition 覆盖结局）
     if (state.phase !== 'play') return;
+    state.lastResDelta = {}; // 每个回合结束前清零 delta
     const origin = ORIGINS[state.player.origin];
     if (origin.traitBonus && !origin.traitBonus.action && !origin.traitBonus.track) {
       applyEffect({ [origin.traitBonus.key]: origin.traitBonus.val });
@@ -3560,6 +3563,7 @@ var Game = (() => {
   function chooseStory(idx) {
     const story = state.pendingStory;
     if (!story || !story.choices[idx]) return;
+    state.lastResDelta = {}; // 故事选择前清零 delta
     // 路由到 NPC 事件处理
     if (story.isNpcEvent) {
       chooseNpcStory(idx);
@@ -3600,7 +3604,12 @@ var Game = (() => {
       if (res[key] !== undefined) {
         const def = trackDefs.find(d => d.key === key);
         const maxVal = (def && def.max != null) ? def.max : 100;
+        const oldVal = res[key];
         res[key] = Math.max(0, Math.min(maxVal, res[key] + delta));
+        const actual = res[key] - oldVal;
+        if (actual !== 0) {
+          state.lastResDelta[key] = (state.lastResDelta[key] || 0) + actual;
+        }
       }
     }
   }
