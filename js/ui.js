@@ -67,6 +67,31 @@ var UI = (() => {
     const origin = ORIGINS[s.player.origin];
     document.getElementById('track-origin-name').textContent = origin.name;
 
+    // 根据出身设置赛道选择情景文本
+    const trackIntroTexts = {
+      scholar_court: '你凭才华得以入仕。朝堂大门已为你打开，现在要选择：成为一名清廉的忠臣还是权谋高手？',
+      scholar_rebel: '当官道无望，或理想幻灭，你或许会走上一条不同的路：揭竿而起，开创属于自己的天地。',
+      scholar_merchant: '用你的才智经营生意。以笔杆起家，用银两改变命运——这条路或许比入仕更自由。',
+      scholar_hero: '抛弃文人身份，用剑而非笔为武器。有些人的侠义，就在那一刻闪现。',
+      warrior_court: '身为武将，朝堂不是陌生之地。圣眷与权柄，你要如何在权力中心立足？',
+      warrior_rebel: '你的兵权注定了一条路：要么为朝廷守疆，要么自立为王。选择吧。',
+      warrior_merchant: '放下刀剑，用商业改变世界。曾经的武将，如今用银两筑起帝国。',
+      warrior_hero: '从军营到江湖，行侠仗义的心从未改变。只是换了战场，换了对手。',
+      merchant_court: '金钱开启了朝堂的大门。作为商贾，你的影响力有多大，取决于你如何在官场博弈。',
+      merchant_rebel: '金钱能募兵，金钱能收买人心。商人或许是比武将更冷酷的革命者。',
+      merchant_merchant: '这是属于你的舞台。财富在流动，商路在延伸，属于商人的帝国呼之欲出。',
+      merchant_hero: '弃商从侠，你要用金钱和剑来守护心中的正义。',
+      wanderer_court: '从江湖走入朝堂，游侠的身份是你的优势还是束缚？ ',
+      wanderer_rebel: '聚义厅、山寨、起义军——江湖出身的你，或许天生就属于这条路。',
+      wanderer_merchant: '游侠放下剑，拿起算盘。你的江湖人脉，是最好的商业资本。',
+      wanderer_hero: '这是你最自然的归宿。侠义在心，剑在手，江湖由你开创传说。'
+    };
+
+    const trackIntroKey = `${s.player.origin}_${s.player.track || 'court'}`;
+    const introText = trackIntroTexts[trackIntroKey] || '选择你这一生的方向，命运将从此改写。';
+    const introEl = document.getElementById('track-intro-text');
+    if (introEl) introEl.textContent = introText;
+
     document.querySelectorAll('.track-card').forEach(card => {
       const trackId = card.dataset.track;
       card.classList.toggle('selected', trackId === s.player.track);
