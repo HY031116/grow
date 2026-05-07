@@ -87,7 +87,7 @@ const TRACKS = {
     icon: '👑',
     desc: '踏入朝堂，在圣眷与权柄之间寻找平衡。辅佐明君，或架空皇帝——史书如何记载你，全凭你的选择。',
     resources: [
-      { key: 'gold',  name: '钱粮', icon: '🌾', color: '#c9a84c', max: 100 },
+      { key: 'gold',  name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300 },
       { key: 'favor', name: '圣眷', icon: '👑', color: '#e8c45a', max: 100 },
       { key: 'power', name: '权柄', icon: '⚖️', color: '#9b59b6', max: 100 }
     ],
@@ -101,7 +101,7 @@ const TRACKS = {
     icon: '⚔️',
     desc: '揭竿而起，招募义军，攻城略地。有朝一日问鼎天下——或者兵败身死，身首异处。',
     resources: [
-      { key: 'gold',      name: '钱粮', icon: '🌾', color: '#c9a84c', max: 100 },
+      { key: 'gold',      name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300 },
       { key: 'troops',    name: '兵力', icon: '⚔️', color: '#e74c3c', max: 100 },
       { key: 'morale',    name: '民心', icon: '❤️', color: '#2ecc71', max: 100 },
       { key: 'territory', name: '地盘', icon: '🏯', color: '#e67e22', max: 100 }
@@ -116,7 +116,7 @@ const TRACKS = {
     icon: '💰',
     desc: '以银子开路，打通商道，垄断贸易。富可敌国之时，天下权贵皆需仰你鼻息，一掷千金，再造乾坤。',
     resources: [
-      { key: 'gold',     name: '钱粮', icon: '🌾', color: '#c9a84c', max: 100 },
+      { key: 'gold',     name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300 },
       { key: 'wealth',   name: '财富', icon: '💎', color: '#f1c40f', max: 150, lowVal: 10, highVal: 80 },
       { key: 'routes',   name: '商路', icon: '🛤️', color: '#27ae60', max: 10,  lowVal: 1,  highVal: 5  },
       { key: 'prestige', name: '商誉', icon: '🏮', color: '#e67e22', max: 100 }
@@ -131,7 +131,7 @@ const TRACKS = {
     icon: '🗡️',
     desc: '仗剑走天涯，行侠仗义，恩仇必报。当你的名字令奸邪胆寒、百姓安心之时，便是真正的江湖传说。',
     resources: [
-      { key: 'gold',    name: '钱粮', icon: '🌾', color: '#c9a84c', max: 100 },
+      { key: 'gold',    name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300 },
       { key: 'martial', name: '武艺', icon: '⚔️', color: '#e74c3c', max: 100 },
       { key: 'fame',    name: '名望', icon: '⭐', color: '#f39c12', max: 100 },
       { key: 'bonds',   name: '恩义', icon: '🤝', color: '#2980b9', max: 50,  lowVal: 3,  highVal: 25 }
@@ -3595,9 +3595,12 @@ var Game = (() => {
   function applyEffect(effect) {
     if (!effect) return;
     const res = state.resources;
+    const trackDefs = (TRACKS[state.player.track] || {}).resources || [];
     for (const [key, delta] of Object.entries(effect)) {
       if (res[key] !== undefined) {
-        res[key] = Math.max(0, Math.min(100, res[key] + delta));
+        const def = trackDefs.find(d => d.key === key);
+        const maxVal = (def && def.max != null) ? def.max : 100;
+        res[key] = Math.max(0, Math.min(maxVal, res[key] + delta));
       }
     }
   }
