@@ -779,6 +779,157 @@ console.log('\n== 动态结局分支 ==');
 }
 
 // ─────────────────────────────────────────────
+// NPC 突破事件（round 11）
+// ─────────────────────────────────────────────
+console.log('\n== NPC 突破事件 ==');
+
+// 官场 round11 minister>=40 → 权相求援事件触发
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.npcs.minister = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('官场 round11 minister>=40 → court_npc_minister_crisis 触发',
+    s.pendingStory && s.pendingStory.id === 'court_npc_minister_crisis');
+}
+
+// 官场 选A → minister 上升
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.npcs.minister = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'court_npc_minister_crisis') {
+    const prevMin = s.npcs.minister;
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('官场 NPC 选A → minister 关系上升', s.npcs.minister > prevMin);
+  } else {
+    assert('官场 NPC 选A（前置触发检查）', false);
+  }
+}
+
+// 官场 cond 不满足（minister<40）→ 不触发
+{
+  newGame('scholar', 'court');
+  s = Game.getState();
+  s.npcs.minister = 20;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('官场 minister<40 → court_npc_minister_crisis 不触发',
+    !s.pendingStory || s.pendingStory.id !== 'court_npc_minister_crisis');
+}
+
+// 造反 round11 general>=40 → 生死之盟触发
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.npcs.general = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('造反 round11 general>=40 → rebel_npc_general_bond 触发',
+    s.pendingStory && s.pendingStory.id === 'rebel_npc_general_bond');
+}
+
+// 造反 选A → general 达到盟友阈值，timeline 有 🤝
+{
+  newGame('warrior', 'rebel');
+  s = Game.getState();
+  s.npcs.general = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'rebel_npc_general_bond') {
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('造反 NPC 选A → general >= 65', (s.npcs.general || 0) >= 65);
+    assert('造反 NPC 选A → timeline 含 🤝',
+      s.timeline.some(function(t) { return t.icon === '\u{1F91D}'; }) ||
+      s.timeline.some(function(t) { return t.icon === '🤝'; }));
+  } else {
+    assert('造反 NPC 选A（前置触发检查）', false);
+    assert('造反 NPC timeline 🤝（前置触发检查）', false);
+  }
+}
+
+// 富商 round11 tycoon>=40 → 首富妥协触发
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  s.npcs.tycoon = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('富商 round11 tycoon>=40 → merchant_npc_tycoon_rival 触发',
+    s.pendingStory && s.pendingStory.id === 'merchant_npc_tycoon_rival');
+}
+
+// 富商 选A → phase 为 play
+{
+  newGame('merchant', 'merchant');
+  s = Game.getState();
+  s.npcs.tycoon = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'merchant_npc_tycoon_rival') {
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('富商 NPC 选A → phase 为 play', s.phase === 'play');
+  } else {
+    assert('富商 NPC 选A（前置触发检查）', false);
+  }
+}
+
+// 侠客 round11 master>=40 → 宗主信任触发
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.npcs.master = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('侠客 round11 master>=40 → hero_npc_master_trust 触发',
+    s.pendingStory && s.pendingStory.id === 'hero_npc_master_trust');
+}
+
+// 侠客 选A → bonds 增加
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.npcs.master = 45;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  if (s.pendingStory && s.pendingStory.id === 'hero_npc_master_trust') {
+    var prevBonds = s.resources.bonds;
+    Game.chooseStory(0);
+    s = Game.getState();
+    assert('侠客 NPC 选A → bonds 增加', s.resources.bonds > prevBonds);
+  } else {
+    assert('侠客 NPC 选A（前置触发检查）', false);
+  }
+}
+
+// cond 不满足（master<40）→ 不触发
+{
+  newGame('wanderer', 'hero');
+  s = Game.getState();
+  s.npcs.master = 20;
+  s.round = 10;
+  Game.endRound();
+  s = Game.getState();
+  assert('侠客 master<40 → hero_npc_master_trust 不触发',
+    !s.pendingStory || s.pendingStory.id !== 'hero_npc_master_trust');
+}
+
+// ─────────────────────────────────────────────
 // 汇总
 // ─────────────────────────────────────────────
 console.log('\n' + '='.repeat(50));

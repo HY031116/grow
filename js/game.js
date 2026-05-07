@@ -1473,6 +1473,30 @@ const STORY_EVENTS = {
       ]
     },
     {
+      // NPC 突破事件：官场·权相危机（round 11，minister>=40 触发）
+      id: 'court_npc_minister_crisis',
+      triggerRound: 11,
+      title: '权相求援',
+      cond: (f, res, npcs) => (npcs.minister || 0) >= 40,
+      scene: '一场突如其来的政争让李崇陷入被动——御史台联署弹劾，矛头直指他的心腹，他在朝中的布局岌岌可危。深夜，他的亲信秘密登门，言辞急切："相爷有急事相求，还望大人援手……"这是李崇第一次真正需要你。',
+      choices: [
+        {
+          text: '全力驰援，与他共进退',
+          result: '你调动关系为李崇解围，他事后亲自登门致谢，眼中带着真正的感激。此后，你们之间的关系不再只是政治盟约，而多了几分真正的信义——他欠了你一份人情，这在朝堂上，比什么都值钱。',
+          effect: { power: 15, favor: -8 },
+          flagSet: { factioner: 1 },
+          npcSet: { minister: 25 }
+        },
+        {
+          text: '谨慎站队，借机提条件',
+          result: '你帮了忙，但事先谈好了条件。李崇对你的精明感到几分敬佩，也有几分戒备——这种人，是最好的盟友，也是最难控制的对手。他答应了你，语气中带着真实的尊重。',
+          effect: { power: 8, favor: 5 },
+          flagSet: { cunning: 1 },
+          npcSet: { minister: 12 }
+        }
+      ]
+    },
+    {
       id: 'court_s5b',
       triggerRound: 13,
       title: '朋党倾轧',
@@ -1835,6 +1859,30 @@ const STORY_EVENTS = {
       ]
     },
     {
+      // NPC 突破事件：造反·徐长风生死之盟（round 11，general>=40 触发）
+      id: 'rebel_npc_general_bond',
+      triggerRound: 11,
+      title: '生死之盟',
+      cond: (f, res, npcs) => (npcs.general || 0) >= 40,
+      scene: '一场突围战中，你的本阵被敌军重重包围，形势岌岌可危。千钧一发之际，徐长风率部从侧翼突破，将你从重围中救出。脱险之后，他拍着你的肩，大笑道："今日算我欠你一个——不，今日算你欠我一个！"他的眼神里，有战火后的热烈，也有真正的情义。',
+      choices: [
+        {
+          text: '把酒言欢，歃血为盟，共誓义气',
+          result: '你们在营帐中把酒，每人划了一刀，以血为誓，共守义气。从此以后，义军上下都知道：你与徐长风已是真正的铁血兄弟，再无猜疑。士气如虹，麾下将士无不振奋。',
+          effect: { morale: 20 },
+          flagSet: { righteous: 1 },
+          npcSet: { general: 25 }
+        },
+        {
+          text: '感谢他，但点到为止，保持一定距离',
+          result: '你感谢了他的援助，却没有做过多的承诺。徐长风看出了你的心思，笑道："你这人，精明得很。"语气中既有欣赏，也有几分遗憾——但你们的关系，比之前又深了一步。',
+          effect: { troops: 10 },
+          flagSet: { cunning: 1 },
+          npcSet: { general: 10 }
+        }
+      ]
+    },
+    {
       id: 'rebel_s4b',
       triggerRound: 14,
       title: '反王联盟',
@@ -2172,6 +2220,30 @@ const STORY_EVENTS = {
       ]
     },
     {
+      // NPC 突破事件：富商·沈万钧的第一次妥协（round 11，tycoon>=40 触发）
+      id: 'merchant_npc_tycoon_rival',
+      triggerRound: 11,
+      title: '首富的妥协',
+      cond: (f, res, npcs) => (npcs.tycoon || 0) >= 40,
+      scene: '一场关键竞标中，你以一步绝杀打破了沈万钧精心布置的局——他输了，而且输得明明白白。事后，他亲自登门，把一封介绍信放在桌上："凭这封信，江南三省的商路，没有人敢刁难你。"他语气平静，眼神却格外认真——这是天下首富第一次真正在乎你。',
+      choices: [
+        {
+          text: '接受，联手布局江南',
+          result: '你接过介绍信，两人相视而笑。从此，你们之间的关系从竞争走向了合作。江南商路上，多了一段"双雄并进"的佳话，商界无人敢小觑。',
+          effect: { routes: 1, prestige: 15 },
+          flagSet: { cunning: 1 },
+          npcSet: { tycoon: 25 }
+        },
+        {
+          text: '谢绝，凭实力自己闯',
+          result: '你客气地把信推回去，说想靠自己打开局面。沈万钧愣了一下，随后抚掌大笑："好！不愧是对手。"他对你的钦佩，又上了一个台阶——此后在商界，你们虽未并肩，却都明白对方的分量。',
+          effect: { prestige: 20 },
+          flagSet: { righteous: 1 },
+          npcSet: { tycoon: 15 }
+        }
+      ]
+    },
+    {
       id: 'merchant_s4',
       triggerRound: 12,
       title: '皇商之邀',
@@ -2418,6 +2490,30 @@ const STORY_EVENTS = {
           idx: 1,
           add: { fame: 12, bonds: 10 },
           result: '你的那封公开信在江湖上引发了异乎寻常的反响——有人将它抄录下来，贴在茶馆门口；有人说它是近十年来最有骨气的侠义宣言。你的名声已不再只是"武艺高强"，而是"此人有侠骨"。'
+        }
+      ]
+    },
+    {
+      // NPC 突破事件：侠客·燕无双的信任（round 11，master>=40 触发）
+      id: 'hero_npc_master_trust',
+      triggerRound: 11,
+      title: '宗主的信任',
+      cond: (f, res, npcs) => (npcs.master || 0) >= 40,
+      scene: '在一场山间伏击中，你以命相搏救了燕无双的退路。脱险之后，他在山崖上喝了一壶酒，把剩下的半壶扔给你，语气少了往日的审视："你这人，我看了很久了。"月色下，你第一次觉得他是个真正的人，而不只是一个江湖符号。',
+      choices: [
+        {
+          text: '赤诚相待，倾心而谈，打开心扉',
+          result: '你们一壶酒，喝了大半夜。从江湖旧事到心中所向，燕无双第一次真正打开了心扉。你知道，从此以后，他是真正的朋友，不只是江湖中的盟友。天下再大，知己难得。',
+          effect: { bonds: 15, fame: 10 },
+          flagSet: { sworn: 1 },
+          npcSet: { master: 25 }
+        },
+        {
+          text: '点到为止，以酒为礼，江湖情义如此',
+          result: '你喝了那半壶酒，说："酒够了，情义也够了。"燕无双大笑，说："你这人，真有意思。"你们没有再多言，但彼此都明白了。有些默契，不需要说出来。',
+          effect: { fame: 12, martial: 8 },
+          flagSet: { lone_hero: 1 },
+          npcSet: { master: 12 }
         }
       ]
     },
@@ -3337,9 +3433,11 @@ var Game = (() => {
   function getStoryEvent() {
     const pool = STORY_EVENTS[state.player.track];
     if (!pool) return null;
+    // cond 接收 (flags, resources, npcs, round)，全部满足才触发
     const regular = pool.find(e =>
       e.triggerRound === state.round &&
-      !state.triggeredStories.includes(e.id)
+      !state.triggeredStories.includes(e.id) &&
+      (!e.cond || e.cond(state.flags, state.resources, state.npcs, state.round))
     ) || null;
     if (regular) return regular;
 
@@ -3380,7 +3478,15 @@ var Game = (() => {
       state.flags[key] = (state.flags[key] || 0) + val;
     }
 
-    addLog('story', `【${story.title}】${choice.result}`);
+    // 应用 npcSet（NPC 关系值变化，同时检测是否跨越盟友阈值写入时间线）
+    for (const [npcId, delta] of Object.entries(choice.npcSet || {})) {
+      const prev = state.npcs[npcId] || 0;
+      state.npcs[npcId] = Math.max(0, Math.min(100, prev + delta));
+      if (state.npcs[npcId] >= 65 && prev < 65 && NPC_DATA[npcId]) {
+        addTimeline('🤝', `与【${NPC_DATA[npcId].name}】结为挚友`);
+      }
+    }
+        addLog('story', `【${story.title}】${choice.result}`);
     // 人生时间线：主线故事完成
     addTimeline('📖', `【${story.title}】${choice.result.slice(0, 22)}${choice.result.length > 22 ? '…' : ''}`);
     state.pendingStory = null;
