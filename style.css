@@ -498,12 +498,41 @@ html, body {
   height: 5px;
   background: rgba(255,255,255,0.06);
   border-radius: 3px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 .npc-bar-fill {
   height: 100%;
   border-radius: 3px;
   transition: width 0.4s ease;
+}
+/* 盟友阈值标记线（65%处） */
+.npc-ally-line {
+  position: absolute;
+  left: 65%;
+  top: -2px;
+  height: 9px;
+  width: 1.5px;
+  background: rgba(255,255,255,0.30);
+  border-radius: 1px;
+  pointer-events: none;
+}
+/* 盟友状态整体高亮 */
+.npc-ally .npc-bar-track {
+  background: rgba(44,184,122,0.12);
+}
+/* 盟友徽章 */
+.npc-ally-badge {
+  display: inline-block;
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: #fff;
+  background: #2cb87a;
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-left: 3px;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
 }
 
 /* NPC 行动按钮高亮 */

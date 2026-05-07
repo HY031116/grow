@@ -208,23 +208,28 @@ var UI = (() => {
         .map(npc => {
           const rel = s.npcs[npc.id] || 0;
           const pct = rel;
+          const isAlly = rel >= 65;
           const label = rel < 35 ? '陌生' : rel < 65 ? '相识' : '盟友';
-          const barColor = rel < 35 ? '#e07' : rel < 65 ? '#fa0' : '#2c9';
+          const barColor = rel < 35 ? '#c0445a' : rel < 65 ? '#e8a04b' : '#2cb87a';
+          const allyBadge = isAlly
+            ? `<span class="npc-ally-badge">盟</span>` : '';
           return `
-            <div class="npc-item">
+            <div class="npc-item${isAlly ? ' npc-ally' : ''}">
               <div class="npc-header">
                 <span class="npc-icon">${npc.icon}</span>
                 <span class="npc-name">${npc.name}</span>
                 <span class="npc-title-label">${npc.title}</span>
+                ${allyBadge}
                 <span class="npc-rel-label" style="color:${barColor}">${label} ${rel}</span>
               </div>
               <div class="npc-bar-track">
                 <div class="npc-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+                <div class="npc-ally-line" title="盟友阈值 65"></div>
               </div>
             </div>`;
         }).join('');
       npcPanelEl.innerHTML = npcEntries
-        ? `<div class="npc-panel-title">人脉关系</div>${npcEntries}`
+        ? `<div class="npc-panel-title">👥 人脉关系</div>${npcEntries}`
         : '';
     }
 
