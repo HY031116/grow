@@ -12,7 +12,7 @@ const ORIGINS = {
     desc: '出身贫寒，却饱读诗书，满腹经纶。一朝中举踏入仕途，脑子是你最大的本钱。',
     flavor: '"十年寒窗无人问，一举成名天下知。"',
     recommended: 'court',
-    trait: '博学多才：每回合情报+5（声望微增）',
+    trait: '博学多才：每回合圣眷 +5',
     traitBonus: { track: 'court', key: 'favor', val: 5 },
     resources: {
       court: { gold: 20, favor: 30, power: 5 },
@@ -501,7 +501,7 @@ const AMBITIONS = {
     name: '兼济天下',
     icon: '🌿',
     desc: '行仁义于天下，泽被苍生，此生无憾。',
-    bonusDesc: '每次「接济百姓」，仁善积累加倍（额外 +1 benevolent）。',
+    bonusDesc: '每次「接济百姓」，仁善积累加倍（额外累积 +1 点仁善值）。',
     bonusActionId: 'charity',
     bonusKey: 'benevolent',
     bonusVal: 1,
@@ -3316,9 +3316,9 @@ var Game = (() => {
     state.phase = 'play';
     const amb = AMBITIONS[ambitionId];
     const trackName = TRACKS[state.player.track].name;
-    addLog('system', `${state.player.title}，志在【${amb.name}】，踏上【${trackName}】之路。传奇，从此刻开始。`);
+    addLog('system', `${state.player.title}，志在【${amb.name}】，踏上【${trackName}】。传奇，从此刻开始。`);
     // 人生时间线：开局里程碑
-    addTimeline('🌅', `踏上【${trackName}】之路，立志【${amb.name}】`);
+    addTimeline('🌅', `踏上【${trackName}】，立志【${amb.name}】`);
     UI.render();
   }
 
