@@ -625,6 +625,48 @@ html, body {
   cursor: not-allowed;
 }
 
+/* 当季强化行动：金边高亮 */
+.action-btn.action-season {
+  border-color: #c9a84c;
+  background: rgba(201,168,76,0.05);
+}
+.action-btn.action-season:hover:not(.action-disabled) {
+  background: rgba(201,168,76,0.12);
+}
+.act-season-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #c9a84c, #e8c45a);
+  color: #1a1208;
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+
+/* 高风险行动：红边高亮 */
+.action-btn.action-risk {
+  border-color: #c0445a;
+  background: rgba(192,68,90,0.05);
+}
+.action-btn.action-risk:hover:not(.action-disabled) {
+  background: rgba(192,68,90,0.10);
+}
+.act-risk-badge {
+  display: inline-block;
+  background: rgba(192,68,90,0.85);
+  color: #fff;
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
 .act-top {
   display: flex;
   align-items: center;

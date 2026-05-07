@@ -174,8 +174,16 @@ var UI = (() => {
     actPanel.innerHTML = actions.map(act => {
       const canUse = act.cost <= remaining;
       const effectStr = fmtEffect(act.effect);
+      // 当季强化标签
+      const isSeasonBonus = act.seasonBonus && act.seasonBonus.season === s.season;
+      const seasonTag = isSeasonBonus
+        ? `<span class="act-season-badge" title="${act.seasonBonus.hint}">✦ ${act.seasonBonus.season}季强化</span>` : '';
+      // 高风险行动：显示胜率提示
+      const winRate = act.isRiskAction
+        ? `<span class="act-risk-badge">⚡ 搏一把</span>` : '';
+      const btnClass = `action-btn${canUse ? '' : ' action-disabled'}${isSeasonBonus ? ' action-season' : ''}${act.isRiskAction ? ' action-risk' : ''}`;
       return `
-        <button class="action-btn${canUse ? '' : ' action-disabled'}"
+        <button class="${btnClass}"
                 onclick="if(!this.classList.contains('action-disabled')) Game.doAction('${act.id}')">
           <div class="act-top">
             <span class="act-icon">${act.icon}</span>
@@ -183,7 +191,7 @@ var UI = (() => {
             <span class="act-cost">${'●'.repeat(act.cost)}</span>
           </div>
           <div class="act-desc">${act.desc}</div>
-          <div class="act-effect">${effectStr}</div>
+          <div class="act-effect">${effectStr}${seasonTag}${winRate}</div>
         </button>`;
     }).join('') + npcActHtml;
 

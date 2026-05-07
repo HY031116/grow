@@ -172,6 +172,7 @@ const ACTIONS = {
       cost: 1,
       desc: '兢兢业业把差事办得漂亮，皇帝都看在眼里。',
       effect: { favor: 18, power: -5 },
+      seasonBonus: { season: '秋', keys: { favor: 8 }, hint: '秋日考评，勤政格外受赏识' },
       results: [
         '你将差事办得井井有条，上司连连称赞，皇帝亦有耳闻，圣眷微升。',
         '你夙兴夜寐，终于将积压的公文处理妥当，忠勤之名渐传。',
@@ -185,6 +186,7 @@ const ACTIONS = {
       cost: 1,
       desc: '拉拢同僚，扶植心腹，在朝中构建自己的势力网络。',
       effect: { power: 22, favor: -8, gold: -10 },
+      seasonBonus: { season: '冬', keys: { power: 10 }, hint: '冬日宴饮多，结党拉拢最易' },
       results: [
         '你广结善缘，暗中许以好处，数位同僚已投入你的麾下，权柄渐盛。',
         '你在官场中编织关系网，皇帝似乎察觉了些什么，但你的势力已成。',
@@ -217,6 +219,7 @@ const ACTIONS = {
       cost: 1,
       desc: '花钱消灾，为官之道在于"孝敬"。银子打出去，路子就通了。',
       effect: { gold: -25, favor: 20, power: 8 },
+      seasonBonus: { season: '冬', keys: { favor: 8, power: 5 }, hint: '年关节礼，礼重情深' },
       results: [
         '你备好厚礼，登门拜访，上司喜笑颜开，当即为你美言几句，圣眷与权柄皆涨。',
         '白花花的银子送出去，上司的态度立刻软了三分，朝中路子也宽了。',
@@ -230,10 +233,31 @@ const ACTIONS = {
       cost: 1,
       desc: '当官不发财，请我来何用？趁机敛财，充实口袋。',
       effect: { gold: 30, favor: -15, power: 5 },
+      seasonBonus: { season: '秋', keys: { gold: 15 }, hint: '秋税丰收，敛财最肥' },
       results: [
         '你打着"征收"的名目，中饱私囊，百姓敢怒不敢言，钱袋鼓了许多。',
         '你设法在账目上做了手脚，白花花的银子流入口袋，但御史已经开始盯着你了。',
         '一番操作下来，钱袋鼓了，街头已有民怨流传，圣眷有所下滑。'
+      ]
+    },
+    {
+      id: 'court_gamble',
+      name: '孤注一掷',
+      icon: '🎯',
+      cost: 2,
+      desc: '在皇帝面前正面弹劾政敌，置之死地而后生。成则声名大噪，败则万劫不复。（消耗 2 行动点，胜率 60%）',
+      effect: { favor: 42, power: 12 },
+      failEffect: { favor: -30, power: -18 },
+      failChance: 0.40,
+      isRiskAction: true,
+      results: [
+        '你当庭慷慨陈词，证据确凿，对手哑口无言。皇帝拍案称赞，满朝震动，圣眷权柄双双飙升。',
+        '你孤身站出，以一己之力扭转局面，皇帝龙颜大悦，此后对你格外倚重。',
+        '这一搏，你赢了。弹劾铁证如山，政敌当场被贬，你的名字在朝野间传开。'
+      ],
+      failResults: [
+        '局势急转直下，对方早有准备，反将你一军。皇帝龙颜震怒，此番孤注一掷满盘皆输。',
+        '你冒险出手，却被对方识破布局，当庭被驳斥得体无完肤，圣眷大损，权柄受创。'
       ]
     }
   ],
@@ -246,6 +270,7 @@ const ACTIONS = {
       cost: 1,
       desc: '乱世中，兵力就是话语权。花银子，招义士，壮大队伍。',
       effect: { gold: -20, troops: 25 },
+      seasonBonus: { season: '春', keys: { troops: 8 }, hint: '春季农闲，壮丁好募' },
       results: [
         '四方豪杰闻风而来，你的旗下又多了数百兵马，军势大振。',
         '你散尽钱财，广招英雄，队伍又壮大了几分，士气高昂。',
@@ -259,6 +284,7 @@ const ACTIONS = {
       cost: 1,
       desc: '得民心者得天下。开仓放粮，施粥赈灾，赢得百姓之心。',
       effect: { gold: -15, morale: 25, troops: 5 },
+      seasonBonus: { season: '冬', keys: { morale: 15 }, hint: '冬日施粥，恩泽倍显' },
       results: [
         '你开仓放粮，百里之内百姓奔走相告，民心大振，甚至有青壮主动从军。',
         '你设粥棚赈济灾民，百姓感恩戴德，民心渐归，又有壮丁自愿投军。',
@@ -291,10 +317,31 @@ const ACTIONS = {
       cost: 1,
       desc: '兵马未动，粮草先行。组织屯田，积蓄粮草，为大战做准备。',
       effect: { gold: 28, morale: 5 },
+      seasonBonus: { season: '秋', keys: { gold: 15 }, hint: '秋收丰年，屯粮事半功倍' },
       results: [
         '你号令军民屯田，一季之后粮仓渐满，军心稳固，民心也跟着涨了些。',
         '你大力推行屯田，解决了后勤之忧，军队士气因此提振。',
         '粮食堆满仓库，士卒安心，百姓的安居让民心也好了许多。'
+      ]
+    },
+    {
+      id: 'rebel_gamble',
+      name: '奇袭突进',
+      icon: '⚡',
+      cost: 2,
+      desc: '率轻骑孤军深入，出奇制胜。成则震动天下，败则全军覆没。（消耗 2 行动点，胜率 65%）',
+      effect: { territory: 22, troops: 12, morale: 8 },
+      failEffect: { troops: -25, gold: -15, morale: -10 },
+      failChance: 0.35,
+      isRiskAction: true,
+      results: [
+        '铁骑奔袭，如天降神兵，敌军措手不及。地盘大涨，军威大振，天下震动。',
+        '你亲率精锐奇袭得手，敌军溃败，三军欢呼，你的勇名传遍四方。',
+        '出奇制胜！这一战打出了你的威风，各路豪杰闻风来投，声势大涨。'
+      ],
+      failResults: [
+        '深入敌后，却遭四面合围，拼死突围之后损兵折将，元气大伤。',
+        '轻骑突进中了埋伏，大败而归，折损精锐无数，士气跌至谷底。'
       ]
     }
   ],
@@ -307,6 +354,7 @@ const ACTIONS = {
       cost: 1,
       desc: '广开商铺，坐地收财。本钱换商路，商路换财富。',
       effect: { gold: -15, wealth: 25, routes: 1 },
+      seasonBonus: { season: '春', keys: { wealth: 10 }, hint: '春季开张大吉，财运旺' },
       results: [
         '你选了个好地段，铺面一开，财源滚滚，路子也越走越宽。',
         '开张大吉，四方客商络绎不绝，财富与商路双双增长。',
@@ -320,6 +368,7 @@ const ACTIONS = {
       cost: 1,
       desc: '趁低买入，高价出售，牟取暴利。但万一风声走漏……',
       effect: { gold: -10, wealth: 45 },
+      seasonBonus: { season: '秋', keys: { wealth: 15 }, hint: '秋后物价旺，囤货最值' },
       riskChance: 0.30,
       riskEffect: { gold: -20, prestige: -15 },
       results: [
@@ -352,6 +401,7 @@ const ACTIONS = {
       cost: 1,
       desc: '送礼行贿，在朝中搭上关系，为生意铺路。商誉因此大涨。',
       effect: { gold: -30, prestige: 22 },
+      seasonBonus: { season: '冬', keys: { prestige: 10 }, hint: '年关礼厚，人情更深' },
       results: [
         '银子送到，笑脸迎来，从此官道畅通，商誉大涨。',
         '礼到，人到，路通了。有了朝中关系，生意更好做了。',
@@ -376,6 +426,26 @@ const ACTIONS = {
         '对方卷款潜逃，血本无归，商誉因此大损。',
         '债主人去楼空，你追讨无门，商界传出你被骗的消息，声誉受损。'
       ]
+    },
+    {
+      id: 'merchant_gamble',
+      name: '孤注一铺',
+      icon: '🎰',
+      cost: 2,
+      desc: '倾全部本钱押注一笔大买卖，赢则暴富，输则倾家。（消耗 2 行动点，胜率 60%）',
+      effect: { wealth: 55, prestige: 15 },
+      failEffect: { wealth: -25, prestige: -20, gold: -20 },
+      failChance: 0.40,
+      isRiskAction: true,
+      results: [
+        '那笔买卖一炮而红，财富如雪崩般涌来，商界惊叹，商誉大振。',
+        '你押对了！货物供不应求，高价售出，财富与声望一夜暴涨。',
+        '时机把握精准，孤注一掷终于换来满盘皆赢，天下商人皆听闻你的名字。'
+      ],
+      failResults: [
+        '买卖砸了，本钱血亏，商誉大损，同行交头接耳都是你的笑话。',
+        '行情突变，货物滞销，押注失败，财富受创，商誉一落千丈。'
+      ]
     }
   ],
 
@@ -387,6 +457,7 @@ const ACTIONS = {
       cost: 1,
       desc: '闭门苦练，精进拳脚与剑法。宝剑锋从磨砺出。',
       effect: { martial: 25 },
+      seasonBonus: { season: '冬', keys: { martial: 10 }, hint: '冬日闭关苦练，功力精进更快' },
       results: [
         '你每日拂晓起身，苦练至日落，武艺精进，剑势日盛。',
         '寒暑不辍，汗水浸透衣衫，你的剑法已炉火纯青。',
@@ -419,6 +490,7 @@ const ACTIONS = {
       cost: 1,
       desc: '路见不平，拔刀相助。你的名望，是一刀一剑闯出来的。',
       effect: { gold: -8, fame: 20, bonds: 10 },
+      seasonBonus: { season: '春', keys: { fame: 10 }, hint: '春暖人和，侠义之名传播更远' },
       results: [
         '你出手惩奸除恶，受益者涕泪横流，当场立誓此生追随。名望大涨。',
         '一刀斩断不平事，百姓奔走相告，你的大名在方圆百里传开。',
@@ -432,6 +504,7 @@ const ACTIONS = {
       cost: 1,
       desc: '接受镖局委托，护送货物抵达目的地。安全则有报酬，遭劫则有风险。',
       effect: { gold: 22 },
+      seasonBonus: { season: '秋', keys: { gold: 12 }, hint: '秋季商旅繁忙，镖银格外丰厚' },
       riskChance: 0.25,
       riskEffect: { gold: 8, martial: -8 },
       results: [
@@ -455,6 +528,26 @@ const ACTIONS = {
         '你振臂一呼，四方豪杰纷纷来投，帮会旗帜在城中正式立起。',
         '你以恩义结纳，帮众齐心，帮派日益壮大，江湖名望大涨。',
         '帮派初立，兄弟义气，誓同生死。名望与恩义齐飞。'
+      ]
+    },
+    {
+      id: 'hero_gamble',
+      name: '生死一搏',
+      icon: '🔥',
+      cost: 2,
+      desc: '单刀赴会，向江湖公认的强者发起挑战。胜则威震四方，败则颜面尽失。（消耗 2 行动点，胜率 65%）',
+      effect: { martial: 28, fame: 22 },
+      failEffect: { gold: -18, martial: -8, fame: -12 },
+      failChance: 0.35,
+      isRiskAction: true,
+      results: [
+        '一场惊天动地的对决，你险胜！消息传开，江湖无人不知你的名字。',
+        '你以弱胜强，武艺精进，名望一夜之间传遍大江南北。',
+        '对决持续数百回合，最终你力压对手，武名响彻江湖。'
+      ],
+      failResults: [
+        '强敌面前，你力有不逮，惨败而归，身受内伤，颜面尽失。',
+        '对方武艺远在你之上，你败得狼狈，伤了根基，名望受损。'
       ]
     }
   ]
@@ -3437,6 +3530,13 @@ var Game = (() => {
       applyEffect(action.effect);
     }
 
+    // 季节加成：成功时才触发（失败/风险不享受当季加成）
+    let seasonBonusTriggered = false;
+    if (!isFail && !isRisk && action.seasonBonus && action.seasonBonus.season === state.season) {
+      applyEffect(action.seasonBonus.keys);
+      seasonBonusTriggered = true;
+    }
+
     // 武将特性：征兵额外+5
     const origin = ORIGINS[state.player.origin];
     if (origin.traitBonus && origin.traitBonus.action === actionId) {
@@ -3454,6 +3554,11 @@ var Game = (() => {
     }
 
     addLog('action', `【${action.name}】${logText}`);
+
+    // 季节加成日志提示
+    if (seasonBonusTriggered) {
+      addLog('hint', `✦ 当季加成（${action.seasonBonus.season}·${action.seasonBonus.hint}）`);
+    }
 
     // 行为记忆追踪（用于世界记忆事件条件判断）
     const behaviorMap = {
