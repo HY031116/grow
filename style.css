@@ -543,6 +543,25 @@ html, body {
 .res-item.res-low .res-name { color: #c0392b; }
 .res-item.res-high .res-val { color: var(--gold-lt); }
 
+/* 体魄资源条特殊样式 */
+.res-vitality {
+  border-radius: 5px;
+  padding: 3px 4px;
+  background: rgba(39, 174, 96, 0.05);
+  border: 1px solid rgba(39, 174, 96, 0.12);
+  transition: background 0.4s, border-color 0.4s;
+}
+/* 体魄中等警告 */
+.res-vitality.res-low {
+  background: rgba(231, 76, 60, 0.08);
+  border-color: rgba(231, 76, 60, 0.35);
+  animation: vitality-pulse 2s ease-in-out infinite;
+}
+@keyframes vitality-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); }
+  50%       { box-shadow: 0 0 6px 2px rgba(231,76,60,0.28); }
+}
+
 /* NPC 关系面板 */
 .npc-panel {
   margin-top: 14px;

@@ -163,15 +163,22 @@ var UI = (() => {
         ? `<span class="res-sublabel">${getCourtTitle(val, s.player.gender)}</span>` : '';
       const d = delta[def.key];
       const deltaHtml = d ? `<span class="res-delta ${d > 0 ? 'res-delta-pos' : 'res-delta-neg'}">${d > 0 ? '+' : ''}${d}</span>` : '';
+      // 体魄条颜色动态：高→绿，中→橙，低→红
+      let barColor = def.color;
+      if (def.key === 'vitality') {
+        if (val > 60) barColor = '#27ae60';
+        else if (val > 30) barColor = '#e67e22';
+        else barColor = '#e74c3c';
+      }
       return `
-        <div class="res-item ${isLow ? 'res-low' : ''} ${isHigh ? 'res-high' : ''}">
+        <div class="res-item ${isLow ? 'res-low' : ''} ${isHigh ? 'res-high' : ''} ${def.key === 'vitality' ? 'res-vitality' : ''}">
           <div class="res-header">
             <span class="res-icon">${def.icon}</span>
             <span class="res-name">${def.name}${extraInfo}</span>
             <span class="res-val">${val}${deltaHtml}</span>
           </div>
           <div class="res-track">
-            <div class="res-fill" style="width:${pct}%; background:${def.color}"></div>
+            <div class="res-fill" style="width:${pct}%; background:${barColor}"></div>
           </div>
         </div>`;
     }).join('');
