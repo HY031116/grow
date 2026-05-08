@@ -625,17 +625,6 @@ html, body {
 }
 .log-npc .log-text { color: #c9b8f0; }
 
-/* 通用行动区分割线 */
-.common-actions-header {
-  margin: 14px 0 8px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6b8fa3;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  padding-top: 12px;
-}
 .common-action-btn {
   border-left: 3px solid #3a8a6b !important;
 }
@@ -1390,12 +1379,6 @@ html, body {
   .action-btn { min-height: 48px; }
   .act-name { font-size: 0.88rem; }
   .act-desc { font-size: 0.75rem; }
-
-  /* 通用行动标题 */
-  .common-actions-header {
-    font-size: 0.72rem;
-    margin-top: 12px;
-  }
 
   /* 右侧日志：显示，限制高度，置于最下方 */
   .play-log {
