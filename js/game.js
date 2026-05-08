@@ -4187,14 +4187,22 @@ var Game = (() => {
         triggerEnding('favor_zero'); return;
       }
       if (state.round >= 14 && r.power >= 80 && r.favor >= 85) { triggerEnding(pickEndingByStats()); return; }
+      // 寿命上限：40 回合（约59岁）自然寿终
+      if (state.round >= 40) { triggerEnding(pickDeathEnding()); return; }
     } else if (state.player.track === 'rebel') {
       if (r.troops <= 0) { triggerEnding('troops_zero'); return; }
       if (state.round >= 8 && r.territory >= 80 && r.morale >= 60) { triggerEnding(pickTerritoryEnding()); return; }
+      // 寿命上限：35 回合（战场消耗，约54岁）自然寿终
+      if (state.round >= 35) { triggerEnding(pickDeathEnding()); return; }
     } else if (state.player.track === 'merchant') {
       if (r.prestige <= 0) { triggerEnding('prestige_zero'); return; }
       if (state.round >= 8 && r.wealth >= 100 && r.routes >= 3) { triggerEnding(pickWealthEnding()); return; }
+      // 寿命上限：40 回合（约59岁）自然寿终
+      if (state.round >= 40) { triggerEnding(pickDeathEnding()); return; }
     } else if (state.player.track === 'hero') {
       if (state.round >= 8 && r.fame >= 80 && r.martial >= 60) { triggerEnding(pickHeroEnding()); return; }
+      // 寿命上限：35 回合（江湖消耗，约54岁）自然寿终
+      if (state.round >= 35) { triggerEnding(pickDeathEnding()); return; }
     }
   }
 
@@ -4256,6 +4264,27 @@ var Game = (() => {
     if ((state.flags.brave || 0) >= 2) return 'hero_triumph_brave';
     if ((state.flags.lone_hero || 0) >= 1) return 'hero_triumph_lone';
     return 'hero_triumph';
+  }
+
+  // ==================== 自然死亡结局选择（按资源状态决定品质）====================
+  function pickDeathEnding() {
+    const track = state.player.track;
+    const r = state.resources;
+    let level;
+    if (track === 'court') {
+      const score = (r.power || 0) + (r.favor || 0);
+      level = score >= 120 ? 'high' : score >= 60 ? 'mid' : 'low';
+    } else if (track === 'rebel') {
+      const score = (r.territory || 0) + (r.morale || 0);
+      level = score >= 100 ? 'high' : score >= 50 ? 'mid' : 'low';
+    } else if (track === 'merchant') {
+      const score = (r.wealth || 0) + (r.prestige || 0);
+      level = score >= 150 ? 'high' : score >= 80 ? 'mid' : 'low';
+    } else if (track === 'hero') {
+      const score = (r.fame || 0) + (r.martial || 0);
+      level = score >= 100 ? 'high' : score >= 50 ? 'mid' : 'low';
+    }
+    return `death_${track}_${level}`;
   }
 
   function confirmTransition(confirm) {
@@ -4450,16 +4479,20 @@ var Game = (() => {
     const r = state.round;
     const SEASONS = ['春', '夏', '秋', '冬'];
     const NUMS = ['元', '二', '三', '四', '五', '六', '七', '八', '九', '十',
-                  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'];
-    const year = NUMS[Math.min(r - 1, 19)] || String(r); // 乾明元年→二十年
+                  '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
+                  '二十一', '二十二', '二十三', '二十四', '二十五', '二十六', '二十七', '二十八', '二十九', '三十',
+                  '三十一', '三十二', '三十三', '三十四', '三十五', '三十六', '三十七', '三十八', '三十九', '四十'];
+    const year = NUMS[Math.min(r - 1, 39)] || String(r); // 乾明元年→四十年
     const season = SEASONS[(r - 1) % 4];
-    const age = 19 + r; // 开局20岁（第1回合），第20回合39岁
+    const age = 19 + r; // 开局20岁（第1回合），第40回合59岁
     let ageTitle;
     if (age <= 22)      ageTitle = '弱冠';
     else if (age <= 29) ageTitle = '青年';
     else if (age <= 35) ageTitle = '而立';
     else if (age <= 39) ageTitle = '盛年';
-    else                ageTitle = '不惑';
+    else if (age <= 49) ageTitle = '不惑';
+    else if (age <= 59) ageTitle = '知天命';
+    else                ageTitle = '耳顺';
     return { year, season, age, ageTitle };
   }
 
