@@ -631,6 +631,16 @@ html, body {
 .common-action-btn .act-effect {
   color: #6bcfa4;
 }
+/* 通用行动的赛道适配加成标签 */
+.act-track-bonus {
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(58, 138, 107, 0.18);
+  border: 1px solid rgba(58, 138, 107, 0.35);
+  font-size: 0.75em;
+  white-space: nowrap;
+}
 
 /* 中部：行动区 */
 .play-main {

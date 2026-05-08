@@ -251,6 +251,9 @@ var UI = (() => {
       commonPanel.innerHTML = Game.COMMON_ACTIONS.map(act => {
         const canUse = act.cost <= remaining;
         const effectStr = fmtEffect(act.effect);
+        // 当前赛道的适配加成（动态展示）
+        const bonus = act.trackBonus && act.trackBonus[s.player.track];
+        const bonusStr = bonus ? fmtEffect(bonus) : '';
         return `
           <button class="action-btn common-action-btn${canUse ? '' : ' action-disabled'}"
                   onclick="if(!this.classList.contains('action-disabled')) Game.doAction('${act.id}')">
@@ -260,7 +263,7 @@ var UI = (() => {
               <span class="act-cost">${'●'.repeat(act.cost)}</span>
             </div>
             <div class="act-desc">${act.desc}</div>
-            <div class="act-effect">${effectStr}</div>
+            <div class="act-effect">${effectStr}${bonusStr ? ' <span class="act-track-bonus">' + bonusStr + '</span>' : ''}</div>
           </button>`;
       }).join('');
     }
