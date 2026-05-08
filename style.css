@@ -649,6 +649,14 @@ html, body {
   position: relative;
 }
 
+/* 专属行动（左） + 通用行动（右）两列并排 */
+.actions-columns {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 12px;
+  align-items: start;
+}
+
 .actions-panel {
   display: flex;
   flex-direction: column;
@@ -1369,6 +1377,11 @@ html, body {
     padding: 12px 12px 72px; /* 底部预留固定按钮空间 */
     overflow-y: visible;
     height: auto;
+  }
+
+  /* 移动端：两列转单列堆叠 */
+  .actions-columns {
+    grid-template-columns: 1fr;
   }
 
   /* 结束回合按钮：固定在视口底部 */

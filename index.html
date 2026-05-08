@@ -250,8 +250,10 @@
       <main class="play-main">
         <div class="panel-title">本回合行动</div>
         <div id="actions-section-header"></div>
-        <div id="actions-panel" class="actions-panel"></div>
-        <div id="common-actions-panel" class="actions-panel common-actions-list"></div>
+        <div class="actions-columns">
+          <div id="actions-panel" class="actions-panel"></div>
+          <div id="common-actions-panel" class="actions-panel common-actions-list"></div>
+        </div>
         <button id="btn-end-round" class="btn-primary end-round-btn" onclick="Game.endRound()">
           结束本回合
         </button>
