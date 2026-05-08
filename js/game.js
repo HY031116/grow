@@ -87,9 +87,10 @@ const TRACKS = {
     icon: '👑',
     desc: '踏入朝堂，在圣眷与权柄之间寻找平衡。辅佐明君，或架空皇帝——史书如何记载你，全凭你的选择。',
     resources: [
-      { key: 'gold',  name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
-      { key: 'favor', name: '圣眷', icon: '👑', color: '#e8c45a', max: 100 },
-      { key: 'power', name: '权柄', icon: '⚖️', color: '#9b59b6', max: 100 }
+      { key: 'gold',     name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
+      { key: 'favor',    name: '圣眷', icon: '👑', color: '#e8c45a', max: 100 },
+      { key: 'power',    name: '权柄', icon: '⚖️', color: '#9b59b6', max: 100 },
+      { key: 'vitality', name: '体魄', icon: '💪', color: '#27ae60', max: 100, lowVal: 30, highVal: 80 }
     ],
     winText: '权柄 ≥ 80 且 圣眷 ≥ 85',
     loseText: '钱粮归零 或 圣眷归零'
@@ -104,7 +105,8 @@ const TRACKS = {
       { key: 'gold',      name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
       { key: 'troops',    name: '兵力', icon: '⚔️', color: '#e74c3c', max: 100 },
       { key: 'morale',    name: '民心', icon: '❤️', color: '#2ecc71', max: 100 },
-      { key: 'territory', name: '地盘', icon: '🏯', color: '#e67e22', max: 100 }
+      { key: 'territory', name: '地盘', icon: '🏯', color: '#e67e22', max: 100 },
+      { key: 'vitality',  name: '体魄', icon: '💪', color: '#27ae60', max: 100, lowVal: 30, highVal: 80 }
     ],
     winText: '地盘 ≥ 80 且 民心 ≥ 60',
     loseText: '钱粮归零 或 兵力归零'
@@ -119,7 +121,8 @@ const TRACKS = {
       { key: 'gold',     name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
       { key: 'wealth',   name: '财富', icon: '💎', color: '#f1c40f', max: 150, lowVal: 10, highVal: 80 },
       { key: 'routes',   name: '商路', icon: '🛤️', color: '#27ae60', max: 10,  lowVal: 1,  highVal: 5  },
-      { key: 'prestige', name: '商誉', icon: '🏮', color: '#e67e22', max: 100 }
+      { key: 'prestige', name: '商誉', icon: '🏮', color: '#e67e22', max: 100 },
+      { key: 'vitality', name: '体魄', icon: '💪', color: '#27ae60', max: 100, lowVal: 30, highVal: 80 }
     ],
     winText: '财富 ≥ 100 且 商路 ≥ 3',
     loseText: '钱粮归零 或 商誉归零'
@@ -131,10 +134,11 @@ const TRACKS = {
     icon: '🗡️',
     desc: '仗剑走天涯，行侠仗义，恩仇必报。当你的名字令奸邪胆寒、百姓安心之时，便是真正的江湖传说。',
     resources: [
-      { key: 'gold',    name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
-      { key: 'martial', name: '武艺', icon: '⚔️', color: '#e74c3c', max: 100 },
-      { key: 'fame',    name: '名望', icon: '⭐', color: '#f39c12', max: 100 },
-      { key: 'bonds',   name: '恩义', icon: '🤝', color: '#2980b9', max: 50,  lowVal: 3,  highVal: 25 }
+      { key: 'gold',     name: '钱粮', icon: '🌾', color: '#c9a84c', max: 300, displayMax: 150, lowVal: 40, highVal: 100 },
+      { key: 'martial',  name: '武艺', icon: '⚔️', color: '#e74c3c', max: 100 },
+      { key: 'fame',     name: '名望', icon: '⭐', color: '#f39c12', max: 100 },
+      { key: 'bonds',    name: '恩义', icon: '🤝', color: '#2980b9', max: 50,  lowVal: 3,  highVal: 25 },
+      { key: 'vitality', name: '体魄', icon: '💪', color: '#27ae60', max: 100, lowVal: 30, highVal: 80 }
     ],
     winText: '名望 ≥ 80 且 武艺 ≥ 60',
     loseText: '钱粮归零'
@@ -185,8 +189,7 @@ const ACTIONS = {
       icon: '🤝',
       cost: 1,
       desc: '拉拢同僚，扶植心腹，在朝中构建自己的势力网络。',
-      effect: { power: 22, favor: -8, gold: -10 },
-      seasonBonus: { season: '冬', keys: { power: 10 }, hint: '冬日宴饮多，结党拉拢最易' },
+      effect: { power: 22, favor: -8, gold: -10, vitality: -5 },
       results: [
         '你广结善缘，暗中许以好处，数位同僚已投入你的麾下，权柄渐盛。',
         '你在官场中编织关系网，皇帝似乎察觉了些什么，但你的势力已成。',
@@ -232,8 +235,7 @@ const ACTIONS = {
       icon: '🪙',
       cost: 1,
       desc: '当官不发财，请我来何用？趁机敛财，充实口袋。',
-      effect: { gold: 30, favor: -15, power: 5 },
-      seasonBonus: { season: '秋', keys: { gold: 15 }, hint: '秋税丰收，敛财最肥' },
+      effect: { gold: 30, favor: -15, power: 5, vitality: -5 },
       results: [
         '你打着"征收"的名目，中饱私囊，百姓敢怒不敢言，钱袋鼓了许多。',
         '你设法在账目上做了手脚，白花花的银子流入口袋，但御史已经开始盯着你了。',
@@ -246,7 +248,7 @@ const ACTIONS = {
       icon: '🎯',
       cost: 2,
       desc: '在皇帝面前正面弹劾政敌，置之死地而后生。成则声名大噪，败则万劫不复。（消耗 2 行动点，胜率 60%）',
-      effect: { favor: 42, power: 12 },
+      effect: { favor: 42, power: 12, vitality: -10 },
       failEffect: { favor: -30, power: -18 },
       failChance: 0.40,
       isRiskAction: true,
@@ -269,8 +271,7 @@ const ACTIONS = {
       icon: '⚔️',
       cost: 1,
       desc: '乱世中，兵力就是话语权。花银子，招义士，壮大队伍。',
-      effect: { gold: -20, troops: 25 },
-      seasonBonus: { season: '春', keys: { troops: 8 }, hint: '春季农闲，壮丁好募' },
+      effect: { gold: -20, troops: 25, vitality: -5 },
       results: [
         '四方豪杰闻风而来，你的旗下又多了数百兵马，军势大振。',
         '你散尽钱财，广招英雄，队伍又壮大了几分，士气高昂。',
@@ -297,7 +298,7 @@ const ACTIONS = {
       icon: '🏯',
       cost: 2,
       desc: '兵锋所指，天下震动。出兵攻打据点，扩大你的地盘。（消耗 2 行动点）',
-      effect: { troops: -15, territory: 20, gold: 15, morale: -5 },
+      effect: { troops: -15, territory: 20, gold: 15, morale: -5, vitality: -10 },
       failEffect: { troops: -22, gold: -10 },
       failChance: 0.28,
       results: [
@@ -330,7 +331,7 @@ const ACTIONS = {
       icon: '⚡',
       cost: 2,
       desc: '率轻骑孤军深入，出奇制胜。成则震动天下，败则全军覆没。（消耗 2 行动点，胜率 65%）',
-      effect: { territory: 22, troops: 12, morale: 8 },
+      effect: { territory: 22, troops: 12, morale: 8, vitality: -10 },
       failEffect: { troops: -25, gold: -15, morale: -10 },
       failChance: 0.35,
       isRiskAction: true,
@@ -367,8 +368,7 @@ const ACTIONS = {
       icon: '📦',
       cost: 1,
       desc: '趁低买入，高价出售，牟取暴利。但万一风声走漏……',
-      effect: { gold: -10, wealth: 45 },
-      seasonBonus: { season: '秋', keys: { wealth: 15 }, hint: '秋后物价旺，囤货最值' },
+      effect: { gold: -10, wealth: 45, vitality: -5 },
       riskChance: 0.30,
       riskEffect: { gold: -20, prestige: -15 },
       results: [
@@ -414,7 +414,7 @@ const ACTIONS = {
       icon: '📜',
       cost: 2,
       desc: '以本金放贷，坐收利息。高回报，但有债主跑路的风险。（消耗 2 行动点）',
-      effect: { gold: -20, wealth: 55 },
+      effect: { gold: -20, wealth: 55, vitality: -10 },
       failChance: 0.25,
       failEffect: { prestige: -20 },
       results: [
@@ -433,7 +433,7 @@ const ACTIONS = {
       icon: '🎰',
       cost: 2,
       desc: '倾全部本钱押注一笔大买卖，赢则暴富，输则倾家。（消耗 2 行动点，胜率 60%）',
-      effect: { wealth: 55, prestige: 15 },
+      effect: { wealth: 55, prestige: 15, vitality: -10 },
       failEffect: { wealth: -25, prestige: -20, gold: -20 },
       failChance: 0.40,
       isRiskAction: true,
@@ -456,8 +456,7 @@ const ACTIONS = {
       icon: '🥋',
       cost: 1,
       desc: '闭门苦练，精进拳脚与剑法。宝剑锋从磨砺出，然而深居练功，江湖声名渐淡。',
-      effect: { martial: 25, fame: -8 },
-      seasonBonus: { season: '冬', keys: { martial: 10 }, hint: '冬日闭关苦练，功力精进更快' },
+      effect: { martial: 25, fame: -8, vitality: -5 },
       results: [
         '你每日拂晓起身，苦练至日落，武艺精进，剑势日盛。',
         '寒暑不辍，汗水浸透衣衫，你的剑法已炉火纯青。',
@@ -536,7 +535,7 @@ const ACTIONS = {
       icon: '🔥',
       cost: 2,
       desc: '单刀赴会，向江湖公认的强者发起挑战。胜则威震四方，败则颜面尽失。（消耗 2 行动点，胜率 65%）',
-      effect: { martial: 28, fame: 22 },
+      effect: { martial: 28, fame: 22, vitality: -10 },
       failEffect: { gold: -18, martial: -8, fame: -12 },
       failChance: 0.35,
       isRiskAction: true,
@@ -993,7 +992,7 @@ const COMMON_ACTIONS = [
     icon: '🌿',
     cost: 1,
     desc: '暂时退出争斗，安心积攒财力。虽无争进，但厚积薄发，来日方长。',
-    effect: { gold: 22 },
+    effect: { gold: 22, vitality: 20 },
     results: [
       '你推掉了所有应酬，在宅中闭门思考，待积累了足够底气再出山。',
       '这段时间你刻意保持低调，专心理财，财力悄然丰厚了许多。',
@@ -3317,6 +3316,32 @@ const ENDINGS = {
     story: '你闯荡了二十年，却始终没能留下一个响亮的名字。老了，独自在一处破庙里躺下，回想这一生，心里没有什么遗憾——你做过该做的事，够了。\n\n无名，也是一种自由。'
   },
 
+  // ==================== 积劳而亡结局（体魄耗尽，提前终结）====================
+  death_exhaustion_court: {
+    type: 'death',
+    title: '积劳成疾',
+    badge: '✧ 鞠躬尽瘁',
+    story: '多年来你在朝堂间博弈、钻营、周旋，从未真正让自己歇过片刻。\n\n那一日，你在官署的灯下批完最后一份公文，便再也没有起来。朝中有人叹惋，有人窃喜——而你，只是先于所有人，放下了这一切。\n\n或许太拼了些。但你曾真实地燃烧过。'
+  },
+  death_exhaustion_rebel: {
+    type: 'death',
+    title: '壮志未酬',
+    badge: '✧ 沙场耗尽',
+    story: '征战多年，你的身体早已在一次次出征中透支殆尽。将士们都说你是铁人，但铁也会锈，也会折。\n\n某个秋日的清晨，你倒在了中军帐里。旗帜还在猎猎作响，问鼎天下的梦却永远停在了这里。\n\n那些随你浴血的兄弟，会记得你的。'
+  },
+  death_exhaustion_merchant: {
+    type: 'death',
+    title: '商海力竭',
+    badge: '✧ 操劳而终',
+    story: '走南闯北、日夜算计，你把全部精力都押在了这片商路上。账目还未结清，新的买卖还在谈判，可身体已经先一步宣告了终结。\n\n你倒在了账房里，手边是半写的账簿。外头还有人催着问货期，没人知道东家再也不会回来。\n\n钱财带不走，但你曾经拼过，这已足够。'
+  },
+  death_exhaustion_hero: {
+    type: 'death',
+    title: '侠骨已折',
+    badge: '✧ 力竭而逝',
+    story: '每一次出剑，你都不曾留力；每一次义举，你都倾尽所有。江湖的代价，终于在此刻一并算清。\n\n你坐在一块山石上，看着最后一缕晚霞，手中的剑再也举不起来了。\n\n有人在远方传唱你的名字，你微微一笑，闭上了眼。这一生，值了。'
+  },
+
   // ==================== NPC 盟友专属结局 ====================
   // 官场路：与权相李崇关系≥70 → 联手登顶
   favor_triumph_npc_minister: {
@@ -3490,6 +3515,8 @@ var Game = (() => {
     state.player.track = trackId;
     const origin = ORIGINS[state.player.origin];
     state.resources = { ...origin.resources[trackId] };
+    // 体魄初始满值（所有赛道共用）
+    state.resources.vitality = 100;
     state.player.title = state.player.gender === 'male' ? origin.titleMale : origin.titleFemale;
     // 初始化该赛道的 NPC 关系值（初始 20，代表陌生人但有所耳闻）
     Object.values(NPC_DATA).forEach(npc => {
@@ -4169,6 +4196,14 @@ var Game = (() => {
 
     if (r.gold <= 0) { triggerEnding('gold_zero'); return; }
 
+    // 体魄归零：积劳而亡（先于其他死亡检测）
+    if ((r.vitality || 0) <= 0) { triggerEnding(pickExhaustionEnding()); return; }
+    // 体魄低预警（只触发一次）
+    if ((r.vitality || 0) <= 30 && !state.flags._vitality_warned) {
+      state.flags._vitality_warned = true;
+      addLog('warn', '积劳已久，你感到精力大不如前，身体每况愈下……若再不休养，恐有不测。');
+    }
+
     if (state.player.track === 'court') {
       // 圣眷归零但有兵力 → 触发赛道转换提示（仅一次）
       if (r.favor <= 0) {
@@ -4285,6 +4320,12 @@ var Game = (() => {
       level = score >= 100 ? 'high' : score >= 50 ? 'mid' : 'low';
     }
     return `death_${track}_${level}`;
+  }
+
+  // ==================== 积劳而亡结局选择（赛道专属）====================
+  function pickExhaustionEnding() {
+    const track = state.player.track;
+    return `death_exhaustion_${track}`;
   }
 
   function confirmTransition(confirm) {
