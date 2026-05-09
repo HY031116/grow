@@ -53,48 +53,8 @@
         </div>
       </section>
 
-      <!-- 出身 -->
-      <section class="create-section">
-        <h3 class="section-label">◆ 出身</h3>
-        <div class="origin-group">
-
-          <div class="origin-card" data-origin="scholar" onclick="Game.setOrigin('scholar')">
-            <div class="origin-icon">📚</div>
-            <div class="origin-name">寒门学子</div>
-            <div class="origin-desc">满腹经纶，才华横溢。一朝中举踏入仕途，脑子是你最大的本钱。</div>
-            <div class="origin-trait">★ 博学多才：每回合圣眷 +5</div>
-            <div class="origin-recommend">推荐：官场之路</div>
-          </div>
-
-          <div class="origin-card" data-origin="warrior" onclick="Game.setOrigin('warrior')">
-            <div class="origin-icon">⚔️</div>
-            <div class="origin-name">边境武将</div>
-            <div class="origin-desc">沙场宿将，手握兵权。乱世之中，刀剑比笔杆更有力。</div>
-            <div class="origin-trait">★ 沙场宿将：每次征兵额外 +5 兵力</div>
-            <div class="origin-recommend">推荐：造反之路</div>
-          </div>
-
-          <div class="origin-card" data-origin="merchant" onclick="Game.setOrigin('merchant')">
-            <div class="origin-icon">💰</div>
-            <div class="origin-name">落魄商贾</div>
-            <div class="origin-desc">家道中落，积蓄仍厚，四方人脉广布。银子是最万能的武器。</div>
-            <div class="origin-trait">★ 富甲一方：每回合钱粮 +5</div>
-            <div class="origin-recommend">推荐：富商之路</div>
-          </div>
-
-          <div class="origin-card" data-origin="wanderer" onclick="Game.setOrigin('wanderer')">
-            <div class="origin-icon">🗡️</div>
-            <div class="origin-name">游侠少年</div>
-            <div class="origin-desc">行走江湖多年，剑术精进，路见不平则拔刀相助。没有钱财背景，却有一身好武艺与赤子之心。</div>
-            <div class="origin-trait">★ 游侠本色：侠客赛道每回合武艺 +3</div>
-            <div class="origin-recommend">推荐：侠客之路</div>
-          </div>
-
-        </div>
-      </section>
-
-      <button id="btn-create" class="btn-primary large" disabled onclick="Game.confirmCreate()">
-        请先选择出身
+      <button id="btn-create" class="btn-primary large" onclick="Game.confirmCreate()">
+        随机出身，踏上人生之路 →
       </button>
 
       <!-- 继续游戏（有存档时显示） -->

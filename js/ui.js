@@ -32,17 +32,7 @@ var UI = (() => {
       btn.classList.toggle('active', btn.dataset.gender === s.player.gender);
     });
 
-    // 出身卡片
-    document.querySelectorAll('.origin-card').forEach(card => {
-      card.classList.toggle('selected', card.dataset.origin === s.player.origin);
-    });
-
-    // 开始按钮
-    const btn = document.getElementById('btn-create');
-    btn.disabled = false;
-    btn.textContent = s.player.origin
-      ? `以「${ORIGINS[s.player.origin].name}」入世 →`
-      : '随机出身，踏上人生之路 →';
+    // 开始按钮（出身已改为全随机，无需处理）
 
     // 存档检查：如有存档则显示"继续游戏"区域
     const continueSection = document.getElementById('continue-section');
