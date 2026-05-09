@@ -3505,8 +3505,14 @@ var Game = (() => {
     UI.render();
   }
 
+  function pickRandomOrigin() {
+    const ids = Object.keys(ORIGINS);
+    return ids[Math.floor(Math.random() * ids.length)];
+  }
+
   function confirmCreate() {
-    if (!state.player.origin) return;
+    // 未手选出身时自动随机，支持一键开局
+    if (!state.player.origin) state.player.origin = pickRandomOrigin();
     state.phase = 'track';
     UI.render();
   }

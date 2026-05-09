@@ -39,8 +39,10 @@ var UI = (() => {
 
     // 开始按钮
     const btn = document.getElementById('btn-create');
-    btn.disabled = !s.player.origin;
-    btn.textContent = s.player.origin ? '踏上人生之路 →' : '请先选择出身';
+    btn.disabled = false;
+    btn.textContent = s.player.origin
+      ? `以「${ORIGINS[s.player.origin].name}」入世 →`
+      : '随机出身，踏上人生之路 →';
 
     // 存档检查：如有存档则显示"继续游戏"区域
     const continueSection = document.getElementById('continue-section');
